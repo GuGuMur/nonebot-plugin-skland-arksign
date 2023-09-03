@@ -78,3 +78,5 @@ _✨ 用于每日早八定时签到森空岛明日方舟的Nonebot插件 ✨_
 * [`xxyz30/skyland-auto-sign`](https://github.com/xxyz30/skyland-auto-sign)、[`Yanstory/skland-checkin-ghaction`](https://github.com/Yanstory/skland-checkin-ghaction)、[`Maojuan-lang/SenKongDao`](https://github.com/Maojuan-lang/SenKongDao)：感谢以上项目提供的参考！
 * [`AzideCupric`](https://github.com/AzideCupric)：感谢大佬的技术支持！orz
 * [`he0119/nonebot-plugin-datastore`](https://github.com/he0119/nonebot-plugin-datastore)：超好用的数据存储插件！
+* [`MountainDash/nonebot-plugin-send-anything-anywhere`](https://github.com/MountainDash/nonebot-plugin-send-anything-anywhere)：峯驰物流部门的全能转接信使！
+* [`noneplugin/nonebot-plugin-session`](https://github.com/noneplugin/nonebot-plugin-session)：全能的<del>账单</del>会话模型管理员！
