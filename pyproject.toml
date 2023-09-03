@@ -1,0 +1,19 @@
+[project]
+name = "nonebot_plugin_skland_arksign"
+version = "0.1.0"
+description = "用于每日定时签到森空岛明日方舟的Nonebot插件"
+authors = [
+    {name = "GuGuMur", email = "222153315@qq.com"},
+]
+dependencies = [
+    "nonebot2>=2.0.1",
+    "nonebot-plugin-datastore>=1.1.0",
+    "httpx>=0.24.1",
+]
+requires-python = ">=3.8"
+readme = "README.md"
+license = {text = "MIT"}
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
