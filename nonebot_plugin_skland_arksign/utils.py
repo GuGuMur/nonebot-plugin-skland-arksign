@@ -7,12 +7,6 @@ def cleantext(text: str):
     result = "\n".join(cleaned_lines)
     return result
 
-def to_dict(model):
-    dictionary = {}
-    for k, v in model.__dict__.items():
-        if k != '_sa_instance_state':
-            dictionary[k] = v
-    return dictionary
 
 async def get_binding_list(cred: str):
     headers = {
@@ -22,9 +16,7 @@ async def get_binding_list(cred: str):
         "Connection": "close",
     }
     async with AsyncClient() as client:
-        response = await client.get(
-            "https://zonai.skland.com/api/v1/game/player/binding", headers=headers
-        )
+        response = await client.get("https://zonai.skland.com/api/v1/game/player/binding", headers=headers)
         response = response.json()
     for i in response["data"]["list"]:
         if i.get("appCode") == "arknights":
@@ -42,11 +34,16 @@ async def run_sign(uid: str, cred: str):
     drname = "Dr"
     server = ""
     binding = await get_binding_list(cred=cred)
+    if not binding:
+        return {
+            "status": False,
+            "text": f"获取账号绑定信息失败，请检查是否正确！\n{binding}",
+        }
     for i in binding:
         if i["uid"] == uid:
             data["gameId"] = i["channelMasterId"]
             drname = i["nickName"]
-            server = i['channelName']
+            server = i["channelName"]
             break
 
     result = {}

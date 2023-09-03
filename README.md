@@ -72,5 +72,9 @@ _✨ 用于每日早八定时签到森空岛明日方舟的Nonebot插件 ✨_
 ### 删除账号
     森空岛.del/skl.del/skd.del 舟游戏ID
 
-## 🎉 致谢
-* [`xxyz30/skyland-auto-sign`](https://github.com/xxyz30/skyland-auto-sign)、[`Yanstory/skland-checkin-ghaction`](https://github.com/Yanstory/skland-checkin-ghaction)、[`Maojuan-lang/SenKongDao`](https://github.com/Maojuan-lang/SenKongDao)：感谢以上大佬项目提供的参考！
+> 注意：非[超级用户](https://nonebot.dev/docs/appendices/config#superusers)只可删除自己绑定的账号，超级用户可以删除bot数据库内所有账号
+
+## 🤗 致谢
+* [`xxyz30/skyland-auto-sign`](https://github.com/xxyz30/skyland-auto-sign)、[`Yanstory/skland-checkin-ghaction`](https://github.com/Yanstory/skland-checkin-ghaction)、[`Maojuan-lang/SenKongDao`](https://github.com/Maojuan-lang/SenKongDao)：感谢以上项目提供的参考！
+* [`AzideCupric`](https://github.com/AzideCupric)：感谢大佬的技术支持！orz
+* [`he0119/nonebot-plugin-datastore`](https://github.com/he0119/nonebot-plugin-datastore)：超好用的数据存储插件！
