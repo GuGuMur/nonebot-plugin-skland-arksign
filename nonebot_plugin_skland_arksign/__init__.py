@@ -1,10 +1,10 @@
 from nonebot import require
-from nonebot.plugin import PluginMetadata
+from nonebot.plugin import PluginMetadata, inherit_supported_adapters
 
 require("nonebot_plugin_apscheduler")
 require("nonebot_plugin_datastore")
 require("nonebot_plugin_saa")
-require("nonebot-plugin-session")
+require("nonebot_plugin_session")
 
 from .command import skl_add as skl_add  # noqa: E402
 from .command import skl_del as skl_del  # noqa: E402
@@ -16,5 +16,5 @@ __plugin_meta__ = PluginMetadata(
     usage="私聊机器人森空岛 uid cred",
     type="application",
     homepage="https://github.com/GuGuMur/nonebot-plugin-skland-arksign",
-    supported_adapters={"~onebot.v11"},
+    supported_adapters=inherit_supported_adapters("nonebot_plugin_saa", "nonebot_plugin_session"),
 )
