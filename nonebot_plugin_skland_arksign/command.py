@@ -39,7 +39,7 @@ async def _(
     await session.commit()
     await session.refresh(useraccount)
     await skl_add.send(cleantext(f"""
-                                    [skland_arksign]已添加新账号！
+                                    [森空岛明日方舟签到器]已添加新账号！
                                     QID：{event.user_id}
                                     UID：{args.uid}
                                     CRED：{args.cred}
@@ -68,7 +68,7 @@ async def _(
         await session.flush()
         await session.commit()
     await skl_add.finish(cleantext(f"""
-                                    [skland_arksign]已删除旧账号！
+                                    [森空岛明日方舟签到器]已删除旧账号！
                                     QID：{event.user_id}
                                     UID：{args.uid}
                                     """))

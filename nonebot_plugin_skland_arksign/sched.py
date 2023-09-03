@@ -23,5 +23,5 @@ async def _():
         result = await run_sign(uid=i["uid"],cred=i["cred"])
         print(result["text"])
         send = await get_bot().send_private_msg(
-                    user_id=i["qid"], message="[skland_arksign]执行定时任务！\n"+result["text"]
+                    user_id=i["qid"], message="[森空岛明日方舟签到器]执行定时任务！\n"+result["text"]
                 )
