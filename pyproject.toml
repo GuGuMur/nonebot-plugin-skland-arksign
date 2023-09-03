@@ -10,6 +10,9 @@ dependencies = [
     "nonebot-plugin-datastore>=1.1.0",
     "httpx>=0.24.1",
     "nonebot-adapter-onebot>=2.2.4",
+    "nonebot-plugin-apscheduler>=0.3.0",
+    "nonebot-plugin-send-anything-anywhere>=0.3.0",
+    "nonebot-plugin-session>=0.1.0",
 ]
 requires-python = ">=3.8"
 readme = "README.md"
