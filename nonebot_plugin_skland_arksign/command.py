@@ -1,25 +1,24 @@
 from argparse import Namespace
+
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 from nonebot import on_shell_command
-from nonebot.adapters import Event, Bot
-from nonebot.params import Depends, ShellCommandArgs
-from nonebot.permission import SUPERUSER
+from nonebot.adapters import Bot, Event
 from nonebot.rule import ArgumentParser
+from nonebot.permission import SUPERUSER
+from sqlalchemy.ext.asyncio import AsyncSession
 from nonebot_plugin_datastore import get_session
-from nonebot_plugin_session import extract_session, SessionLevel
+from nonebot.params import Depends, ShellCommandArgs
+from nonebot_plugin_session import SessionLevel, extract_session
 
 from .model import SklandSubscribe
-from .utils import cleantext, run_sign
+from .utils import run_sign, cleantext
 
 init_parser = ArgumentParser(
     add_help=False,
-    description=cleantext(
-        """森空岛自动签到插件
+    description=cleantext("""森空岛自动签到插件
         使用：森空岛 [游戏账号ID] [森空岛cred]
         注意：如果在群聊使用请注意安全问题！
-        """
-    ),
+        """),
 )
 init_parser.add_argument("uid", type=str, help="tags!")
 init_parser.add_argument("cred", type=str, help="tags!")
@@ -52,15 +51,11 @@ async def _(
     db_session.add(new_record)
     await db_session.commit()
     await db_session.refresh(new_record)
-    await skl_add.send(
-        cleantext(
-            f"""
+    await skl_add.send(cleantext(f"""
             [森空岛明日方舟签到器]已添加新账号！
             UID：{new_record.uid}
             CRED：{new_record.cred}
-            """
-        )
-    )
+            """))
     runres = await run_sign(uid=args.uid, cred=args.cred)
     await skl_add.finish(f"立即执行签到操作完成！\n{runres['text']}")
 
@@ -101,11 +96,7 @@ async def _(
     await db_session.delete(result)
     await db_session.commit()
 
-    await skl_add.finish(
-        cleantext(
-            f"""
+    await skl_add.finish(cleantext(f"""
             [森空岛明日方舟签到器]已删除旧账号！
             UID：{args.uid}
-            """
-        )
-    )
+            """))

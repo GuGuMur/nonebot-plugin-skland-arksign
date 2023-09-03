@@ -1,11 +1,14 @@
 import asyncio
+
+from sqlalchemy import select
 from nonebot.log import logger
-from nonebot_plugin_datastore.db import create_session
 from nonebot_plugin_apscheduler import scheduler
 from nonebot_plugin_saa import Text, PlatformTarget
-from sqlalchemy import select
-from .model import SklandSubscribe
+from nonebot_plugin_datastore.db import create_session
+
 from .utils import run_sign
+from .model import SklandSubscribe
+
 
 @scheduler.scheduled_job("cron", hour=8, id="skland_sched")
 # @scheduler.scheduled_job("cron", minute="*/1", id="skland_sched")

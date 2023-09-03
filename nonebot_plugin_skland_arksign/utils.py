@@ -1,37 +1,32 @@
 from httpx import AsyncClient
 
+
 def cleantext(text: str):
     lines = text.strip().split("\n")
     cleaned_lines = [line.strip() for line in lines]
     result = "\n".join(cleaned_lines)
     return result
 
+
 async def get_binding_list(cred: str):
     headers = {
         "cred": cred,
-        "User-Agent": (
-            "Skland/1.0.1 (com.hypergryph.skland; build:100001014; Android 31; )"
-            " Okhttp/4.11.0"
-        ),
+        "User-Agent": "Skland/1.0.1 (com.hypergryph.skland; build:100001014; Android 31; ) Okhttp/4.11.0",
         "Accept-Encoding": "gzip",
         "Connection": "close",
     }
     async with AsyncClient() as client:
-        response = await client.get(
-            "https://zonai.skland.com/api/v1/game/player/binding", headers=headers
-        )
+        response = await client.get("https://zonai.skland.com/api/v1/game/player/binding", headers=headers)
         response = response.json()
     for i in response["data"]["list"]:
         if i.get("appCode") == "arknights":
             return i["bindingList"]
 
+
 async def run_sign(uid: str, cred: str):
     headers = {
         "cred": cred,
-        "User-Agent": (
-            "Skland/1.0.1 (com.hypergryph.skland; build:100001014; Android 31; )"
-            " Okhttp/4.11.0"
-        ),
+        "User-Agent": "Skland/1.0.1 (com.hypergryph.skland; build:100001014; Android 31; ) Okhttp/4.11.0",
         "Accept-Encoding": "gzip",
         "Connection": "close",
     }
@@ -78,7 +73,5 @@ async def run_sign(uid: str, cred: str):
             result["text"] += "奖励类型为：" + award.get("type") + "\n"
     else:
         result["status"] = False
-        result["text"] = (
-            f"{server}账号 Dr.{drname}(UID{uid})签到失败，请检查以下信息：\n{sign_response}"
-        )
+        result["text"] = f"{server}账号 Dr.{drname}(UID{uid})签到失败，请检查以下信息：\n{sign_response}"
     return result
