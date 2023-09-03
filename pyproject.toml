@@ -1,5 +1,5 @@
 [project]
-name = "森空岛明日方舟签到器"
+name = "nonebot-plugin-skland-arksign"
 version = "0.1.2"
 description = "用于每日定时签到森空岛明日方舟的Nonebot插件"
 authors = [
