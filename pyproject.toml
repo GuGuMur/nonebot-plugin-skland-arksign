@@ -1,6 +1,6 @@
 [project]
-name = "nonebot_plugin_skland_arksign"
-version = "0.1.2"
+name = "森空岛明日方舟签到器"
+version = "0.4.1"
 description = "用于每日定时签到森空岛明日方舟的Nonebot插件"
 authors = [
     {name = "GuGuMur", email = "222153315@qq.com"},
