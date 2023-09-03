@@ -1,6 +1,7 @@
 from .command import *
 from .sched import *
 from nonebot.plugin import PluginMetadata
+
 __plugin_meta__ = PluginMetadata(
     name="森空岛明日方舟签到器",
     description="私聊机器人以获得自动明日方舟森空岛签到服务",

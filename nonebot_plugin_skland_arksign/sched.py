@@ -10,7 +10,8 @@ from .utils import run_sign, to_dict
 
 scheduler = require("nonebot_plugin_apscheduler").scheduler
 
-@scheduler.scheduled_job('cron', hour=8, id="skland_sched")
+
+@scheduler.scheduled_job("cron", hour=8, id="skland_sched")
 # @scheduler.scheduled_job("cron", minute="*/1", id="skland_sched")
 async def _():
     logger.info("森空岛签到任务开始执行！")
@@ -20,8 +21,8 @@ async def _():
         users = [to_dict(data) for data in users]
         print(users)
     for i in users:
-        result = await run_sign(uid=i["uid"],cred=i["cred"])
+        result = await run_sign(uid=i["uid"], cred=i["cred"])
         print(result["text"])
         send = await get_bot().send_private_msg(
-                    user_id=i["qid"], message="[森空岛明日方舟签到器]执行定时任务！\n"+result["text"]
-                )
+            user_id=i["qid"], message="[森空岛明日方舟签到器]执行定时任务！\n" + result["text"]
+        )

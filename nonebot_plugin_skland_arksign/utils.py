@@ -7,17 +7,22 @@ def cleantext(text: str):
     result = "\n".join(cleaned_lines)
     return result
 
+
 def to_dict(model):
     dictionary = {}
     for k, v in model.__dict__.items():
-        if k != '_sa_instance_state':
+        if k != "_sa_instance_state":
             dictionary[k] = v
     return dictionary
+
 
 async def get_binding_list(cred: str):
     headers = {
         "cred": cred,
-        "User-Agent": "Skland/1.0.1 (com.hypergryph.skland; build:100001014; Android 31; ) Okhttp/4.11.0",
+        "User-Agent": (
+            "Skland/1.0.1 (com.hypergryph.skland; build:100001014; Android 31; )"
+            " Okhttp/4.11.0"
+        ),
         "Accept-Encoding": "gzip",
         "Connection": "close",
     }
@@ -34,7 +39,10 @@ async def get_binding_list(cred: str):
 async def run_sign(uid: str, cred: str):
     headers = {
         "cred": cred,
-        "User-Agent": "Skland/1.0.1 (com.hypergryph.skland; build:100001014; Android 31; ) Okhttp/4.11.0",
+        "User-Agent": (
+            "Skland/1.0.1 (com.hypergryph.skland; build:100001014; Android 31; )"
+            " Okhttp/4.11.0"
+        ),
         "Accept-Encoding": "gzip",
         "Connection": "close",
     }
@@ -46,7 +54,7 @@ async def run_sign(uid: str, cred: str):
         if i["uid"] == uid:
             data["gameId"] = i["channelMasterId"]
             drname = i["nickName"]
-            server = i['channelName']
+            server = i["channelName"]
             break
 
     result = {}
@@ -76,5 +84,7 @@ async def run_sign(uid: str, cred: str):
             result["text"] += "奖励类型为：" + award.get("type") + "\n"
     else:
         result["status"] = False
-        result["text"] = f"{server}账号 Dr.{drname}(UID{uid})签到失败，请检查以下信息：\n{sign_response}"
+        result["text"] = (
+            f"{server}账号 Dr.{drname}(UID{uid})签到失败，请检查以下信息：\n{sign_response}"
+        )
     return result
