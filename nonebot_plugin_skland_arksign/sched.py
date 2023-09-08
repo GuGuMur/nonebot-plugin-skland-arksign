@@ -20,6 +20,9 @@ async def _():
         subscribes = result.all()
 
     for sub in subscribes:
+        if not sub.token:
+            await Text("账号未绑定Token，请重新绑定！").send_to(PlatformTarget.deserialize(sub.user))
+            continue
         result = await run_sign(uid=sub.uid, token=sub.token)
         logger.info(result)
         msg = Text("[森空岛明日方舟签到器]执行定时任务！\n") + Text(result["text"])
