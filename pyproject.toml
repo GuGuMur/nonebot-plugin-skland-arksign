@@ -27,7 +27,11 @@ dev = [
     "black>=23.7.0",
     "ruff>=0.0.287",
     "isort>=5.12.0",
+    "nb-cli>=1.2.3",
 ]
+
+[tool.nonebot]
+plugins = ["nonebot_plugin_skland_arksign"]
 
 [tool.ruff]
 select = ["E", "W", "F", "UP", "C", "T", "PYI", "PT", "Q"]
