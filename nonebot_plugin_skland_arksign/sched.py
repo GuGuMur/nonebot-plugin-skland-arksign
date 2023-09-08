@@ -20,7 +20,7 @@ async def _():
         subscribes = result.all()
 
     for sub in subscribes:
-        result = await run_sign(uid=sub.uid, cred=sub.cred)
+        result = await run_sign(uid=sub.uid, token=sub.token)
         logger.info(result)
         msg = Text("[森空岛明日方舟签到器]执行定时任务！\n") + Text(result["text"])
 
