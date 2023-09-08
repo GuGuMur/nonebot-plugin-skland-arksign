@@ -1,11 +1,44 @@
 from httpx import AsyncClient
 
+APP_CODE = "4ca99fa6b56cc2ba"
+
+login_header = {
+    "User-Agent": "Skland/1.0.1 (com.hypergryph.skland; build:100001014; Android 31; ) Okhttp/4.11.0",
+    "Accept-Encoding": "gzip",
+    "Connection": "close",
+}
+
 
 def cleantext(text: str):
     lines = text.strip().split("\n")
     cleaned_lines = [line.strip() for line in lines]
     result = "\n".join(cleaned_lines)
     return result
+
+
+async def get_grant_code(token: str) -> str:
+    data = {"appCode": APP_CODE, "token": token, "type": 0}
+
+    async with AsyncClient() as client:
+        response = await client.post("https://as.hypergryph.com/user/oauth2/v2/grant", headers=login_header, data=data)
+        response.raise_for_status()
+        return response.json()["data"]["code"]
+
+
+async def get_cred(grant_code: str) -> str:
+    data = {"code": grant_code, "kind": 1}
+
+    async with AsyncClient() as client:
+        response = await client.post(
+            "https://zonai.skland.com/api/v1/user/auth/generate_cred_by_code", headers=login_header, data=data
+        )
+        response.raise_for_status()
+        return response.json()["data"]["cred"]
+
+
+async def get_cred_by_token(token: str):
+    grant_code = await get_grant_code(token)
+    return await get_cred(grant_code)
 
 
 async def get_binding_list(cred: str):
@@ -23,7 +56,12 @@ async def get_binding_list(cred: str):
             return i["bindingList"]
 
 
-async def run_sign(uid: str, cred: str):
+async def run_sign(uid: str, token: str):
+    cred = await get_cred_by_token(token)
+    return await do_sign(uid, cred)
+
+
+async def do_sign(uid: str, cred: str):
     headers = {
         "cred": cred,
         "User-Agent": "Skland/1.0.1 (com.hypergryph.skland; build:100001014; Android 31; ) Okhttp/4.11.0",

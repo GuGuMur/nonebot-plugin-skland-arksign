@@ -10,7 +10,6 @@
 
 _✨ 用于每日早八定时签到森空岛明日方舟的Nonebot插件 ✨_
 
-
 <a href="./LICENSE">
     <img src="https://img.shields.io/github/license/owner/nonebot-plugin-skland-arksign.svg" alt="license">
 </a>
@@ -39,21 +38,25 @@ _✨ 用于每日早八定时签到森空岛明日方舟的Nonebot插件 ✨_
 <summary>pip</summary>
 
     pip install nonebot-plugin-skland-arksign
+
 </details>
 <details>
 <summary>pdm</summary>
 
     pdm add nonebot-plugin-skland-arksign
+
 </details>
 <details>
 <summary>poetry</summary>
 
     poetry add nonebot-plugin-skland-arksign
+
 </details>
 <details>
 <summary>conda</summary>
 
     conda install nonebot-plugin-skland-arksign
+
 </details>
 
 打开 nonebot2 项目根目录下的 `pyproject.toml` 文件, 在 `[tool.nonebot]` 部分追加写入
@@ -62,21 +65,45 @@ _✨ 用于每日早八定时签到森空岛明日方舟的Nonebot插件 ✨_
 
 </details>
 
-
 ## 🎉 使用
-### 新增账号
-    森空岛/skl/skd 舟游戏ID 森空岛cred
 
-> 关于什么是森空岛cred：参见[此处](https://github.com/xxyz30/skyland-auto-sign)
+### 新增账号
+
+    森空岛/skl/skd 舟游戏ID 森空岛token
+
+#### 获取Token
+
+1. 登录[森空岛](https://www.skland.com/)
+
+2. 访问这个[网址](https://web-api.skland.com/account/info/hg)
+
+   返回如下信息
+
+   ```json
+   {
+     "code": 0,
+     "data": {
+       "content": "<Token>"
+     },
+     "msg": "接口会返回您的鹰角网络通行证账号的登录凭证，此凭证可以用于鹰角网络账号系统校验您登录的有效性。泄露登录凭证属于极度危险操作，为了您的账号安全，请勿将此凭证以任何形式告知他人！"
+   }
+   ```
+
+3. 将`<Token>`填入命令中
+
+> 例子: "content": "1145141919810"
+> 则命令为`森空岛 你的游戏UID 1145141919810`
 
 ### 删除账号
+
     森空岛.del/skl.del/skd.del 舟游戏ID
 
 > 注意：非[超级用户](https://nonebot.dev/docs/appendices/config#superusers)只可删除自己绑定的账号，超级用户可以删除bot数据库内所有账号
 
 ## 🤗 致谢
-* [`xxyz30/skyland-auto-sign`](https://github.com/xxyz30/skyland-auto-sign)、[`Yanstory/skland-checkin-ghaction`](https://github.com/Yanstory/skland-checkin-ghaction)、[`Maojuan-lang/SenKongDao`](https://github.com/Maojuan-lang/SenKongDao)：感谢以上项目提供的参考！
-* [`AzideCupric`](https://github.com/AzideCupric)：感谢大佬的技术支持！orz
-* [`he0119/nonebot-plugin-datastore`](https://github.com/he0119/nonebot-plugin-datastore)：超好用的数据存储插件！
-* [`MountainDash/nonebot-plugin-send-anything-anywhere`](https://github.com/MountainDash/nonebot-plugin-send-anything-anywhere)：峯驰物流部门的全能转接信使！
-* [`noneplugin/nonebot-plugin-session`](https://github.com/noneplugin/nonebot-plugin-session)：全能的<del>账单</del>会话模型管理员！
+
+- [`xxyz30/skyland-auto-sign`](https://github.com/xxyz30/skyland-auto-sign)、[`Yanstory/skland-checkin-ghaction`](https://github.com/Yanstory/skland-checkin-ghaction)、[`Maojuan-lang/SenKongDao`](https://github.com/Maojuan-lang/SenKongDao)：感谢以上项目提供的参考！
+- [`AzideCupric`](https://github.com/AzideCupric)：感谢大佬的技术支持！orz
+- [`he0119/nonebot-plugin-datastore`](https://github.com/he0119/nonebot-plugin-datastore)：超好用的数据存储插件！
+- [`MountainDash/nonebot-plugin-send-anything-anywhere`](https://github.com/MountainDash/nonebot-plugin-send-anything-anywhere)：峯驰物流部门的全能转接信使！
+- [`noneplugin/nonebot-plugin-session`](https://github.com/noneplugin/nonebot-plugin-session)：全能的<del>账单</del>会话模型管理员！

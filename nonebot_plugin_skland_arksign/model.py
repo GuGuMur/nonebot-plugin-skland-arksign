@@ -13,3 +13,4 @@ class SklandSubscribe(Model):
     uid: Mapped[str] = mapped_column(String, primary_key=True, doc="森空岛账号ID")
     user: Mapped[dict] = mapped_column(JSON().with_variant(JSONB, "postgresql"), doc="订阅用户信息")
     cred: Mapped[str] = mapped_column(String, doc="森空岛账号CRED")
+    token: Mapped[str] = mapped_column(String, doc="森空岛账号TOKEN")
