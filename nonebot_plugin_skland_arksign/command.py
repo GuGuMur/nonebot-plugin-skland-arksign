@@ -16,12 +16,12 @@ from .utils import run_sign, cleantext
 init_parser = ArgumentParser(
     add_help=False,
     description=cleantext("""森空岛自动签到插件
-        使用：森空岛 [游戏账号ID] [森空岛cred]
+        使用：森空岛 [游戏账号ID] [森空岛token]
         注意：如果在群聊使用请注意安全问题！
         """),
 )
 init_parser.add_argument("uid", type=str, help="tags!")
-init_parser.add_argument("cred", type=str, help="tags!")
+init_parser.add_argument("token", type=str, help="tags!")
 init_parser.add_argument("-h", "--help", dest="help", action="store_true")
 skl_add = on_shell_command("森空岛", aliases={"skd", "skl"}, parser=init_parser)
 
@@ -46,7 +46,7 @@ async def _(
         await skl_add.finish("未能获取到当前会话的用户信息，请检查")
 
     assert user_account
-    new_record = SklandSubscribe(user=user_account.dict(), uid=args.uid, cred=args.cred)
+    new_record = SklandSubscribe(user=user_account.dict(), uid=args.uid, token=args.token, cred="")
 
     db_session.add(new_record)
     await db_session.commit()
@@ -54,9 +54,9 @@ async def _(
     await skl_add.send(cleantext(f"""
             [森空岛明日方舟签到器]已添加新账号！
             UID：{new_record.uid}
-            CRED：{new_record.cred}
+            TOKEN：{new_record.token}
             """))
-    runres = await run_sign(uid=args.uid, cred=args.cred)
+    runres = await run_sign(uid=args.uid, token=args.token)
     await skl_add.finish(f"立即执行签到操作完成！\n{runres['text']}")
 
 
