@@ -113,7 +113,7 @@ skland_arksign_allow_group=True
 
 ## 🤗 致谢
 
-- [`xxyz30/skyland-auto-sign`](https://github.com/xxyz30/skyland-auto-sign)、[`Yanstory/skland-checkin-ghaction`](https://github.com/Yanstory/skland-checkin-ghaction)、[`Maojuan-lang/SenKongDao`](https://github.com/Maojuan-lang/SenKongDao)：感谢以上项目提供的参考！
+- `xxyz30/skyland-auto-sign`([<del>Github</del>](https://github.com/xxyz30/skyland-auto-sign)/[Gitee](https://gitee.com/FancyCabbage/skyland-auto-sign))、[`Yanstory/skland-checkin-ghaction`](https://github.com/Yanstory/skland-checkin-ghaction)、[`Maojuan-lang/SenKongDao`](https://github.com/Maojuan-lang/SenKongDao)：感谢以上项目提供的参考！
 - [`AzideCupric`](https://github.com/AzideCupric)：感谢大佬的技术支持！orz
 - [`he0119/nonebot-plugin-datastore`](https://github.com/he0119/nonebot-plugin-datastore)：超好用的数据存储插件！
 - [`MountainDash/nonebot-plugin-send-anything-anywhere`](https://github.com/MountainDash/nonebot-plugin-send-anything-anywhere)：峯驰物流部门的全能转接信使！
