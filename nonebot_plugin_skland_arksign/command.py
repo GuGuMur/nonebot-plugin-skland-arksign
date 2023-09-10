@@ -20,8 +20,8 @@ init_parser = ArgumentParser(
         注意：如果在群聊使用请注意安全问题！
         """),
 )
-init_parser.add_argument("uid", type=str, help="tags!")
-init_parser.add_argument("token", type=str, help="tags!")
+init_parser.add_argument("uid", type=str, help="游戏账号ID", nargs='?', default="")
+init_parser.add_argument("token", type=str, help="森空岛token", nargs='?', default="")
 init_parser.add_argument("-h", "--help", dest="help", action="store_true")
 skl_add = on_shell_command("森空岛", aliases={"skd", "skl"}, parser=init_parser)
 
@@ -62,9 +62,13 @@ async def _(
 
 del_parser = ArgumentParser(
     add_help=False,
-    description="删除森空岛账号",
+    description=cleantext("""
+        删除森空岛账号
+        使用：森空岛.del [游戏账号ID]
+        注意：非超级用户只可删除自己绑定的账号，超级用户可以删除bot数据库内所有账号
+        """),
 )
-del_parser.add_argument("uid", type=str, help="tags!")
+del_parser.add_argument("uid", type=str, help="游戏账号ID", nargs='?', default="")
 del_parser.add_argument("-h", "--help", dest="help", action="store_true")
 skl_del = on_shell_command("森空岛.del", aliases={"skd.del", "skl.del"}, parser=del_parser)
 
@@ -77,6 +81,10 @@ async def _(
     db_session: AsyncSession = Depends(get_session),
     args: Namespace = ShellCommandArgs(),
 ):
+    # 处理帮助
+    if args.help:
+        await skl_add.finish(init_parser.description)
+    
     stmt = select(SklandSubscribe).where(SklandSubscribe.uid == args.uid)
     result = await db_session.scalar(stmt)
 

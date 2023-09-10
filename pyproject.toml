@@ -1,9 +1,10 @@
 [project]
 name = "nonebot-plugin-skland-arksign"
-version = "0.3.1"
+version = "0.3.2"
 description = "用于每日定时签到森空岛明日方舟的Nonebot插件"
 authors = [
     {name = "GuGuMur", email = "222153315@qq.com"},
+    {name = "Azide", email = "rukuy@qq.com"},
 ]
 dependencies = [
     "nonebot2>=2.0.1",

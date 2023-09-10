@@ -11,7 +11,7 @@
 _✨ 用于每日早八定时签到森空岛明日方舟的Nonebot插件 ✨_
 
 <a href="./LICENSE">
-    <img src="https://img.shields.io/github/license/owner/nonebot-plugin-skland-arksign.svg" alt="license">
+    <img src="https://img.shields.io/github/license/GuGuMur/nonebot-plugin-skland-arksign.svg" alt="license">
 </a>
 <a href="https://pypi.python.org/pypi/nonebot-plugin-skland-arksign">
     <img src="https://img.shields.io/pypi/v/nonebot-plugin-skland-arksign.svg" alt="pypi">

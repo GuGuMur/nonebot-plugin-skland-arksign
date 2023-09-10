@@ -9,7 +9,7 @@ login_header = {
 }
 
 
-def cleantext(text: str):
+def cleantext(text: str) -> str:
     lines = text.strip().split("\n")
     cleaned_lines = [line.strip() for line in lines]
     result = "\n".join(cleaned_lines)
@@ -41,7 +41,7 @@ async def get_cred_by_token(token: str):
     return await get_cred(grant_code)
 
 
-async def get_binding_list(cred: str):
+async def get_binding_list(cred: str) -> list:
     headers = {
         "cred": cred,
         "User-Agent": "Skland/1.0.1 (com.hypergryph.skland; build:100001014; Android 31; ) Okhttp/4.11.0",
@@ -68,7 +68,7 @@ async def do_sign(uid: str, cred: str):
         "Accept-Encoding": "gzip",
         "Connection": "close",
     }
-    data = {"uid": str(uid), "gameId": "0"}
+    data = {"uid": uid, "gameId": "0"}
     drname = "Dr"
     server = ""
     binding = await get_binding_list(cred=cred)
@@ -80,7 +80,7 @@ async def do_sign(uid: str, cred: str):
     for i in binding:
         if i["uid"] == uid:
             data["gameId"] = i["channelMasterId"]
-            drname = i["nickName"]
+            drname = "Dr." + i["nickName"]
             server = i["channelName"]
             break
 
@@ -95,7 +95,7 @@ async def do_sign(uid: str, cred: str):
 
     if sign_response.get("code") == 0:
         result["status"] = True
-        result["text"] = f"{server}账号{drname}(UID{uid})签到成功\n"
+        result["text"] = f"{server}账号 {drname}(UID{uid})签到成功\n"
         awards = sign_response.get("data").get("awards")
         for award in awards:
             result["text"] += "获得的奖励ID为：" + award.get("resource").get("id") + "\n"
@@ -111,5 +111,5 @@ async def do_sign(uid: str, cred: str):
             result["text"] += "奖励类型为：" + award.get("type") + "\n"
     else:
         result["status"] = False
-        result["text"] = f"{server}账号 Dr.{drname}(UID{uid})签到失败，请检查以下信息：\n{sign_response}"
+        result["text"] = f"{server}账号 {drname}(UID{uid})签到失败，请检查以下信息：\n{sign_response}"
     return result
