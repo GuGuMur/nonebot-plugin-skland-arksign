@@ -10,6 +10,7 @@ from nonebot_plugin_datastore import get_session
 from nonebot.params import Depends, ShellCommandArgs
 from nonebot_plugin_session import SessionLevel, extract_session
 
+from .config import skland_arksign_allow_group
 from .model import SklandSubscribe
 from .utils import run_sign, cleantext
 
@@ -39,7 +40,8 @@ async def _(
 
     session = extract_session(bot, event)
     if session.level != SessionLevel.LEVEL1:
-        await skl_add.finish("请在私聊中使用")
+        if not skland_arksign_allow_group:
+            await skl_add.finish("请在私聊中使用")
 
     user_account = session.get_saa_target()
     if not user_account:
