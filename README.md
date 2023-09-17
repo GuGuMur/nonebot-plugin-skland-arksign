@@ -106,7 +106,7 @@ skland_arksign_allow_group=True
 
 #### 私信补充token
 
-    森空岛.group_add_token/skl.group_add_token/skd.group_add_token 森空岛token
+    森空岛.群token/skl.group_add_token/skd.group_add_token 森空岛token
 
 ### 删除账号
 

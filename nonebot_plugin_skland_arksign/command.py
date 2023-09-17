@@ -155,7 +155,12 @@ async def _(
     await msg.send_to(PlatformTarget.deserialize(skd_user_send_saa_target))
     # 最后删掉Session数据库里的消息
     async with db_session.begin():
-        await db_session.execute(SessionModel.__table__.delete().where(SessionModel.id1 == session.id1))
+        delete_session_stmt = select(SessionModel).where(SessionModel.id1 == session.id1)
+        result = await session.scalars(delete_session_stmt)
+        result = result.all()
+        for i in result:
+            await db_session.delete(i)
+        await db_session.flush()
         await db_session.commit()
 
 
