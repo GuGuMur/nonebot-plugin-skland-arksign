@@ -74,8 +74,8 @@ _✨ 用于每日早八定时签到森空岛明日方舟的Nonebot插件 ✨_
 ```env
 skland_arksign_allow_group=True
 ```
-这将允许群组等私信用户以上的对话模型注册模型而不会警告 _请在私聊中使用_ 字样
 
+这将允许群组等私信用户以上的对话模型注册模型而不会警告 _请在私聊中使用_ 字样
 
 ### 新增账号
 
@@ -105,8 +105,8 @@ skland_arksign_allow_group=True
 > 则命令为`森空岛 你的游戏UID 1145141919810`
 
 #### 私信补充token
-    森空岛.group_add_token/skl.group_add_token/skd.group_add_token 森空岛token
 
+    森空岛.group_add_token/skl.group_add_token/skd.group_add_token 森空岛token
 
 ### 删除账号
 
