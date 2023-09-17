@@ -1,21 +1,23 @@
 from argparse import Namespace
 
 from sqlalchemy import select
-from nonebot import on_shell_command
 from nonebot.adapters import Bot, Event
 from nonebot.rule import ArgumentParser
 from nonebot.permission import SUPERUSER
 from sqlalchemy.ext.asyncio import AsyncSession
+from nonebot import get_driver, on_shell_command
 from nonebot.params import Depends, ShellCommandArgs
 from nonebot_plugin_datastore import get_session, create_session
 from nonebot_plugin_session import SessionLevel, extract_session
 from nonebot_plugin_session.model import SessionModel, get_or_add_session_model
 
+from .config import Config
 from .model import SklandSubscribe
 from .utils import run_sign, cleantext
-from .config import del_des, init_des, skland_arksign_allow_group
 
-init_parser = ArgumentParser(add_help=False, description=init_des())
+plugin_config: Config = Config.parse_obj(get_driver().config).weather
+
+init_parser = ArgumentParser(add_help=False, description=plugin_config.init_des())
 init_parser.add_argument("uid", type=str, help="游戏账号ID", nargs="?", default="")
 init_parser.add_argument("token", type=str, help="森空岛token", nargs="?", default="")
 init_parser.add_argument("-h", "--help", dest="help", action="store_true")
@@ -44,7 +46,7 @@ async def _(
 
     # 这是群聊
     if session.level != SessionLevel.LEVEL1:
-        if not skland_arksign_allow_group:
+        if not plugin_config.skland_arksign_allow_group:
             await skl_add.finish("请在私聊中使用该指令！")
         else:
             # 先添加一个record
@@ -109,23 +111,26 @@ async def _(
     assert user_account
 
     if session.level != SessionLevel.LEVEL1:
-        if not skland_arksign_allow_group:
-            await skl_add.finish("请在私聊中使用该指令！")
+        if not plugin_config.skland_arksign_allow_group:
+            await group_add_token.finish("请在私聊中使用该指令！")
 
     # 先找到私聊用户对应的群聊Session
     async with db_session.begin():
         group_messages = await db_session.execute(select(SessionModel).where(SessionModel.id1 == session.id1))
-        group_session: SessionModel = group_messages.scalars().first()
+        group_session: SessionModel | None = group_messages.scalars().first()
         if not group_session:
             await group_add_token.finish("请检查您是否先在任意群聊注册自动签到！")
         else:
-            group_session_dict = group_session.session.get_saa_target().dict()
-            group_session_id = group_session.id2
-            session_user_id = group_session.id1
+            if group_session_dict := group_session.session.get_saa_target():
+                group_session_id = group_session.id2
+                session_user_id = group_session.id1
+            else:
+                await group_add_token.finish("先前绑定的群聊会话信息有误，请检查")
     # 再更新SklandSubscribe
     async with db_session.begin():
-        skd_user = await db_session.execute(select(SklandSubscribe).where(SklandSubscribe.user == group_session_dict))
-        skd_user: SklandSubscribe = skd_user.scalars().first()
+        stmt = select(SklandSubscribe).where(SklandSubscribe.user == group_session_dict)
+        skd_users = await db_session.scalars(stmt)
+        skd_user: SklandSubscribe | None = skd_users.first()
         skd_user.token = args.token
         skd_user_token = skd_user.token
         skd_user_uid = skd_user.uid
@@ -160,7 +165,7 @@ async def _(
         await db_session.commit()
 
 
-del_parser = ArgumentParser(add_help=False, description=del_des())
+del_parser = ArgumentParser(add_help=False, description=plugin_config.del_des())
 del_parser.add_argument("uid", type=str, help="游戏账号ID", nargs="?", default="")
 del_parser.add_argument("-h", "--help", dest="help", action="store_true")
 skl_del = on_shell_command("森空岛.del", aliases={"skd.del", "skl.del"}, parser=del_parser)
