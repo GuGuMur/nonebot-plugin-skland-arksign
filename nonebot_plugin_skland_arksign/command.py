@@ -121,7 +121,7 @@ async def _(
         if not group_session:
             await group_add_token.finish("请检查您是否先在任意群聊注册自动签到！")
             return
-        elif group_session_dict := group_session.session.get_saa_target():
+        elif group_session_dict := group_session.session.get_saa_target().dict():
             group_session_id: str | None = group_session.id2
             session_user_id: str | None = group_session.id1
         else:
