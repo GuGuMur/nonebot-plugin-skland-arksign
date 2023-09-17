@@ -114,7 +114,7 @@ async def _(
             select(SessionModel).where(SessionModel.id1 == session.id1))
         group_session:SessionModel = group_messages.scalars().first()
         if not group_session:
-            group_add_token.finish("请检查您是否先在任意群聊注册自动签到！")
+            await group_add_token.finish("请检查您是否先在任意群聊注册自动签到！")
         else:
             group_session_dict = group_session.session.get_saa_target().dict()
             group_session_id = group_session.id2
