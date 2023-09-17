@@ -39,7 +39,7 @@ adapters = [{name = "OneBot V11", module_name = "nonebot.adapters.onebot.v11"}]
 
 [tool.ruff]
 select = ["E", "W", "F", "UP", "C", "T", "PYI", "PT", "Q"]
-ignore = ["E402", "C901", "PT023"]
+ignore = ["E402", "E501", "C901", "PT023"]
 
 line-length = 120
 target-version = "py310"

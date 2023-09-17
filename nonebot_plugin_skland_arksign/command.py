@@ -15,7 +15,7 @@ from .config import Config
 from .model import SklandSubscribe
 from .utils import run_sign, cleantext
 
-plugin_config: Config = Config.parse_obj(get_driver().config).weather
+plugin_config: Config = Config.parse_obj(get_driver().config)
 
 init_parser = ArgumentParser(add_help=False, description=plugin_config.init_des())
 init_parser.add_argument("uid", type=str, help="游戏账号ID", nargs="?", default="")
@@ -61,7 +61,7 @@ async def _(
             await skl_add.finish(cleantext(f"""
                 [森空岛明日方舟签到器]已在群聊{session.id2}添加新账号！
                 UID：{group_new_record.uid}
-                接下来，请你通过私信bot /森空岛.group_add_token [该账号对应的token]来获得定时签到服务！"""))
+                接下来，请你通过私信bot /森空岛.群token [该账号对应的token]来获得定时签到服务！"""))
 
     # 这是私信
     else:
@@ -83,12 +83,12 @@ group_add_token_parser = ArgumentParser(
     add_help=False,
     description=cleantext("""
             森空岛明日方舟签到器
-            在通过群聊注册账号到群聊后，私聊机器人/森空岛.group_add_token [账号对应的token]来获得定时签到服务！"""),
+            在通过群聊注册账号到群聊后，私聊机器人/森空岛.群token [账号对应的token]来获得定时签到服务！"""),
 )
 group_add_token_parser.add_argument("token", type=str, help="森空岛token", nargs="?", default="")
 group_add_token_parser.add_argument("-h", "--help", dest="help", action="store_true")
 group_add_token = on_shell_command(
-    "森空岛.group_add_token", aliases={"skd.group_add_token", "skl.group_add_token"}, parser=group_add_token_parser
+    "森空岛.群token", aliases={"skd.group_add_token", "skl.group_add_token"}, parser=group_add_token_parser
 )
 
 
@@ -138,12 +138,6 @@ async def _(
         await db_session.flush()
         await db_session.commit()
     # 再发送信息
-    # await group_add_token.send(cleantext(f"""
-    #             [森空岛明日方舟签到器]已经为绑定在群聊的游戏账号{skd_user.token}绑定TOKEN！
-    #             群聊ID：{group_session.id2}
-    #             游戏账号UID：{skd_user.uid}
-    #             TOKEN：{skd_user.token}
-    #             """))
     await group_add_token.send(cleantext(f"""
             [森空岛明日方舟签到器]已经为绑定在群聊的游戏账号绑定TOKEN！
             群聊ID：{group_session_id}
