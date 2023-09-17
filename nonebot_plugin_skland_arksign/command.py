@@ -17,7 +17,7 @@ from .utils import run_sign, cleantext
 
 plugin_config: Config = Config.parse_obj(get_driver().config)
 
-init_parser = ArgumentParser(add_help=False, description=plugin_config.init_des())
+init_parser = ArgumentParser(add_help=False, description=plugin_config.init_des)
 init_parser.add_argument("uid", type=str, help="游戏账号ID", nargs="?", default="")
 init_parser.add_argument("token", type=str, help="森空岛token", nargs="?", default="")
 init_parser.add_argument("-h", "--help", dest="help", action="store_true")
@@ -120,12 +120,13 @@ async def _(
         group_session: SessionModel | None = group_messages.scalars().first()
         if not group_session:
             await group_add_token.finish("请检查您是否先在任意群聊注册自动签到！")
+            return
+        elif group_session_dict := group_session.session.get_saa_target():
+            group_session_id: str | None = group_session.id2
+            session_user_id: str | None = group_session.id1
         else:
-            if group_session_dict := group_session.session.get_saa_target():
-                group_session_id = group_session.id2
-                session_user_id = group_session.id1
-            else:
-                await group_add_token.finish("先前绑定的群聊会话信息有误，请检查")
+            await group_add_token.finish("先前绑定的群聊会话信息有误，请检查")
+            return
     # 再更新SklandSubscribe
     async with db_session.begin():
         stmt = select(SklandSubscribe).where(SklandSubscribe.user == group_session_dict)
@@ -156,7 +157,7 @@ async def _(
     # 最后删掉Session数据库里的消息
     async with db_session.begin():
         delete_session_stmt = select(SessionModel).where(SessionModel.id1 == session.id1)
-        result = await session.scalars(delete_session_stmt)
+        result = await db_session.scalars(delete_session_stmt)
         result = result.all()
         for i in result:
             await db_session.delete(i)
@@ -164,7 +165,7 @@ async def _(
         await db_session.commit()
 
 
-del_parser = ArgumentParser(add_help=False, description=plugin_config.del_des())
+del_parser = ArgumentParser(add_help=False, description=plugin_config.del_des)
 del_parser.add_argument("uid", type=str, help="游戏账号ID", nargs="?", default="")
 del_parser.add_argument("-h", "--help", dest="help", action="store_true")
 skl_del = on_shell_command("森空岛.del", aliases={"skd.del", "skl.del"}, parser=del_parser)
