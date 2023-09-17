@@ -316,22 +316,6 @@ files = [
 ]
 
 [[package]]
-name = "fastapi"
-version = "0.103.1"
-requires_python = ">=3.7"
-summary = "FastAPI framework, high performance, easy to learn, fast to code, ready for production"
-dependencies = [
-    "anyio<4.0.0,>=3.7.1",
-    "pydantic!=1.8,!=1.8.1,!=2.0.0,!=2.0.1,!=2.1.0,<3.0.0,>=1.7.4",
-    "starlette<0.28.0,>=0.27.0",
-    "typing-extensions>=4.5.0",
-]
-files = [
-    {file = "fastapi-0.103.1-py3-none-any.whl", hash = "sha256:5e5f17e826dbd9e9b5a5145976c5cd90bcaa61f2bf9a69aca423f2bcebe44d83"},
-    {file = "fastapi-0.103.1.tar.gz", hash = "sha256:345844e6a82062f06a096684196aaf96c1198b25c06b72c1311b882aa2d8a35d"},
-]
-
-[[package]]
 name = "filelock"
 version = "3.12.4"
 requires_python = ">=3.8"
@@ -394,30 +378,6 @@ summary = "A pure-Python, bring-your-own-I/O implementation of HTTP/1.1"
 files = [
     {file = "h11-0.14.0-py3-none-any.whl", hash = "sha256:e3fe4ac4b851c468cc8363d500db52c2ead036020723024a109d37346efaa761"},
     {file = "h11-0.14.0.tar.gz", hash = "sha256:8f19fbbe99e72420ff35c00b27a34cb9937e902a8b810e2c88300c6f0a3b699d"},
-]
-
-[[package]]
-name = "h2"
-version = "4.1.0"
-requires_python = ">=3.6.1"
-summary = "HTTP/2 State-Machine based protocol implementation"
-dependencies = [
-    "hpack<5,>=4.0",
-    "hyperframe<7,>=6.0",
-]
-files = [
-    {file = "h2-4.1.0-py3-none-any.whl", hash = "sha256:03a46bcf682256c95b5fd9e9a99c1323584c3eec6440d379b9903d709476bc6d"},
-    {file = "h2-4.1.0.tar.gz", hash = "sha256:a83aca08fbe7aacb79fec788c9c0bac936343560ed9ec18b82a13a12c28d2abb"},
-]
-
-[[package]]
-name = "hpack"
-version = "4.0.0"
-requires_python = ">=3.6.1"
-summary = "Pure-Python HPACK header compression"
-files = [
-    {file = "hpack-4.0.0-py3-none-any.whl", hash = "sha256:84a076fad3dc9a9f8063ccb8041ef100867b1878b25ef0ee63847a5d53818a6c"},
-    {file = "hpack-4.0.0.tar.gz", hash = "sha256:fc41de0c63e687ebffde81187a948221294896f6bdc0ae2312708df339430095"},
 ]
 
 [[package]]
@@ -969,10 +929,14 @@ files = [
 [[package]]
 name = "nonebot-plugin-datastore"
 <<<<<<< HEAD
+<<<<<<< HEAD
 version = "1.1.2"
 =======
 version = "1.1.1"
 >>>>>>> b3f87cc (✨ 将cred替换为更加稳定的token (#4))
+=======
+version = "1.1.2"
+>>>>>>> 28d39e6 (:tada: group binding)
 requires_python = ">=3.8,<4.0"
 summary = "适用于 Nonebot2 的数据存储插件"
 dependencies = [
@@ -983,12 +947,17 @@ dependencies = [
 ]
 files = [
 <<<<<<< HEAD
+<<<<<<< HEAD
     {file = "nonebot_plugin_datastore-1.1.2-py3-none-any.whl", hash = "sha256:e61044e018c6b60701b38a078b5d0c1ff87e924ee1722675a14006cc32039b05"},
     {file = "nonebot_plugin_datastore-1.1.2.tar.gz", hash = "sha256:32d06d0b06b32d2c02fb3f206820e0da64e0dde542cff3b8aa44abd93b3aeada"},
 =======
     {file = "nonebot_plugin_datastore-1.1.1-py3-none-any.whl", hash = "sha256:7ae06b5a50651c29426775b6f300f229a18c4f09aaecb7f2104f321369524e16"},
     {file = "nonebot_plugin_datastore-1.1.1.tar.gz", hash = "sha256:f5b675646a0b17850911ee746d973f86e1a6afb4eb5d124cdb55adbf12404ac2"},
 >>>>>>> b3f87cc (✨ 将cred替换为更加稳定的token (#4))
+=======
+    {file = "nonebot_plugin_datastore-1.1.2-py3-none-any.whl", hash = "sha256:e61044e018c6b60701b38a078b5d0c1ff87e924ee1722675a14006cc32039b05"},
+    {file = "nonebot_plugin_datastore-1.1.2.tar.gz", hash = "sha256:32d06d0b06b32d2c02fb3f206820e0da64e0dde542cff3b8aa44abd93b3aeada"},
+>>>>>>> 28d39e6 (:tada: group binding)
 ]
 
 [[package]]
@@ -1056,6 +1025,7 @@ files = [
 [[package]]
 name = "nonebot2"
 <<<<<<< HEAD
+<<<<<<< HEAD
 version = "2.1.0"
 =======
 version = "2.0.1"
@@ -1071,6 +1041,18 @@ dependencies = [
     "nonebot2==2.0.1",
 >>>>>>> b3f87cc (✨ 将cred替换为更加稳定的token (#4))
     "uvicorn[standard]<1.0.0,>=0.20.0",
+=======
+version = "2.1.0"
+requires_python = ">=3.8,<4.0"
+summary = "An asynchronous python bot framework."
+dependencies = [
+    "loguru<1.0.0,>=0.6.0",
+    "pydantic[dotenv]<2.0.0,>=1.10.0",
+    "pygtrie<3.0.0,>=2.4.1",
+    "tomli<3.0.0,>=2.0.1; python_version < \"3.11\"",
+    "typing-extensions<5.0.0,>=4.4.0",
+    "yarl<2.0.0,>=1.7.2",
+>>>>>>> 28d39e6 (:tada: group binding)
 ]
 files = [
     {file = "nonebot2-2.1.0-py3-none-any.whl", hash = "sha256:e14bfbb962df72a9beac5035291594ad6e549c004b2ff5d28db97d0fdc3abf45"},
@@ -1079,6 +1061,7 @@ files = [
 
 [[package]]
 name = "nonebot2"
+<<<<<<< HEAD
 <<<<<<< HEAD
 version = "2.1.0"
 =======
@@ -1094,6 +1077,18 @@ dependencies = [
 =======
     "nonebot2==2.0.1",
 >>>>>>> b3f87cc (✨ 将cred替换为更加稳定的token (#4))
+=======
+version = "2.1.0"
+requires_python = ">=3.8,<4.0"
+summary = "An asynchronous python bot framework."
+dependencies = [
+    "loguru<1.0.0,>=0.6.0",
+    "pydantic[dotenv]<2.0.0,>=1.10.0",
+    "pygtrie<3.0.0,>=2.4.1",
+    "tomli<3.0.0,>=2.0.1; python_version < \"3.11\"",
+    "typing-extensions<5.0.0,>=4.4.0",
+    "yarl<2.0.0,>=1.7.2",
+>>>>>>> 28d39e6 (:tada: group binding)
 ]
 files = [
     {file = "nonebot2-2.1.0-py3-none-any.whl", hash = "sha256:e14bfbb962df72a9beac5035291594ad6e549c004b2ff5d28db97d0fdc3abf45"},
@@ -1572,20 +1567,6 @@ files = [
 ]
 
 [[package]]
-name = "starlette"
-version = "0.27.0"
-requires_python = ">=3.7"
-summary = "The little ASGI library that shines."
-dependencies = [
-    "anyio<5,>=3.4.0",
-    "typing-extensions>=3.10.0; python_version < \"3.10\"",
-]
-files = [
-    {file = "starlette-0.27.0-py3-none-any.whl", hash = "sha256:918416370e846586541235ccd38a474c08b80443ed31c578a418e2209b3eef91"},
-    {file = "starlette-0.27.0.tar.gz", hash = "sha256:6a6b0d042acb8d469a01eba54e9cda6cbd24ac602c4cd016723117d6a7e73b75"},
-]
-
-[[package]]
 name = "strenum"
 version = "0.4.15"
 summary = "An Enum that inherits from str."
@@ -1670,6 +1651,7 @@ files = [
 ]
 
 [[package]]
+<<<<<<< HEAD
 >>>>>>> b3f87cc (✨ 将cred替换为更加稳定的token (#4))
 name = "uvicorn"
 version = "0.23.2"
@@ -1776,6 +1758,8 @@ files = [
 ]
 
 [[package]]
+=======
+>>>>>>> 28d39e6 (:tada: group binding)
 name = "virtualenv"
 version = "20.17.1"
 requires_python = ">=3.6"
@@ -1840,6 +1824,7 @@ files = [
 ]
 
 [[package]]
+<<<<<<< HEAD
 >>>>>>> b3f87cc (✨ 将cred替换为更加稳定的token (#4))
 name = "websockets"
 version = "11.0.3"
@@ -1910,6 +1895,8 @@ files = [
 ]
 
 [[package]]
+=======
+>>>>>>> 28d39e6 (:tada: group binding)
 name = "win32-setctime"
 version = "1.1.0"
 requires_python = ">=3.5"

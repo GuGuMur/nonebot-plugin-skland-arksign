@@ -21,7 +21,7 @@ async def _():
 
     for sub in subscribes:
         if not sub.token:
-            await Text("账号未绑定Token，请重新绑定！").send_to(PlatformTarget.deserialize(sub.user))
+            await Text(f"账号{sub.uid}未绑定Token，请重新绑定！").send_to(PlatformTarget.deserialize(sub.user))
             continue
         result = await run_sign(uid=sub.uid, token=sub.token)
         logger.info(result)

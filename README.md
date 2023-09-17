@@ -76,11 +76,10 @@ skland_arksign_allow_group=True
 ```
 这将允许群组等私信用户以上的对话模型注册模型而不会警告 _请在私聊中使用_ 字样
 
-> 注意：为保证你的账号安全，使用该方式时请将bot和你的聊天账号拉到一个单独的群里
 
 ### 新增账号
 
-    森空岛/skl/skd 舟游戏ID 森空岛token
+    森空岛/skl/skd 舟游戏ID [森空岛token（若在群聊中使用请不要直接输入该参数）]
 
 #### 获取Token
 
@@ -104,6 +103,10 @@ skland_arksign_allow_group=True
 
 > 例子: "content": "1145141919810"
 > 则命令为`森空岛 你的游戏UID 1145141919810`
+
+#### 私信补充token
+    森空岛.group_add_token/skl.group_add_token/skd.group_add_token 森空岛token
+
 
 ### 删除账号
 
