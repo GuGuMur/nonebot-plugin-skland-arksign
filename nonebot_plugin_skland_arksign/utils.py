@@ -54,6 +54,7 @@ async def get_binding_list(cred: str) -> list:
     for i in response["data"]["list"]:
         if i.get("appCode") == "arknights":
             return i["bindingList"]
+    return []
 
 
 async def run_sign(uid: str, token: str):

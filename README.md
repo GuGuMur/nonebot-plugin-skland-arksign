@@ -67,9 +67,19 @@ _✨ 用于每日早八定时签到森空岛明日方舟的Nonebot插件 ✨_
 
 ## 🎉 使用
 
+### 设置是否允许私信用户以上的对话模型注册插件
+
+在bot文件夹下的`.env.dev`文件中追加
+
+```env
+skland_arksign_allow_group=True
+```
+
+这将允许群组等私信用户以上的对话模型注册模型而不会警告 _请在私聊中使用_ 字样
+
 ### 新增账号
 
-    森空岛/skl/skd 舟游戏ID 森空岛token
+    森空岛/skl/skd 舟游戏ID [森空岛token（若在群聊中使用请不要直接输入该参数）]
 
 #### 获取Token
 
@@ -94,6 +104,10 @@ _✨ 用于每日早八定时签到森空岛明日方舟的Nonebot插件 ✨_
 > 例子: "content": "1145141919810"
 > 则命令为`森空岛 你的游戏UID 1145141919810`
 
+#### 私信补充token
+
+    森空岛.群token/skl.group_add_token/skd.group_add_token 森空岛token
+
 ### 删除账号
 
     森空岛.del/skl.del/skd.del 舟游戏ID
@@ -102,7 +116,7 @@ _✨ 用于每日早八定时签到森空岛明日方舟的Nonebot插件 ✨_
 
 ## 🤗 致谢
 
-- [`xxyz30/skyland-auto-sign`](https://github.com/xxyz30/skyland-auto-sign)、[`Yanstory/skland-checkin-ghaction`](https://github.com/Yanstory/skland-checkin-ghaction)、[`Maojuan-lang/SenKongDao`](https://github.com/Maojuan-lang/SenKongDao)：感谢以上项目提供的参考！
+- `xxyz30/skyland-auto-sign`([<del>Github</del>](https://github.com/xxyz30/skyland-auto-sign)/[Gitee](https://gitee.com/FancyCabbage/skyland-auto-sign))、[`Yanstory/skland-checkin-ghaction`](https://github.com/Yanstory/skland-checkin-ghaction)、[`Maojuan-lang/SenKongDao`](https://github.com/Maojuan-lang/SenKongDao)：感谢以上项目提供的参考！
 - [`AzideCupric`](https://github.com/AzideCupric)：感谢大佬的技术支持！orz
 - [`he0119/nonebot-plugin-datastore`](https://github.com/he0119/nonebot-plugin-datastore)：超好用的数据存储插件！
 - [`MountainDash/nonebot-plugin-send-anything-anywhere`](https://github.com/MountainDash/nonebot-plugin-send-anything-anywhere)：峯驰物流部门的全能转接信使！
