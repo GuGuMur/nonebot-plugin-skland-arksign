@@ -6,10 +6,12 @@ require("nonebot_plugin_datastore")
 require("nonebot_plugin_saa")
 require("nonebot_plugin_session")
 
-from .command import skl_add as skl_add  # noqa: E402
-from .command import skl_del as skl_del  # noqa: E402
+# from ._command import group_add_token as group_add_token  # noqa: E402
+from .command import skland as skland  # noqa: E402
+
+# from ._command import skl_add as skl_add  # noqa: E402
+# from ._command import skl_del as skl_del  # noqa: E402
 from .sched import scheduler as scheduler  # noqa: E402
-from .command import group_add_token as group_add_token  # noqa: E402
 
 __plugin_meta__ = PluginMetadata(
     name="森空岛明日方舟签到器",

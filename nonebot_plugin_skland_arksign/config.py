@@ -42,3 +42,6 @@ class Config(BaseModel):
             使用：森空岛.del [游戏账号ID]
             注意：非超级用户只可删除自己绑定的账号；超级用户可以删除bot数据库内所有账号
             """)
+
+
+plugin_config = Config.parse_obj(get_driver().config)
