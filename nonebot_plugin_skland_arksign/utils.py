@@ -3,6 +3,8 @@ import json
 import time
 import hashlib
 from urllib import parse
+from typing import Literal
+
 
 from httpx import AsyncClient
 
@@ -12,6 +14,22 @@ login_header = {
     "User-Agent": "Skland/1.0.1 (com.hypergryph.skland; build:100001014; Android 31; ) Okhttp/4.11.0",
     "Accept-Encoding": "gzip",
     "Connection": "close",
+}
+
+temp_header = {
+    "cred": "",
+    "User-Agent": "Skland/1.0.1 (com.hypergryph.skland; build:100001014; Android 31; ) Okhttp/4.11.0",
+    "Accept-Encoding": "gzip",
+    "Connection": "close",
+}
+
+# 签名请求头一定要这个顺序，否则失败
+# timestamp是必填的,其它三个随便填,不要为none即可
+header_for_sign = {
+    "platform": "1", 
+    "timestamp": "", 
+    "dId": "de9759a5afaa634f", 
+    "vName": "1.0.1"
 }
 
 sign_url = "https://zonai.skland.com/api/v1/game/attendance"
@@ -51,12 +69,8 @@ async def get_cred_by_token(token: str):
 
 
 async def get_binding_list(cred_resp: dict) -> list:
-    headers = {
-        "cred": cred_resp["cred"],
-        "User-Agent": "Skland/1.0.1 (com.hypergryph.skland; build:100001014; Android 31; ) Okhttp/4.11.0",
-        "Accept-Encoding": "gzip",
-        "Connection": "close",
-    }
+    headers = temp_header.copy()
+    headers["cred"] = cred_resp["cred"]
     async with AsyncClient() as client:
         response = await client.get(
             binding_url, headers=get_sign_header(binding_url, "get", None, headers, cred_resp["token"])
@@ -86,40 +100,33 @@ def generate_signature(token: str, path: str, body_or_query: str):
     :param body_or_query: 如果是GET，则是它的query。POST则为它的body
     :return: 计算完毕的sign
     """
-    # 签名请求头一定要这个顺序，否则失败
-    # timestamp是必填的,其它三个随便填,不要为none即可
-    header_for_sign = {"platform": "1", "timestamp": "", "dId": "de9759a5afaa634f", "vName": "1.0.1"}
     # 总是说请勿修改设备时间，怕不是yj你的服务器有问题吧，所以这里特地-2
-    t = str(int(time.time()) - 2)
+    timestamp = str(int(time.time()) - 2)
     token = token.encode("utf-8")
-    header_ca = json.loads(json.dumps(header_for_sign))
-    header_ca["timestamp"] = t
+    header_ca = header_for_sign.copy()
+    header_ca["timestamp"] = timestamp
     header_ca_str = json.dumps(header_ca, separators=(",", ":"))
-    s = path + body_or_query + t + header_ca_str
+    s = path + body_or_query + timestamp + header_ca_str
     hex_s = hmac.new(token, s.encode("utf-8"), hashlib.sha256).hexdigest()
     md5 = hashlib.md5(hex_s.encode("utf-8")).hexdigest().encode("utf-8").decode("utf-8")
     return md5, header_ca
 
 
-def get_sign_header(url: str, method: str, body: dict, old_header: dict, sign_token: str) -> dict:
-    h = json.loads(json.dumps(old_header))
-    p = parse.urlparse(url)
-    if method.lower() == "get":
-        h["sign"], header_ca = generate_signature(sign_token, p.path, p.query)
+def get_sign_header(url: str, method: Literal["get", "post"], body: dict, old_header: dict, sign_token: str) -> dict:
+    header = old_header.copy()
+    url_parsed = parse.urlparse(url)
+    if method == "get":
+        header["sign"], header_ca = generate_signature(sign_token, url_parsed.path, url_parsed.query)
     else:
-        h["sign"], header_ca = generate_signature(sign_token, p.path, json.dumps(body))
+        header["sign"], header_ca = generate_signature(sign_token, url_parsed.path, json.dumps(body))
     for i in header_ca:
-        h[i] = header_ca[i]
-    return h
+        header[i] = header_ca[i]
+    return header
 
 
 async def do_sign(uid: str, cred_resp: dict):
-    headers = {
-        "cred": cred_resp["cred"],
-        "User-Agent": "Skland/1.0.1 (com.hypergryph.skland; build:100001014; Android 31; ) Okhttp/4.11.0",
-        "Accept-Encoding": "gzip",
-        "Connection": "close",
-    }
+    headers = temp_header.copy()
+    headers["cred"] = cred_resp["cred"]
     data = {"uid": uid, "gameId": "0"}
     drname = "Dr"
     server = ""
