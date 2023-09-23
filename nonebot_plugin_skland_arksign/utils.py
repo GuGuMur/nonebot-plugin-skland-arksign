@@ -102,7 +102,7 @@ def generate_signature(token: str, path: str, body_or_query: str):
     header_ca_str = json.dumps(header_ca, separators=(",", ":"))
     s = path + body_or_query + timestamp + header_ca_str
     hex_s = hmac.new(token, s.encode("utf-8"), hashlib.sha256).hexdigest()
-    md5 = hashlib.md5(hex_s.encode("utf-8")).hexdigest().encode("utf-8").decode("utf-8")
+    md5 = hashlib.md5(hex_s.encode("utf-8")).hexdigest()
     return md5, header_ca
 
 
