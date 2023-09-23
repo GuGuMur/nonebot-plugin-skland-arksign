@@ -5,7 +5,6 @@ import hashlib
 from urllib import parse
 from typing import Literal
 
-
 from httpx import AsyncClient
 
 APP_CODE = "4ca99fa6b56cc2ba"
@@ -25,12 +24,7 @@ temp_header = {
 
 # 签名请求头一定要这个顺序，否则失败
 # timestamp是必填的,其它三个随便填,不要为none即可
-header_for_sign = {
-    "platform": "1", 
-    "timestamp": "", 
-    "dId": "de9759a5afaa634f", 
-    "vName": "1.0.1"
-}
+header_for_sign = {"platform": "1", "timestamp": "", "dId": "de9759a5afaa634f", "vName": "1.0.1"}
 
 sign_url = "https://zonai.skland.com/api/v1/game/attendance"
 binding_url = "https://zonai.skland.com/api/v1/game/player/binding"
