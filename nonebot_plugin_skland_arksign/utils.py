@@ -1,10 +1,10 @@
+import hmac
 import json
 import time
 import hashlib
-import hmac
+from urllib import parse
 
 from httpx import AsyncClient
-from urllib import parse
 
 APP_CODE = "4ca99fa6b56cc2ba"
 
@@ -18,6 +18,7 @@ sign_url = "https://zonai.skland.com/api/v1/game/attendance"
 binding_url = "https://zonai.skland.com/api/v1/game/player/binding"
 grant_code_url = "https://as.hypergryph.com/user/oauth2/v2/grant"
 cred_code_url = "https://zonai.skland.com/api/v1/user/auth/generate_cred_by_code"
+
 
 def cleantext(text: str) -> str:
     lines = text.strip().split("\n")
@@ -39,9 +40,7 @@ async def get_cred(grant_code: str) -> dict:
     data = {"code": grant_code, "kind": 1}
 
     async with AsyncClient() as client:
-        response = await client.post(
-            cred_code_url, headers=login_header, data=data
-        )
+        response = await client.post(cred_code_url, headers=login_header, data=data)
         response.raise_for_status()
         return response.json()["data"]
 
@@ -59,7 +58,9 @@ async def get_binding_list(cred_resp: dict) -> list:
         "Connection": "close",
     }
     async with AsyncClient() as client:
-        response = await client.get(binding_url, headers=get_sign_header(binding_url, 'get', None, headers, cred_resp["token"]))
+        response = await client.get(
+            binding_url, headers=get_sign_header(binding_url, "get", None, headers, cred_resp["token"])
+        )
         response.raise_for_status()
         response = response.json()
     for i in response["data"]["list"]:
@@ -84,15 +85,10 @@ def generate_signature(token: str, path: str, body_or_query: str):
     :param path: 请求路径（不包括网址）
     :param body_or_query: 如果是GET，则是它的query。POST则为它的body
     :return: 计算完毕的sign
-    """    
+    """
     # 签名请求头一定要这个顺序，否则失败
     # timestamp是必填的,其它三个随便填,不要为none即可
-    header_for_sign = {
-        "platform": "1",
-        "timestamp": "",
-        "dId": "de9759a5afaa634f",
-        "vName": "1.0.1"
-    }
+    header_for_sign = {"platform": "1", "timestamp": "", "dId": "de9759a5afaa634f", "vName": "1.0.1"}
     # 总是说请勿修改设备时间，怕不是yj你的服务器有问题吧，所以这里特地-2
     t = str(int(time.time()) - 2)
     token = token.encode("utf-8")
