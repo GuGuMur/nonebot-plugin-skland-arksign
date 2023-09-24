@@ -1,25 +1,22 @@
-from nonebot.adapters import Bot, Event
-from nonebot_plugin_alconna import on_alconna
-from sqlalchemy.ext.asyncio import AsyncSession
-from nonebot.permission import SUPERUSER
 from sqlalchemy import select
 from nonebot.params import Depends
+from nonebot.adapters import Bot, Event
+from nonebot.permission import SUPERUSER
+from sqlalchemy.ext.asyncio import AsyncSession
+from nonebot_plugin_alconna import Match, on_alconna
 from nonebot_plugin_datastore import get_session, create_session
 from nonebot_plugin_session import SessionLevel, extract_session
 from nonebot_plugin_session.model import SessionModel, get_or_add_session_model
-from nonebot_plugin_alconna import Match
+
+from .alcparse import skland_alc
 from .config import plugin_config
 from .model import SklandSubscribe
 from .utils import run_sign, cleantext
-from .alcparse import skland_alc
 
 skland = on_alconna(
-    skland_alc,
-    aliases={"skd", "skl", "skland"},
-    use_cmd_start=True,
-    use_cmd_sep=True,
-    auto_send_output=True
+    skland_alc, aliases={"skd", "skl", "skland"}, use_cmd_start=True, use_cmd_sep=True, auto_send_output=True
 )
+
 
 @skland.assign("add")
 async def add_processor(
@@ -73,6 +70,7 @@ async def add_processor(
             await skland.finish(f"立即执行签到操作完成！\n{runres['text']}")
         else:
             await skland.finish("请重新执行该命令并补充token！")
+
 
 @skland.assign("群token")
 async def group_add_token_processor(
@@ -142,6 +140,7 @@ async def group_add_token_processor(
         await db_session.flush()
         await db_session.commit()
 
+
 @skland.assign("del")
 async def delete_processor(
     bot: Bot,
@@ -173,6 +172,7 @@ async def delete_processor(
             UID：{uid.result}
             """))
 
+
 @skland.assign("list")
 async def list_processor(
     bot: Bot,
@@ -199,5 +199,5 @@ async def list_processor(
     if not current_subs:
         await skland.finish("您当前的聊天账号未绑定任何森空岛签到账号！")
     else:
-        text = "您当前的聊天账号绑定了以下森空岛签到账号："+"\n".join([f"{i.uid}" for i in current_subs])
+        text = "您当前的聊天账号绑定了以下森空岛签到账号：" + "\n".join([f"{i.uid}" for i in current_subs])
         await skland.finish(text)

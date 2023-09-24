@@ -1,4 +1,5 @@
 from nonebot_plugin_alconna import Args, Alconna, Subcommand, CommandMeta
+
 from .config import plugin_config
 
 skland_alc = Alconna(
@@ -25,6 +26,6 @@ skland_alc = Alconna(
     meta=CommandMeta(
         description="用于每日早八定时签到森空岛明日方舟的Nonebot插件",
         usage=plugin_config.init_des,
-        example=plugin_config.use_example
-    )
+        example=plugin_config.use_example,
+    ),
 )

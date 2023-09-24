@@ -3,6 +3,7 @@ from pydantic import BaseModel
 
 from .utils import cleantext
 
+
 class Config(BaseModel):
     skland_arksign_allow_group: bool = False
 
@@ -21,6 +22,7 @@ class Config(BaseModel):
                 /森空岛 del [游戏账号ID]
                 /森空岛 list
                 """)
+
     @property
     def add_des(self) -> str:
         if self.skland_arksign_allow_group is True:
@@ -54,4 +56,4 @@ class Config(BaseModel):
             """)
 
 
-plugin_config : Config = Config.parse_obj(get_driver().config)
+plugin_config: Config = Config.parse_obj(get_driver().config)
