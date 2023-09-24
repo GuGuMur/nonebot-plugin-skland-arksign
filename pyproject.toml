@@ -14,7 +14,7 @@ dependencies = [
     "nonebot-plugin-send-anything-anywhere>=0.3.0",
     "nonebot-plugin-session>=0.1.0",
     "pydantic>=1.10.12",
-    "nonebot-plugin-alconna>=0.23.0",
+    "nonebot-plugin-alconna>=0.24.0",
 ]
 requires-python = ">=3.8"
 readme = "README.md"
