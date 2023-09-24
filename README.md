@@ -79,7 +79,7 @@ skland_arksign_allow_group=True
 
 ### 新增账号
 
-    森空岛/skl/skd 舟游戏ID [森空岛token（若在群聊中使用请不要直接输入该参数）]
+    森空岛/skl/skd/skland add 舟游戏ID [森空岛token（若在群聊中使用请不要直接输入该参数）]
 
 #### 获取Token
 
@@ -106,11 +106,11 @@ skland_arksign_allow_group=True
 
 #### 私信补充token
 
-    森空岛.群token/skl.group_add_token/skd.group_add_token 森空岛token
+    森空岛/skl/skd/skland 群token 森空岛token
 
 ### 删除账号
 
-    森空岛.del/skl.del/skd.del 舟游戏ID
+    森空岛/skl/skd/skland del 舟游戏ID
 
 > 注意：非[超级用户](https://nonebot.dev/docs/appendices/config#superusers)只可删除自己绑定的账号，超级用户可以删除bot数据库内所有账号
 

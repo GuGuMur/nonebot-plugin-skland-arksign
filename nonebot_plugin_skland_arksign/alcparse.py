@@ -1,4 +1,4 @@
-from nonebot_plugin_alconna import Args, Option, Alconna, Subcommand
+from nonebot_plugin_alconna import Args, Alconna, Subcommand, CommandMeta
 from .config import plugin_config
 
 skland_alc = Alconna(
@@ -6,9 +6,6 @@ skland_alc = Alconna(
     Subcommand(
         "add",
         Args["uid", int]["token?", str],
-        [
-            Option("-t|--token", Args["token", str]),
-        ],
         help_text=plugin_config.add_des,
     ),
     Subcommand(
@@ -18,15 +15,16 @@ skland_alc = Alconna(
     ),
     Subcommand(
         "del",
-        Args["identifier", str],
+        Args["uid", str],
         help_text=plugin_config.del_des,
     ),
     Subcommand(
         "list",
         help_text="列出当前所有签到账号",
     ),
-    Subcommand(
-        "help",
-        help_text="显示帮助信息",
-    ),
+    meta=CommandMeta(
+        description="用于每日早八定时签到森空岛明日方舟的Nonebot插件",
+        usage=plugin_config.init_des,
+        example=plugin_config.use_example
+    )
 )

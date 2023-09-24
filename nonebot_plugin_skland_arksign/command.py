@@ -10,13 +10,15 @@ from nonebot_plugin_session.model import SessionModel, get_or_add_session_model
 from nonebot_plugin_alconna import Match
 from .config import plugin_config
 from .model import SklandSubscribe
-from .utils import run_sign, cleantext, compare_dicts
+from .utils import run_sign, cleantext
 from .alcparse import skland_alc
 
 skland = on_alconna(
     skland_alc,
     aliases={"skd", "skl", "skland"},
     use_cmd_start=True,
+    use_cmd_sep=True,
+    auto_send_output=True
 )
 
 @skland.assign("add")
@@ -53,22 +55,24 @@ async def add_processor(
             await skland.finish(cleantext(f"""
                 [森空岛明日方舟签到器]已在群聊{session.id2}添加新账号！
                 UID：{group_new_record.uid}
-                接下来，请你通过私信bot /森空岛.群token [该账号对应的token]来获得定时签到服务！"""))
+                接下来，请你通过私信bot /森空岛 群token [该账号对应的token]来获得定时签到服务！"""))
 
     # 这是私信
     else:
-        private_new_record = SklandSubscribe(user=user_account.dict(), uid=uid.result, token=token.result, cred="")
-
-        db_session.add(private_new_record)
-        await db_session.commit()
-        await db_session.refresh(private_new_record)
-        await skland.send(cleantext(f"""
-                [森空岛明日方舟签到器]已添加新账号！
-                UID：{private_new_record.uid}
-                TOKEN：{private_new_record.token}
-                """))
-        runres = await run_sign(uid=uid.result, token=token.result)
-        await skland.finish(f"立即执行签到操作完成！\n{runres['text']}")
+        if uid.available:
+            private_new_record = SklandSubscribe(user=user_account.dict(), uid=uid.result, token=token.result, cred="")
+            db_session.add(private_new_record)
+            await db_session.commit()
+            await db_session.refresh(private_new_record)
+            await skland.send(cleantext(f"""
+                    [森空岛明日方舟签到器]已添加新账号！
+                    UID：{private_new_record.uid}
+                    TOKEN：{private_new_record.token}
+                    """))
+            runres = await run_sign(uid=uid.result, token=token.result)
+            await skland.finish(f"立即执行签到操作完成！\n{runres['text']}")
+        else:
+            await skland.finish("请重新执行该命令并补充token！")
 
 @skland.assign("群token")
 async def group_add_token_processor(
@@ -158,7 +162,7 @@ async def delete_processor(
             await skland.finish("未能获取到当前会话的用户信息，请检查")
         assert user
 
-        if not compare_dicts(user.dict(), result.user):
+        if user.dict() != result.user:
             await skland.finish("您无权删除该账号！")
 
     await db_session.delete(result)
@@ -189,11 +193,11 @@ async def list_processor(
 
     current_subs = []
     for sub in subscribes:
-        if compare_dicts(msg_session.dict(), sub.user):
+        if msg_session.dict() == sub.user:
             current_subs.append(sub)
 
     if not current_subs:
-        skland.finish("您当前的聊天账号未绑定任何森空岛签到账号！")
+        await skland.finish("您当前的聊天账号未绑定任何森空岛签到账号！")
     else:
         text = "您当前的聊天账号绑定了以下森空岛签到账号："+"\n".join([f"{i.uid}" for i in current_subs])
-        skland.finish(text)
+        await skland.finish(text)
