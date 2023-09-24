@@ -122,23 +122,24 @@ async def _(
     async with db_session.begin():
         group_messages = await db_session.execute(select(SessionModel).where(SessionModel.id1 == session.id1))
         group_session: SessionModel | None = group_messages.scalars().first()
-        logger.debug(f"查询到的群聊Session：{group_session.session.dict()}")
         if not group_session:
             await group_add_token.finish("请检查您是否先在任意群聊注册自动签到！")
-            return
-        elif group_session_dict := group_session.session.get_saa_target().dict():
+        elif group_session_saa := group_session.session.get_saa_target():
+            group_session_dict = group_session_saa.dict()
+            logger.debug(f"查询到的群聊Session: {group_session.session.dict()}")
             logger.debug(f"查询到的群聊Session对应的用户信息：{group_session_dict}")
             group_session_id: str | None = group_session.id2
             session_user_id: str | None = group_session.id1
         else:
             await group_add_token.finish("先前绑定的群聊会话信息有误，请检查")
-            return
     # 再更新SklandSubscribe
     async with db_session.begin():
         stmt = select(SklandSubscribe).where(SklandSubscribe.user == group_session_dict)
         skd_users = await db_session.scalars(stmt)
         skd_user: SklandSubscribe | None = skd_users.first()
         logger.debug(f"查询到的SklandSubscribe：{skd_user}")
+        if not skd_user:
+            await group_add_token.finish("未能匹配到你在群聊注册的账号，请检查")
         skd_user.token = args.token
         skd_user_token = skd_user.token
         skd_user_uid = skd_user.uid
