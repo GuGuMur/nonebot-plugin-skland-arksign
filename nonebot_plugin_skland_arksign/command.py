@@ -1,6 +1,7 @@
 from argparse import Namespace
 
 from sqlalchemy import select
+from nonebot.log import logger
 from nonebot.adapters import Bot, Event
 from nonebot.rule import ArgumentParser
 from nonebot.permission import SUPERUSER
@@ -41,6 +42,7 @@ async def _(
     if not user_account:
         await skl_add.finish("未能获取到当前会话的用户信息，请检查")
     assert user_account
+    logger.debug(f"当前会话的用户信息：{user_account.dict()}")
 
     # 根据Session判断是否为私信/群聊
 
@@ -57,6 +59,7 @@ async def _(
             # 然后把session注册到消息数据库里
             async with create_session() as db_session:
                 await get_or_add_session_model(session, db_session)
+                logger.debug(f"当前会话的Session信息：{session.dict()}")
             # 最后回应一下
             await skl_add.finish(cleantext(f"""
                 [森空岛明日方舟签到器]已在群聊{session.id2}添加新账号！
@@ -99,6 +102,7 @@ async def _(
     db_session: AsyncSession = Depends(get_session),
     args: Namespace = ShellCommandArgs(),
 ):
+    logger.debug(f"匹配到的参数：{args}")
     # 处理帮助
     if args.help:
         await group_add_token.finish(group_add_token_parser.description)
@@ -120,18 +124,22 @@ async def _(
         group_session: SessionModel | None = group_messages.scalars().first()
         if not group_session:
             await group_add_token.finish("请检查您是否先在任意群聊注册自动签到！")
-            return
-        elif group_session_dict := group_session.session.get_saa_target().dict():
+        elif group_session_saa := group_session.session.get_saa_target():
+            group_session_dict = group_session_saa.dict()
+            logger.debug(f"查询到的群聊Session: {group_session.session.dict()}")
+            logger.debug(f"查询到的群聊Session对应的用户信息：{group_session_dict}")
             group_session_id: str | None = group_session.id2
             session_user_id: str | None = group_session.id1
         else:
             await group_add_token.finish("先前绑定的群聊会话信息有误，请检查")
-            return
     # 再更新SklandSubscribe
     async with db_session.begin():
         stmt = select(SklandSubscribe).where(SklandSubscribe.user == group_session_dict)
         skd_users = await db_session.scalars(stmt)
         skd_user: SklandSubscribe | None = skd_users.first()
+        logger.debug(f"查询到的SklandSubscribe：{skd_user}")
+        if not skd_user:
+            await group_add_token.finish("未能匹配到你在群聊注册的账号，请检查")
         skd_user.token = args.token
         skd_user_token = skd_user.token
         skd_user_uid = skd_user.uid

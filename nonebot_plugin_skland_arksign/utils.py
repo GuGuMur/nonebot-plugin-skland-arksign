@@ -96,23 +96,25 @@ def generate_signature(token: str, path: str, body_or_query: str):
     """
     # 总是说请勿修改设备时间，怕不是yj你的服务器有问题吧，所以这里特地-2
     timestamp = str(int(time.time()) - 2)
-    token = token.encode("utf-8")
+    token_bytes = token.encode("utf-8")
     header_ca = header_for_sign.copy()
     header_ca["timestamp"] = timestamp
     header_ca_str = json.dumps(header_ca, separators=(",", ":"))
     s = path + body_or_query + timestamp + header_ca_str
-    hex_s = hmac.new(token, s.encode("utf-8"), hashlib.sha256).hexdigest()
+    hex_s = hmac.new(token_bytes, s.encode("utf-8"), hashlib.sha256).hexdigest()
     md5 = hashlib.md5(hex_s.encode("utf-8")).hexdigest()
     return md5, header_ca
 
 
-def get_sign_header(url: str, method: Literal["get", "post"], body: dict, old_header: dict, sign_token: str) -> dict:
+def get_sign_header(
+    url: str, method: Literal["get", "post"], body: dict | None, old_header: dict, sign_token: str
+) -> dict:
     header = old_header.copy()
     url_parsed = parse.urlparse(url)
     if method == "get":
         header["sign"], header_ca = generate_signature(sign_token, url_parsed.path, url_parsed.query)
     else:
-        header["sign"], header_ca = generate_signature(sign_token, url_parsed.path, json.dumps(body))
+        header["sign"], header_ca = generate_signature(sign_token, url_parsed.path, json.dumps(body or {}))
     for i in header_ca:
         header[i] = header_ca[i]
     return header
