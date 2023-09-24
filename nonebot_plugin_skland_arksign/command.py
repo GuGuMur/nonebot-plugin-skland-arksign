@@ -59,6 +59,7 @@ async def _(
             # 然后把session注册到消息数据库里
             async with create_session() as db_session:
                 await get_or_add_session_model(session, db_session)
+                logger.debug(f"当前会话的Session信息：{session.dict()}")
             # 最后回应一下
             await skl_add.finish(cleantext(f"""
                 [森空岛明日方舟签到器]已在群聊{session.id2}添加新账号！
@@ -121,11 +122,12 @@ async def _(
     async with db_session.begin():
         group_messages = await db_session.execute(select(SessionModel).where(SessionModel.id1 == session.id1))
         group_session: SessionModel | None = group_messages.scalars().first()
-        logger.debug(f"查询到的群聊Session：{group_session}")
+        logger.debug(f"查询到的群聊Session：{group_session.session.dict()}")
         if not group_session:
             await group_add_token.finish("请检查您是否先在任意群聊注册自动签到！")
             return
         elif group_session_dict := group_session.session.get_saa_target().dict():
+            logger.debug(f"查询到的群聊Session对应的用户信息：{group_session_dict}")
             group_session_id: str | None = group_session.id2
             session_user_id: str | None = group_session.id1
         else:
