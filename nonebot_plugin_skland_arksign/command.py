@@ -86,7 +86,6 @@ async def group_add_token_processor(
         await skland.finish("未能获取到当前会话的用户信息，请检查")
     assert user_account
 
-
     if session.level != SessionLevel.LEVEL1:
         if not plugin_config.skland_arksign_allow_group:
             await skland.finish("请在私聊中使用该指令！")
