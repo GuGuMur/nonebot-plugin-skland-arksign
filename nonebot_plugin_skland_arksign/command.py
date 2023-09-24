@@ -1,6 +1,7 @@
 from argparse import Namespace
 
 from sqlalchemy import select
+from nonebot.log import logger
 from nonebot.adapters import Bot, Event
 from nonebot.rule import ArgumentParser
 from nonebot.permission import SUPERUSER
@@ -41,6 +42,7 @@ async def _(
     if not user_account:
         await skl_add.finish("未能获取到当前会话的用户信息，请检查")
     assert user_account
+    logger.debug(f"当前会话的用户信息：{user_account.dict()}")
 
     # 根据Session判断是否为私信/群聊
 
@@ -99,6 +101,7 @@ async def _(
     db_session: AsyncSession = Depends(get_session),
     args: Namespace = ShellCommandArgs(),
 ):
+    logger.debug(f"匹配到的参数：{args}")
     # 处理帮助
     if args.help:
         await group_add_token.finish(group_add_token_parser.description)
@@ -118,6 +121,7 @@ async def _(
     async with db_session.begin():
         group_messages = await db_session.execute(select(SessionModel).where(SessionModel.id1 == session.id1))
         group_session: SessionModel | None = group_messages.scalars().first()
+        logger.debug(f"查询到的群聊Session：{group_session}")
         if not group_session:
             await group_add_token.finish("请检查您是否先在任意群聊注册自动签到！")
             return
@@ -132,6 +136,7 @@ async def _(
         stmt = select(SklandSubscribe).where(SklandSubscribe.user == group_session_dict)
         skd_users = await db_session.scalars(stmt)
         skd_user: SklandSubscribe | None = skd_users.first()
+        logger.debug(f"查询到的SklandSubscribe：{skd_user}")
         skd_user.token = args.token
         skd_user_token = skd_user.token
         skd_user_uid = skd_user.uid
