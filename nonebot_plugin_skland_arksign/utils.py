@@ -38,6 +38,13 @@ def cleantext(text: str) -> str:
     result = "\n".join(cleaned_lines)
     return result
 
+def compare_dicts(dict1:dict, dict2:dict)->bool:
+    """用于删除森空岛账号时的判断"""
+    params = ["bot_type","platform","id1"]
+    for i in params:
+        if dict1[i] != dict2[i]:
+            return False
+    return True
 
 async def get_grant_code(token: str) -> str:
     data = {"appCode": APP_CODE, "token": token, "type": 0}

@@ -6,17 +6,13 @@ require("nonebot_plugin_datastore")
 require("nonebot_plugin_saa")
 require("nonebot_plugin_session")
 
-# from ._command import group_add_token as group_add_token  # noqa: E402
 from .command import skland as skland  # noqa: E402
-
-# from ._command import skl_add as skl_add  # noqa: E402
-# from ._command import skl_del as skl_del  # noqa: E402
 from .sched import scheduler as scheduler  # noqa: E402
 
 __plugin_meta__ = PluginMetadata(
     name="森空岛明日方舟签到器",
     description="私聊机器人以获得自动明日方舟森空岛签到服务",
-    usage="在私信或群聊中使用指令 /森空岛 游戏账号ID [森空岛token]",
+    usage="在私信或群聊中使用指令 /森空岛 add 游戏账号ID [森空岛token]",
     type="application",
     homepage="https://github.com/GuGuMur/nonebot-plugin-skland-arksign",
     supported_adapters=inherit_supported_adapters("nonebot_plugin_saa", "nonebot_plugin_session"),

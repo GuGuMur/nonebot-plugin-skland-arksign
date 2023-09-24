@@ -10,7 +10,7 @@ class Config(BaseModel):
     skland_arksign_allow_group: bool = False
 
     @property
-    def init_des(self) -> str:
+    def add_des(self) -> str:
         if self.skland_arksign_allow_group is True:
             return cleantext("""
                 森空岛自动签到插件
