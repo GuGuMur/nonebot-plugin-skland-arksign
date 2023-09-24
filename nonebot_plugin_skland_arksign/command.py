@@ -86,6 +86,7 @@ async def group_add_token_processor(
         await skland.finish("未能获取到当前会话的用户信息，请检查")
     assert user_account
 
+
     if session.level != SessionLevel.LEVEL1:
         if not plugin_config.skland_arksign_allow_group:
             await skland.finish("请在私聊中使用该指令！")
@@ -166,7 +167,6 @@ async def delete_processor(
 
     await db_session.delete(result)
     await db_session.commit()
-
     await skland.finish(cleantext(f"""
             [森空岛明日方舟签到器]已删除旧账号！
             UID：{uid.result}

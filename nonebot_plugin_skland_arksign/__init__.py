@@ -9,6 +9,7 @@ require("nonebot_plugin_session")
 from .command import skland as skland  # noqa: E402
 from .sched import scheduler as scheduler  # noqa: E402
 
+
 __plugin_meta__ = PluginMetadata(
     name="森空岛明日方舟签到器",
     description="私聊机器人以获得自动明日方舟森空岛签到服务",
