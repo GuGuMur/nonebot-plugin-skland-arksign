@@ -1,41 +1,31 @@
-from nonebot_plugin_alconna import Args, Option, Alconna, Subcommand
+from nonebot_plugin_alconna import Args, Alconna, Subcommand, CommandMeta
+
+from .config import plugin_config
 
 skland_alc = Alconna(
     "森空岛",
     Subcommand(
         "add",
-        Args["uid", int]["token", str],
-        [
-            Option("-n|--note", Args["note", str]),
-        ],
-        help_text="添加一个新的签到账号",
+        Args["uid", int]["token?", str],
+        help_text=plugin_config.add_des,
     ),
     Subcommand(
-        "list",
-        [
-            Option("-u|--uid", Args["uid", int]),
-            Option("-n|--note", Args["note", str]),
-        ],
-        help_text="列出所有签到账号",
+        "群token",
+        Args["token", str],
+        help_text="继承群聊的消息来补充token信息",
     ),
     Subcommand(
         "del",
-        Args["identifier", str],
-        help_text="删除一个签到账号",
+        Args["uid", str],
+        help_text=plugin_config.del_des,
     ),
     Subcommand(
-        "update",
-        Args["identifier", str],
-        [
-            Option("-u|--uid", Args["uid", int]),
-            Option("-t|--token", Args["token", str]),
-            Option("-n|--note", Args["note", str]),
-        ],
-        help_text="更新一个签到账号",
+        "list",
+        help_text="列出当前所有签到账号",
     ),
-    Subcommand(
-        "help",
-        help_text="显示帮助信息",
+    meta=CommandMeta(
+        description="用于每日早八定时签到森空岛明日方舟的Nonebot插件",
+        usage=plugin_config.init_des,
+        example=plugin_config.use_example,
     ),
-    Option("-ds|--dont-sign-now", Args["dont_sign_now", bool, True], help_text="不立即签到"),
 )
