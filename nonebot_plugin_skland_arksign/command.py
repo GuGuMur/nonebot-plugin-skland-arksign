@@ -28,7 +28,7 @@ skland = on_alconna(
 async def add(
     state: T_State,
     uid: str,
-    token: str,
+    token: str | None = None,
     note: str | None = None,
     event_session: Session = Depends(session_extract),
     db_session: AsyncSession = Depends(get_session),
@@ -62,6 +62,13 @@ async def add(
 
     # 这是私信
     else:
+        if not token:
+            await skland.finish(cleantext(f"""
+                [森空岛明日方舟签到器]已添加新账号！
+                UID：{uid}
+                备注：{note or "无"}
+                接下来，请你通过`私信`bot /森空岛 bind [该账号对应的token] 来完成定时签到服务！"""))
+
         await skland.send(cleantext(f"""
                 [森空岛明日方舟签到器]已添加新账号！
                 UID：{uid}

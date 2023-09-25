@@ -6,7 +6,8 @@ skland_alc = Alconna(
     "skland",
     Subcommand(
         "add",
-        Args["uid", int]["token", str, ""]["note?", str],
+        Args["uid", int]["token?", str],
+        Option("-n|--note", Args["note", str]),
         help_text="添加一个新的签到账号",
     ),
     Subcommand(
