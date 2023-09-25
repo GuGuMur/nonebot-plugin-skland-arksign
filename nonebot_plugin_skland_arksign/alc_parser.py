@@ -6,7 +6,7 @@ skland_alc = Alconna(
     "skland",
     Subcommand(
         "add",
-        Args["uid", int]["token?", str],
+        Args["uid", str]["token?", str],
         Option("-n|--note", Args["note", str]),
         help_text="添加一个新的签到账号",
     ),
@@ -23,7 +23,7 @@ skland_alc = Alconna(
         "update",
         Args["identifier", str],
         [
-            Option("-u|--uid", Args["uid", int]),
+            Option("-u|--uid", Args["uid", str]),
             Option("-t|--token", Args["token", str]),
             Option("-n|--note", Args["note", str]),
         ],
@@ -33,10 +33,6 @@ skland_alc = Alconna(
         "bind",
         Args["token", str],
         help_text="在私聊绑定一个在群聊中添加的签到账号",
-    ),
-    Subcommand(
-        "help",
-        help_text="显示帮助信息",
     ),
     meta=CommandMeta(
         description="用于每日定时签到森空岛明日方舟的Nonebot插件",

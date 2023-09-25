@@ -2,6 +2,7 @@ from sqlalchemy import select
 from nonebot.log import logger
 from nonebot.params import Depends
 from nonebot.typing import T_State
+from nonebot.adapters import Bot, Event
 from nonebot.permission import SUPERUSER
 from nonebot_plugin_alconna import on_alconna
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -12,8 +13,8 @@ from nonebot_plugin_session.model import SessionModel, get_or_add_session_model
 
 from .alc_parser import skland_alc
 from .model import SklandSubscribe
-from .depends import session_extract
 from .utils import run_sign, cleantext
+from .depends import skland_session_extract
 
 skland = on_alconna(
     skland_alc,
@@ -30,7 +31,7 @@ async def add(
     uid: str,
     token: str | None = None,
     note: str | None = None,
-    event_session: Session = Depends(session_extract),
+    event_session: Session = Depends(skland_session_extract),
     db_session: AsyncSession = Depends(get_session),
 ):
     logger.debug(f"匹配到的参数：{state}")
@@ -83,7 +84,7 @@ async def add(
 async def bind(
     state: T_State,
     token: str,
-    event_session: Session = Depends(session_extract),
+    event_session: Session = Depends(skland_session_extract),
     db_session: AsyncSession = Depends(get_session),
 ):
     logger.debug(f"匹配到的参数：{state}")
@@ -143,7 +144,9 @@ async def bind(
 
 # 删除功能可以在各处使用
 @skland.assign("del")
-async def _(
+async def del_(
+    bot: Bot,
+    event: Event,
     identifier: str,
     event_session: Session = Depends(extract_session),
     db_session: AsyncSession = Depends(get_session),
@@ -155,7 +158,7 @@ async def _(
     if not result:
         await skland.finish("未能使用uid或备注匹配到任何账号，请检查")
 
-    if not SUPERUSER:
+    if not await SUPERUSER(bot, event):
         user = event_session.get_saa_target()
         if not user:
             await skland.finish("未能获取到当前会话的用户信息，请检查")
@@ -173,4 +176,76 @@ async def _(
             [森空岛明日方舟签到器]已删除旧账号！
             UID：{uid}
             备注：{note}
+            """))
+
+
+@skland.assign("list", parameterless=[Depends(skland_session_extract)])
+async def list_(
+    bot: Bot,
+    event: Event,
+    state: T_State,
+    db_session: AsyncSession = Depends(get_session),
+):
+    if not await SUPERUSER(bot, event):
+        await skland.finish("您无权查看账号列表！")
+
+    is_group = state.get("is_group")
+
+    def show_token(token: str):
+        if not token:
+            return "未绑定"
+        else:
+            if is_group:
+                return "已绑定"
+            return token
+
+    def report_maker(subscribes: list[SklandSubscribe]):
+        report = []
+        for i in subscribes:
+            report.append(cleantext(f"""
+                    UID：{i.uid}
+                    TOKEN：{show_token(i.token)}
+                    备注：{i.note}
+                    """))
+        return "\n\n".join(report)
+
+    stmt = select(SklandSubscribe)
+    result = (await db_session.scalars(stmt)).all()
+    if not result:
+        await skland.finish("未能查询到任何账号，请检查")
+    await skland.finish(report_maker(list(result)))
+
+
+@skland.assign("update", parameterless=[Depends(skland_session_extract)])
+async def update(
+    bot: Bot,
+    event: Event,
+    identifier: str,
+    uid: str | None = None,
+    token: str | None = None,
+    note: str | None = None,
+    db_session: AsyncSession = Depends(get_session),
+):
+    if not await SUPERUSER(bot, event):
+        await skland.finish("您无权更新账号信息！")
+
+    identifier_uid_stmt = select(SklandSubscribe).where(SklandSubscribe.uid == identifier)
+    identifier_note_stmt = select(SklandSubscribe).where(SklandSubscribe.note == identifier)
+    result = await db_session.scalar(identifier_uid_stmt) or await db_session.scalar(identifier_note_stmt)
+    if not result:
+        await skland.finish("未能使用uid或备注匹配到任何账号，请检查")
+
+    if uid:
+        result.uid = uid
+    if token:
+        result.token = token
+    if note:
+        result.note = note
+    await db_session.flush()
+    await db_session.commit()
+    await skland.finish(cleantext(f"""
+            [森空岛明日方舟签到器]已更新账号信息！
+            UID：{uid or "未更改"}
+            TOKEN：{token or "未更改"}
+            备注：{note or "未更改"}
             """))
