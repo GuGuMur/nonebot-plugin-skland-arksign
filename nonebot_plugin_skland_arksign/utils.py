@@ -78,6 +78,16 @@ async def get_binding_list(cred_resp: dict) -> list:
 
 
 async def run_sign(uid: str, token: str):
+    try:
+        return await _run_sign(uid, token)
+    except Exception as e:
+        return {
+            "status": False,
+            "text": f"签到时发生错误：{e}",
+        }
+
+
+async def _run_sign(uid: str, token: str):
     cred_resp = await get_cred_by_token(token)
     return await do_sign(uid, cred_resp)
 
