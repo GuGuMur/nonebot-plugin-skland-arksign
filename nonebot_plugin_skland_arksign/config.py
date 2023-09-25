@@ -3,8 +3,6 @@ from pydantic import BaseModel
 
 from .utils import cleantext
 
-config = get_driver().config.dict()
-
 
 class Config(BaseModel):
     skland_arksign_allow_group: bool = False
@@ -27,18 +25,19 @@ class Config(BaseModel):
 
     @property
     def del_des(self) -> str:
-        # if skland_arksign_allow_group is True:
-        #     return cleantext("""
-        #         删除森空岛账号
-        #         使用：森空岛.del [游戏账号ID]
-        #         注意：
-        #           绑定到群聊的账号可以被群管理员删除；
-        #           非超级用户只可删除自己绑定的账号；
-        #           超级用户可以删除bot数据库内所有账号
-        #         """)
-        # else:
         return cleantext("""
             删除森空岛账号
             使用：森空岛.del [游戏账号ID]
             注意：非超级用户只可删除自己绑定的账号；超级用户可以删除bot数据库内所有账号
             """)
+
+    @property
+    def use_example(self) -> str:
+        return cleantext("""
+            /森空岛 add [游戏账号ID] [森空岛token]
+            /森空岛 del [游戏账号ID]
+            /森空岛 list
+            """)
+
+
+plugin_config: Config = Config.parse_obj(get_driver().config)
