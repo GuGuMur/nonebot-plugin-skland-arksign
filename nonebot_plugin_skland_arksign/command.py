@@ -135,12 +135,6 @@ async def bind(
         信息如下：{runres['text']}"""))
     await msg.send_to(PlatformTarget.deserialize(skd_user.user))
 
-    # 最后删掉Session数据库里的消息
-    delete_session_stmt = select(SessionModel).where(SessionModel.id1 == event_session.id1)
-    result = (await db_session.scalars(delete_session_stmt)).all()
-    for i in result:
-        await db_session.delete(i)
-    await db_session.flush()
     # 保存到数据库
     await db_session.commit()
 
