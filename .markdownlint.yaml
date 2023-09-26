@@ -1,0 +1,7 @@
+MD013: false
+MD024: # 重复标题
+  siblings_only: true
+MD033: false # 允许 html
+MD041: false # 不需要 first-line-h1
+MD046:
+  style: fenced # 代码块使用 ``` 语法
