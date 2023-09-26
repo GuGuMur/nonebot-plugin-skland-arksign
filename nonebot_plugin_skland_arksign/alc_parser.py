@@ -34,6 +34,11 @@ skland_alc = Alconna(
         Args["token", str],
         help_text="在私聊绑定一个在群聊中添加的签到账号",
     ),
+    Subcommand(
+        "signin",
+        Args["identifier", str],
+        help_text="使用uid或者备注立刻签到一个账号",
+    ),
     meta=CommandMeta(
         description="用于每日定时签到森空岛明日方舟的Nonebot插件",
         usage=plugin_config.init_des,

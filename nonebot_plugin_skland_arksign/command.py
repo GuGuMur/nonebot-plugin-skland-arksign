@@ -152,9 +152,8 @@ async def del_(
     db_session: AsyncSession = Depends(get_session),
 ):
     # identifier 可以是uid或者备注, 需要都尝试一下
-    uid_stmt = select(SklandSubscribe).where(SklandSubscribe.uid == identifier)
-    note_stmt = select(SklandSubscribe).where(SklandSubscribe.note == identifier)
-    result = await db_session.scalar(uid_stmt) or await db_session.scalar(note_stmt)
+    stmt = select(SklandSubscribe).where((SklandSubscribe.uid == identifier) | (SklandSubscribe.note == identifier))
+    result = await db_session.scalar(stmt)
     if not result:
         await skland.finish("未能使用uid或备注匹配到任何账号，请检查")
 
@@ -229,9 +228,8 @@ async def update(
     if not await SUPERUSER(bot, event):
         await skland.finish("您无权更新账号信息！")
 
-    identifier_uid_stmt = select(SklandSubscribe).where(SklandSubscribe.uid == identifier)
-    identifier_note_stmt = select(SklandSubscribe).where(SklandSubscribe.note == identifier)
-    result = await db_session.scalar(identifier_uid_stmt) or await db_session.scalar(identifier_note_stmt)
+    stmt = select(SklandSubscribe).where((SklandSubscribe.uid == identifier) | (SklandSubscribe.note == identifier))
+    result = await db_session.scalar(stmt)
     if not result:
         await skland.finish("未能使用uid或备注匹配到任何账号，请检查")
 
@@ -248,4 +246,27 @@ async def update(
             UID：{uid or "未更改"}
             TOKEN：{token or "未更改"}
             备注：{note or "未更改"}
+            """))
+
+
+# 手动签到功能可以在各处使用
+@skland.assign("signin")
+async def signin(
+    bot: Bot,
+    event: Event,
+    identifier: str,
+    db_session: AsyncSession = Depends(get_session),
+):
+    if not await SUPERUSER(bot, event):
+        await skland.finish("您无权手动签到！")
+
+    stmt = select(SklandSubscribe).where((SklandSubscribe.uid == identifier) | (SklandSubscribe.note == identifier))
+    result = await db_session.scalar(stmt)
+    if not result:
+        await skland.finish("未能使用uid或备注匹配到任何账号，请检查")
+
+    sign_res = await run_sign(uid=result.uid, token=result.token)
+    await skland.send(cleantext(f"""
+            [森空岛明日方舟签到器]已为账号{result.uid}手动签到！
+            信息如下：{sign_res['text']}
             """))
