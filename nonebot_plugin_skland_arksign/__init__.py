@@ -5,13 +5,12 @@ require("nonebot_plugin_apscheduler")
 require("nonebot_plugin_datastore")
 require("nonebot_plugin_saa")
 require("nonebot_plugin_session")
+require("nonebot_plugin_alconna")
 
 from nonebot_plugin_saa.utils.auto_select_bot import enable_auto_select_bot
 
-from .command import skl_add as skl_add
-from .command import skl_del as skl_del
+from .command import skland as skland
 from .sched import scheduler as scheduler
-from .command import group_add_token as group_add_token
 
 enable_auto_select_bot()
 

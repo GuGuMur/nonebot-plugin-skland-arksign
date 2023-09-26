@@ -6,7 +6,7 @@ groups = ["default", "dev"]
 cross_platform = true
 static_urls = false
 lock_version = "4.3"
-content_hash = "sha256:dc26a4ddb9c3657d4d3d661a17912ee48b4f59eddf82e5150f81a80eb921b8ce"
+content_hash = "sha256:1ad50292a59a995e1d0513207d05a9da218d01b1f13a95abe41eb591a20e8d9d"
 
 [[package]]
 name = "aiosqlite"
@@ -63,6 +63,35 @@ dependencies = [
 files = [
     {file = "APScheduler-3.10.4-py3-none-any.whl", hash = "sha256:fb91e8a768632a4756a585f79ec834e0e27aad5860bac7eaa523d9ccefd87661"},
     {file = "APScheduler-3.10.4.tar.gz", hash = "sha256:e6df071b27d9be898e486bc7940a7be50b4af2e9da7c08f0744a96d4bd4cef4a"},
+]
+
+[[package]]
+name = "arclet-alconna"
+version = "1.7.24"
+requires_python = ">=3.8"
+summary = "A High-performance, Generality, Humane Command Line Arguments Parser Library."
+dependencies = [
+    "nepattern<0.6.0,>=0.5.14",
+    "tarina>=0.4.1",
+    "typing-extensions>=4.5.0",
+]
+files = [
+    {file = "arclet_alconna-1.7.24-py3-none-any.whl", hash = "sha256:fe2fcfd170da7985810f1bd68051288b56f586f08b154d744c7db4fba890d94e"},
+    {file = "arclet_alconna-1.7.24.tar.gz", hash = "sha256:e10fce577be3de3f326890a0a80410a83fad41adff71db241007bb43b09ba846"},
+]
+
+[[package]]
+name = "arclet-alconna-tools"
+version = "0.6.7"
+requires_python = ">=3.8"
+summary = "Builtin Tools for Alconna"
+dependencies = [
+    "arclet-alconna<2.0,>=1.7.21",
+    "nepattern<0.6.0,>=0.5.14",
+]
+files = [
+    {file = "arclet-alconna-tools-0.6.7.tar.gz", hash = "sha256:3cc640956883d5c8452b241d85368970de4150037d696216ef8d117bde388dca"},
+    {file = "arclet_alconna_tools-0.6.7-py3-none-any.whl", hash = "sha256:acffb10ccc77a32d282c3683c4589aa875711a8a56547136752db7a43d5ceb12"},
 ]
 
 [[package]]
@@ -863,6 +892,20 @@ files = [
 ]
 
 [[package]]
+name = "nepattern"
+version = "0.5.14"
+requires_python = ">=3.8"
+summary = "a complex pattern, support typing"
+dependencies = [
+    "tarina>=0.3.3",
+    "typing-extensions>=4.5.0",
+]
+files = [
+    {file = "nepattern-0.5.14-py3-none-any.whl", hash = "sha256:2dd1bdb9b722da8099d52794a1d1c7fa7ace220badac10b91ec8b6ff053a7c51"},
+    {file = "nepattern-0.5.14.tar.gz", hash = "sha256:d9cda6e6033645a57bec70e3e5f8998cbca278a78e38b55f96d9c2f419fdcc24"},
+]
+
+[[package]]
 name = "nodeenv"
 version = "1.8.0"
 requires_python = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,!=3.6.*"
@@ -888,6 +931,22 @@ dependencies = [
 files = [
     {file = "nonebot_adapter_onebot-2.3.0-py3-none-any.whl", hash = "sha256:b78fba1230766f59ecf2a103650b29e9ca499809be022e1d94b9951a42f4a491"},
     {file = "nonebot_adapter_onebot-2.3.0.tar.gz", hash = "sha256:417946698b4d82a3227cea55573085772b911c4cb27ee5515f7306dbb14ef2e0"},
+]
+
+[[package]]
+name = "nonebot-plugin-alconna"
+version = "0.25.0"
+requires_python = ">=3.8"
+summary = "Alconna Adapter for Nonebot"
+dependencies = [
+    "arclet-alconna-tools<0.7.0,>=0.6.7",
+    "arclet-alconna<2.0.0,>=1.7.21",
+    "nepattern<0.6.0,>=0.5.14",
+    "nonebot2>=2.0.0rc4",
+]
+files = [
+    {file = "nonebot_plugin_alconna-0.25.0-py3-none-any.whl", hash = "sha256:5deaeb96770d0fee6c54b034036ca7a40042eb879f224eb81bb02f0fe087df62"},
+    {file = "nonebot_plugin_alconna-0.25.0.tar.gz", hash = "sha256:b7200a4ea36cb9ec2abbfa61c4acb286f4d59cd60763192b35f47b611c1b1586"},
 ]
 
 [[package]]
@@ -1491,6 +1550,55 @@ summary = "An Enum that inherits from str."
 files = [
     {file = "StrEnum-0.4.15-py3-none-any.whl", hash = "sha256:a30cda4af7cc6b5bf52c8055bc4bf4b2b6b14a93b574626da33df53cf7740659"},
     {file = "StrEnum-0.4.15.tar.gz", hash = "sha256:878fb5ab705442070e4dd1929bb5e2249511c0bcf2b0eeacf3bcd80875c82eff"},
+]
+
+[[package]]
+name = "tarina"
+version = "0.4.1"
+requires_python = ">=3.8"
+summary = "A collection of common utils for Arclet"
+dependencies = [
+    "typing-extensions>=4.4.0",
+]
+files = [
+    {file = "tarina-0.4.1-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:86820fb0d8e98f8b100c44e70adf4138c8c3586ab25c4bbe07b6791ecfb5e986"},
+    {file = "tarina-0.4.1-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:8536b27a3f245251b590cdafd56b0dd4490e4cc5468cd6c5a8b22bc412a48f1e"},
+    {file = "tarina-0.4.1-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:8702b6a6c6361d3ba0d1083c42427383fa55486aa0950082f7d2b225ae90b9e8"},
+    {file = "tarina-0.4.1-cp310-cp310-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:3e0251284b63f1897c69a06822548c79e4f39d12574e4dd9fa54c9c9cc8eaecb"},
+    {file = "tarina-0.4.1-cp310-cp310-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:30979b4c6a3439cc18952b8ad28ad4c2f298e667d3957b3809e41e4cbc639e56"},
+    {file = "tarina-0.4.1-cp310-cp310-musllinux_1_1_i686.whl", hash = "sha256:d2d25b6ecedef55f2f9a03a52aaa1805e61a8dce9c9aa8647d514ae29d46cc43"},
+    {file = "tarina-0.4.1-cp310-cp310-musllinux_1_1_x86_64.whl", hash = "sha256:63d396439847a25cb5ac54c4e5e90ae33b9a7e7f95eaca9e689d666fcbc6dd0c"},
+    {file = "tarina-0.4.1-cp310-cp310-win32.whl", hash = "sha256:7f15c34ed1b120c921376ebc2a39fd95acbfad7daf2fc097a9e789997f4dbe15"},
+    {file = "tarina-0.4.1-cp310-cp310-win_amd64.whl", hash = "sha256:6248e8f9337157637b8ee081fa24f385712dfa04d12915e065103346cc3700a9"},
+    {file = "tarina-0.4.1-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:31c2c3f58d914df70bc63ad08e60afcbf6c14cad58ec42dfd0a298dcdaea6918"},
+    {file = "tarina-0.4.1-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:7129e905ca2f3991b20fffac8900bdd99c53b5ada80311309d372a29d84db6d8"},
+    {file = "tarina-0.4.1-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:8cc2710bb06da3844948d2811efe0bbc486b011f10522059f0adeffc5f788478"},
+    {file = "tarina-0.4.1-cp311-cp311-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:1bc357ffe56941f017d3a43850952ad3245b1604d20c296b71ad91bb6beabd0e"},
+    {file = "tarina-0.4.1-cp311-cp311-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:7e2a2ba1036f347bcc81fafee0d51038f3773c547be8c3c1e470fd2fcb22b968"},
+    {file = "tarina-0.4.1-cp311-cp311-musllinux_1_1_i686.whl", hash = "sha256:c5b691065d20f9bb08eb80d7a709017764e8278321359792742ca0bcac9f95d1"},
+    {file = "tarina-0.4.1-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:8ddfc2e2c1a4e0ac00c591bf42ab4f8e75297cb1728eda4da76d83bdbcdd7084"},
+    {file = "tarina-0.4.1-cp311-cp311-win32.whl", hash = "sha256:f5b75825028a1de0e181ee82005371929285ab2d6b445fed9fe429b8dfa06f58"},
+    {file = "tarina-0.4.1-cp311-cp311-win_amd64.whl", hash = "sha256:50f3b74d9871fde3ffb3aa0539b0f0396429409f7a13a11da82fe368fef35d09"},
+    {file = "tarina-0.4.1-cp38-cp38-macosx_10_9_universal2.whl", hash = "sha256:b29e92f8efd787d70cbdf15ccd8af804ba4eb849aa46bb6907ec4d2bc904adce"},
+    {file = "tarina-0.4.1-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:9b68a409ad83ab4c5dd4fa2857a179f241daf53669eeda5dcfddb5af0f4fa0b7"},
+    {file = "tarina-0.4.1-cp38-cp38-macosx_11_0_arm64.whl", hash = "sha256:49f81d8d488e25d1ac58f01323d2af0c3811a6d2905338310d0bb1ea079477ec"},
+    {file = "tarina-0.4.1-cp38-cp38-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:8fde83a08dc11a27e770528310c03d0634f94345c2b4a0079e5dcac32d548a7d"},
+    {file = "tarina-0.4.1-cp38-cp38-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:413e9cb9f50eb75769484f577ca4c2db54770d2f52b63347bbfefbf40beac77c"},
+    {file = "tarina-0.4.1-cp38-cp38-musllinux_1_1_i686.whl", hash = "sha256:b374b10b1bfa7eb5d2bb631bc718ce845342abf2268ec80c70659bc9fc9b8313"},
+    {file = "tarina-0.4.1-cp38-cp38-musllinux_1_1_x86_64.whl", hash = "sha256:36a909d02a6880a76ae09ba8950b2b544897754d95528444c639e0777c9a9d23"},
+    {file = "tarina-0.4.1-cp38-cp38-win32.whl", hash = "sha256:56211ecb0a179b5cb36a68fc2a8638c7d2838ab4b37b077d5d7db87732b5fec9"},
+    {file = "tarina-0.4.1-cp38-cp38-win_amd64.whl", hash = "sha256:f73710fe797b265e2faf14ac53728224ae04aef89d01fa23bdb9e06ccbd78b89"},
+    {file = "tarina-0.4.1-cp39-cp39-macosx_10_9_universal2.whl", hash = "sha256:b36688c9ab5d628116a1844f1523a4f9a008102771d6afb4df904745184b495b"},
+    {file = "tarina-0.4.1-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:3a5a0312a010512fb30561449e022fe0d292dfe5036ec63c767dc7ff21f4fbfb"},
+    {file = "tarina-0.4.1-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:a95b19e723b2337eb9b4a67c5be1317243afbcd09e9b41b73765aa717f8a5f0f"},
+    {file = "tarina-0.4.1-cp39-cp39-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:4f46170b8177e2579a70f3e17cec1dcf07f709e36163f2bf3dd55c76060bcff8"},
+    {file = "tarina-0.4.1-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:06c1cbe945fdf44068a11b719141860ccaee7df5c3bcf2b95f5700c7e9f4662f"},
+    {file = "tarina-0.4.1-cp39-cp39-musllinux_1_1_i686.whl", hash = "sha256:5d5e13ff13c1fdc326f6d2c4acff62906b07062931cc6a7dc064f4879821e758"},
+    {file = "tarina-0.4.1-cp39-cp39-musllinux_1_1_x86_64.whl", hash = "sha256:e7ffc0a5ad5c1e43a31a1cc59572109a4dfb34926aa4b02005ccb8ed2119cdac"},
+    {file = "tarina-0.4.1-cp39-cp39-win32.whl", hash = "sha256:68476ea932f9c63e8c5344e5070088b9550078cb8cda7ff3bb1ff9ea59b3839c"},
+    {file = "tarina-0.4.1-cp39-cp39-win_amd64.whl", hash = "sha256:a42f035a617fd133e59ac2060c0cb09853ea80f07dfe100ecf9090962516cc49"},
+    {file = "tarina-0.4.1-py3-none-any.whl", hash = "sha256:95f282fcc2dd5cb6dc52d926dcaca29fecdf78d0c1b0f32a7a335543a307b891"},
+    {file = "tarina-0.4.1.tar.gz", hash = "sha256:6b947104e0bb4b98426088558afb9cff72fcf47e79e6fdeea39d05cc0aa08fe7"},
 ]
 
 [[package]]

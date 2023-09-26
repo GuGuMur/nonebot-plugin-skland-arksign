@@ -3,7 +3,7 @@ import json
 import time
 import hashlib
 from urllib import parse
-from typing import Literal
+from typing import Any, Literal
 
 from httpx import AsyncClient
 
@@ -48,7 +48,7 @@ async def get_grant_code(token: str) -> str:
         return response.json()["data"]["code"]
 
 
-async def get_cred(grant_code: str) -> dict:
+async def get_cred(grant_code: str) -> dict[str, Any]:
     data = {"code": grant_code, "kind": 1}
 
     async with AsyncClient() as client:
@@ -57,12 +57,12 @@ async def get_cred(grant_code: str) -> dict:
         return response.json()["data"]
 
 
-async def get_cred_by_token(token: str):
+async def get_cred_by_token(token: str) -> dict[str, Any]:
     grant_code = await get_grant_code(token)
     return await get_cred(grant_code)
 
 
-async def get_binding_list(cred_resp: dict) -> list:
+async def get_binding_list(cred_resp: dict) -> list[dict[str, Any]]:
     headers = temp_header.copy()
     headers["cred"] = cred_resp["cred"]
     async with AsyncClient() as client:
@@ -78,6 +78,16 @@ async def get_binding_list(cred_resp: dict) -> list:
 
 
 async def run_sign(uid: str, token: str):
+    try:
+        return await _run_sign(uid, token)
+    except Exception as e:
+        return {
+            "status": False,
+            "text": f"签到时发生错误：{e}",
+        }
+
+
+async def _run_sign(uid: str, token: str):
     cred_resp = await get_cred_by_token(token)
     return await do_sign(uid, cred_resp)
 
@@ -139,7 +149,7 @@ async def do_sign(uid: str, cred_resp: dict):
             server = i["channelName"]
             break
 
-    result = {}
+    result: dict[str, Any] = {}
     async with AsyncClient() as client:
         sign_response = await client.post(
             sign_url,
