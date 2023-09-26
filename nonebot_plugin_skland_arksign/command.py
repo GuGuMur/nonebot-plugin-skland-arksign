@@ -7,8 +7,8 @@ from nonebot.permission import SUPERUSER
 from nonebot_plugin_alconna import on_alconna
 from sqlalchemy.ext.asyncio import AsyncSession
 from nonebot_plugin_saa import Text, PlatformTarget
-from nonebot_plugin_session import Session, extract_session
 from nonebot_plugin_datastore import get_session, create_session
+from nonebot_plugin_session import Session, SessionLevel, extract_session
 from nonebot_plugin_session.model import SessionModel, get_or_add_session_model
 
 from .alc_parser import skland_alc
@@ -94,32 +94,35 @@ async def bind(
         await skland.finish("未能获取到当前会话的可发送用户信息，请检查")
 
     # 先找到私聊用户对应的群聊Session
-    get_group_session_stmt = select(SessionModel).where(SessionModel.id1 == event_session.id1)
-    group_session = (await db_session.scalars(get_group_session_stmt)).first()
-    if not group_session:
+    get_group_session_stmt = select(SessionModel).where(
+        (SessionModel.id1 == event_session.id1) | (SessionModel.level != SessionLevel.LEVEL1)
+    )
+    group_session_list = (await db_session.scalars(get_group_session_stmt)).all()
+    if not group_session_list:
         await skland.finish("未找到与你对应的群聊Session，请检查")
-    elif group_session_saa := group_session.session.get_saa_target():
-        group_session_dict = group_session_saa.dict()
-        logger.debug(f"查询到的群聊Session: {group_session.session.dict()}")
-        logger.debug(f"查询到的群聊Session对应的用户信息：{group_session_dict}")
-        session_user_id: str | None = group_session.id1
-        # 单独赋值是因为需要跨查询使用，如果在下一个查询里直接使用group_session.id1会报错
-        group_session_id: str | None = group_session.id2
+    elif group_session_saa_list := [
+        saa_target for group_session in group_session_list if (saa_target := group_session.session.get_saa_target())
+    ]:
+        group_session_dict_list = [saa_target.dict() for saa_target in group_session_saa_list]
+        logger.debug(f"查询到的群聊Session: {group_session_list}")
+        logger.debug(f"查询到的群聊Session对应的用户信息：{group_session_dict_list}")
     else:
         await skland.finish("无法获取到对应可发送用户信息，请检查")
 
     # 再更新SklandSubscribe
-    get_skland_subscribe_stmt = select(SklandSubscribe).where(SklandSubscribe.user == group_session_dict)
+    # 判断group_session_dict_list里是否有与SklandSubscribe匹配的用户
+    get_skland_subscribe_stmt = select(SklandSubscribe).where(SklandSubscribe.user.in_(group_session_dict_list))
     skd_user: SklandSubscribe | None = (await db_session.scalars(get_skland_subscribe_stmt)).first()
     logger.debug(f"查询到的SklandSubscribe：{skd_user}")
     if not skd_user:
         await skland.finish("未能匹配到你在群聊注册的账号，请检查")
     skd_user.token = token
     await db_session.flush()
+    logger.debug(f"更新后的SklandSubscribe：{skd_user}")
     # 发送成功信息（私聊）
     await skland.send(cleantext(f"""
             [森空岛明日方舟签到器]已经为绑定在群聊的游戏账号绑定TOKEN！
-            群聊ID：{group_session_id}
+            群聊ID：{skd_user.user}
             游戏账号UID：{skd_user.uid}
             TOKEN：{token}
             备注：{skd_user.note}
@@ -127,7 +130,7 @@ async def bind(
     # 再到群聊通知一下
     runres = await run_sign(uid=skd_user.uid, token=token)
     msg = Text(cleantext(f"""
-        [森空岛明日方舟签到器]用户{session_user_id}已经通过私信绑定账号{skd_user.uid}的token！
+        [森空岛明日方舟签到器]用户{event_session.id1}已经通过私信绑定账号{skd_user.uid}的token！
         立即执行签到操作完成！
         信息如下：{runres['text']}"""))
     await msg.send_to(PlatformTarget.deserialize(skd_user.user))
