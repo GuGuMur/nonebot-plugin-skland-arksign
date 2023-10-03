@@ -4,6 +4,7 @@ import time
 import hashlib
 from urllib import parse
 from typing import Any, Literal
+from collections import defaultdict
 
 from httpx import AsyncClient
 
@@ -160,21 +161,17 @@ async def do_sign(uid: str, cred_resp: dict):
 
     if sign_response.get("code") == 0:
         result["status"] = True
-        result["text"] = f"{server}账号 {drname}(UID{uid})签到成功\n"
-        awards = sign_response.get("data").get("awards")
+        result["text"] = f"[{server}] {drname} UID:{uid} 签到成功\n"
+        awards: list[dict] = sign_response.get("data", {}).get("awards", [])
+        if not awards:
+            raise ValueError(f"未能获取奖励列表，{sign_response=}")
         for award in awards:
-            result["text"] += "获得的奖励ID为：" + award.get("resource").get("id") + "\n"
-            result["text"] += (
-                "此次签到获得了"
-                + str(award.get("count"))
-                + "单位的"
-                + award.get("resource").get("name")
-                + "("
-                + award.get("resource").get("type")
-                + ")\n"
-            )
-            result["text"] += "奖励类型为：" + award.get("type") + "\n"
+            resource = defaultdict(lambda: "<Err>")
+            resource.update(award.get("resource", {}))
+            result["text"] += f"奖励ID：{resource['id']}\n"
+            result["text"] += f"签到奖励：{resource['name']}({resource['type']}) × {resource['count']}\n"
+            result["text"] += "类型：" + award.get("type", "<Err>") + "\n"
     else:
         result["status"] = False
-        result["text"] = f"{server}账号 {drname}(UID{uid})签到失败，请检查以下信息：\n{sign_response}"
+        result["text"] = f"[{server}] {drname} UID:{uid} 签到失败\n请检查以下信息：\n{sign_response}"
     return result
