@@ -84,7 +84,7 @@ async def run_sign(uid: str, token: str):
     except Exception as e:
         return {
             "status": False,
-            "text": f"签到时发生错误：{e}",
+            "text": f"UID:{uid}签到时发生错误：{e}",
         }
 
 
@@ -141,7 +141,7 @@ async def do_sign(uid: str, cred_resp: dict):
     if not binding:
         return {
             "status": False,
-            "text": f"获取账号绑定信息失败，请检查是否正确！\n{binding}",
+            "text": f"UID:{uid}获取账号绑定信息失败，请检查是否正确！\n{binding}",
         }
     for i in binding:
         if i["uid"] == uid:
