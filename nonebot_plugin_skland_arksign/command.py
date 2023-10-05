@@ -10,6 +10,7 @@ from nonebot_plugin_datastore import get_session
 from nonebot_plugin_saa import Text, PlatformTarget
 from nonebot_plugin_session import Session, extract_session
 
+from .sched import sched_sign
 from .alc_parser import skland_alc
 from .model import SklandSubscribe
 from .utils import run_sign, cleantext
@@ -244,6 +245,12 @@ async def update(
             TOKEN：{token or "未更改"}
             备注：{note or "未更改"}
             """))
+
+
+@skland.assign("signin.identifier", "!all")
+async def signin_all():
+    await sched_sign()
+    await skland.finish("所有账号已经手动重新触发签到！")
 
 
 # 手动签到功能可以在各处使用
