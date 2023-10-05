@@ -172,12 +172,21 @@ skland update 舟游戏ID/备注 [-u 可选UID] [-t 可选token] [-n 可选备�
 
 ### 立即手动签到
 
+#### 特定用户
+
 ```shell
 skland signin 舟游戏ID/备注
 ```
 
+#### 所有用户
+
+```shell
+skland signin !all
+```
+
 > [!WARNING]
 > 仅超级用户可用
+> 签到全部用户时，会分发到原本对应的聊天目标
 
 ## ♿️ FAQ
 
