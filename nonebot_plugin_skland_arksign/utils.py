@@ -169,7 +169,7 @@ async def do_sign(uid: str, cred_resp: dict):
             resource = defaultdict(lambda: "<Err>")
             resource.update(award.get("resource", {}))
             result["text"] += f"奖励ID：{resource['id']}\n"
-            result["text"] += f"签到奖励：{resource['name']}({resource['type']}) × {resource['count']}\n"
+            result["text"] += f"签到奖励：{resource['name']}({resource['type']}) × {award.get('count')}\n"
             result["text"] += "类型：" + award.get("type", "<Err>") + "\n"
     else:
         result["status"] = False
