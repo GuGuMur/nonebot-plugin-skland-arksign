@@ -1,3 +1,4 @@
+from typing import Union
 from sqlalchemy import select
 from nonebot.log import logger
 from nonebot.params import Depends
@@ -35,8 +36,8 @@ skland = on_alconna(
 async def add(
     state: T_State,
     uid: str,
-    token: str | None = None,
-    note: str | None = None,
+    token: Union(str, None) = None,
+    note: Union(str, None) = None,
     event_session: EventSession = Depends(skland_session_extract),
     db_session: AsyncSession = Depends(get_session),
 ):
@@ -107,7 +108,7 @@ async def bind(
     # 判断是否有与SklandSubscribe匹配的用户
     get_skland_subscribe_stmt = select(SklandSubscribe).where(SklandSubscribe.uid == bind_uid)
     # uid是主键，所以只会有一个
-    skd_user: SklandSubscribe | None = (await db_session.scalars(get_skland_subscribe_stmt)).one_or_none()
+    skd_user: Union(SklandSubscribe, None) = (await db_session.scalars(get_skland_subscribe_stmt)).one_or_none()
     logger.debug(f"查询到的SklandSubscribe：{skd_user}")
     if not skd_user:
         await skland.finish("未能匹配到你在群聊注册的账号，请检查")
@@ -219,9 +220,9 @@ async def update(
     bot: Bot,
     event: Event,
     identifier: str,
-    uid: str | None = None,
-    token: str | None = None,
-    note: str | None = None,
+    uid: Union(str, None) = None,
+    token: Union(str, None) = None,
+    note: Union(str, None) = None,
     db_session: AsyncSession = Depends(get_session),
 ):
     if not await SUPERUSER(bot, event):
