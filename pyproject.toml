@@ -34,6 +34,12 @@ dev = [
     "nb-cli>=1.2.3",
     "nonebot-adapter-onebot>=2.2.4",
 ]
+test = [
+    "nonebug>=0.3.5",
+    "pytest>=7.4.3",
+    "pytest-asyncio>=0.21.1",
+    "pytest-xdist>=3.3.1",
+]
 
 [tool.nonebot]
 adapters = [{name = "OneBot V11", module_name = "nonebot.adapters.onebot.v11"}]
@@ -45,7 +51,7 @@ select = ["E", "W", "F", "UP", "C", "T", "PYI", "PT", "Q"]
 ignore = ["E402", "E501", "C901", "PT023"]
 
 line-length = 120
-target-version = "py310"
+target-version = "py38"
 
 [tool.black]
 line-length = 120
