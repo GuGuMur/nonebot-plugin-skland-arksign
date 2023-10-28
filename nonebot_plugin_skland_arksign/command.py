@@ -8,8 +8,8 @@ from nonebot_plugin_alconna import on_alconna
 from sqlalchemy.ext.asyncio import AsyncSession
 from nonebot_plugin_datastore import get_session
 from nonebot_plugin_saa import Text, PlatformTarget
-from nonebot_plugin_session import EventSession, extract_session
 from nonebot_plugin_session_saa import get_saa_target
+from nonebot_plugin_session import EventSession, extract_session
 
 from .sched import sched_sign
 from .alc_parser import skland_alc
