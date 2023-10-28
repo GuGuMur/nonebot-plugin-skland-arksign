@@ -1,20 +1,21 @@
 [project]
 name = "nonebot-plugin-skland-arksign"
-version = "0.5.5"
+version = "0.5.6"
 description = "用于每日定时签到森空岛明日方舟的Nonebot插件"
 authors = [
     {name = "GuGuMur", email = "222153315@qq.com"},
     {name = "Azide", email = "rukuy@qq.com"},
 ]
 dependencies = [
-    "nonebot2>=2.0.1",
-    "nonebot-plugin-datastore>=1.1.0",
-    "httpx>=0.24.1",
+    "nonebot2>=2.1.1",
+    "httpx>=0.25.0",
+    "pydantic>=1.10.13",
     "nonebot-plugin-apscheduler>=0.3.0",
-    "nonebot-plugin-send-anything-anywhere>=0.3.0",
-    "nonebot-plugin-session>=0.1.0",
-    "pydantic>=1.10.12",
-    "nonebot-plugin-alconna>=0.25.0",
+    "nonebot-plugin-alconna>=0.30.7",
+    "nonebot-plugin-datastore>=1.1.2",
+    "nonebot-plugin-session>=0.2.0",
+    "nonebot-plugin-session-saa>=0.1.0",
+    "nonebot-plugin-send-anything-anywhere>=0.3.2",
 ]
 requires-python = ">=3.8"
 readme = "README.md"
@@ -35,8 +36,9 @@ dev = [
 ]
 
 [tool.nonebot]
-plugins = ["nonebot_plugin_skland_arksign"]
 adapters = [{name = "OneBot V11", module_name = "nonebot.adapters.onebot.v11"}]
+plugins = ["nonebot_plugin_skland_arksign"]
+builtin_plugins = ["echo", "single_session"]
 
 [tool.ruff]
 select = ["E", "W", "F", "UP", "C", "T", "PYI", "PT", "Q"]

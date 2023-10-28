@@ -3,8 +3,8 @@ import json
 import time
 import hashlib
 from urllib import parse
-from typing import Any, Literal
 from collections import defaultdict
+from typing import Any, Union, Literal
 
 from httpx import AsyncClient
 
@@ -118,7 +118,7 @@ def generate_signature(token: str, path: str, body_or_query: str):
 
 
 def get_sign_header(
-    url: str, method: Literal["get", "post"], body: dict | None, old_header: dict, sign_token: str
+    url: str, method: Literal["get", "post"], body: Union[dict, None], old_header: dict, sign_token: str  # noqa: UP007
 ) -> dict:
     header = old_header.copy()
     url_parsed = parse.urlparse(url)

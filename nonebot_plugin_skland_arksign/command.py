@@ -8,7 +8,8 @@ from nonebot_plugin_alconna import on_alconna
 from sqlalchemy.ext.asyncio import AsyncSession
 from nonebot_plugin_datastore import get_session
 from nonebot_plugin_saa import Text, PlatformTarget
-from nonebot_plugin_session import Session, extract_session
+from nonebot_plugin_session_saa import get_saa_target
+from nonebot_plugin_session import EventSession, extract_session
 
 from .sched import sched_sign
 from .alc_parser import skland_alc
@@ -36,11 +37,11 @@ async def add(
     uid: str,
     token: str | None = None,
     note: str | None = None,
-    event_session: Session = Depends(skland_session_extract),
+    event_session: EventSession = Depends(skland_session_extract),
     db_session: AsyncSession = Depends(get_session),
 ):
     logger.debug(f"匹配到的参数：{state}")
-    user_account = event_session.get_saa_target()
+    user_account = get_saa_target(event_session)
     if not user_account:
         await skland.finish("未能获取到当前会话的可发送用户信息，请检查")
     logger.debug(f"当前会话的用户信息：{user_account.dict()}")
@@ -92,7 +93,7 @@ async def add(
 async def bind(
     state: T_State,
     token: str,
-    event_session: Session = Depends(skland_session_extract),
+    event_session: EventSession = Depends(skland_session_extract),
     db_session: AsyncSession = Depends(get_session),
 ):
     logger.debug(f"匹配到的参数：{state}")
@@ -146,7 +147,7 @@ async def del_(
     bot: Bot,
     event: Event,
     identifier: str,
-    event_session: Session = Depends(extract_session),
+    event_session: EventSession = Depends(extract_session),
     db_session: AsyncSession = Depends(get_session),
 ):
     # identifier 可以是uid或者备注, 需要都尝试一下
@@ -156,7 +157,7 @@ async def del_(
         await skland.finish("未能使用uid或备注匹配到任何账号，请检查")
 
     if not await SUPERUSER(bot, event):
-        user = event_session.get_saa_target()
+        user = get_saa_target(event_session)
         if not user:
             await skland.finish("未能获取到当前会话的用户信息，请检查")
 
