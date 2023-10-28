@@ -133,7 +133,7 @@ skland add 舟游戏ID [森空岛token] [-n 可选备注]
 > [!NOTE]
 > 例子: `"content": "1145141919810"`
 >
-> 则命令为 `森空岛 你的游戏UID 1145141919810`
+> 则命令为 `森空岛 add 你的游戏UID 1145141919810`
 
 #### 私信补充token
 
@@ -149,7 +149,7 @@ skland bind 森空岛token
 skland del 舟游戏ID/备注
 ```
 
-> {!WARNING}
+> [!WARNING]
 > 注意：非[超级用户](https://nonebot.dev/docs/appendices/config#superusers)只可删除自己绑定的账号，超级用户可以删除bot数据库内所有账号
 
 ### 列出账号
@@ -215,4 +215,4 @@ skland signin !all
 - [`he0119/nonebot-plugin-datastore`](https://github.com/he0119/nonebot-plugin-datastore)：超好用的数据存储插件！
 - [`MountainDash/nonebot-plugin-send-anything-anywhere`](https://github.com/MountainDash/nonebot-plugin-send-anything-anywhere)：峯驰物流部门的全能转接信使！
 - [`noneplugin/nonebot-plugin-session`](https://github.com/noneplugin/nonebot-plugin-session)：全能的<del>账单</del>会话模型管理员！
-- [`nonebot/plugin-alconna`](https://github.com/nonebot/plugin-alconna)：超好用命令行解析器！
+- [`nonebot/plugin-alconna`](https://github.com/nonebot/plugin-alconna)：<del>比[argparse](https://docs.python.org/3/library/argparse.html)好用十倍甚至九倍的</del>命令行解析器！
