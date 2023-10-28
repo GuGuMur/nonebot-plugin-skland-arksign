@@ -1,4 +1,5 @@
 from typing import Union
+
 from sqlalchemy import select
 from nonebot.log import logger
 from nonebot.params import Depends
