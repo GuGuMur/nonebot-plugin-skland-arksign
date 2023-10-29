@@ -3,8 +3,8 @@ import json
 import time
 import hashlib
 from urllib import parse
-from collections import defaultdict
 from typing import Any, Literal
+from collections import defaultdict
 
 from httpx import AsyncClient
 
