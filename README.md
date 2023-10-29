@@ -224,15 +224,18 @@ skland signin !all
    ```
 
 3. 为什么我刚获取token并绑定好，一会就用不了了？
+
 - 当您使用浏览器获取token时，**不要去登出账号，否则鹰角网络通行证会失效！**
 - 如果要添加多个账号，请删除浏览器缓存。或者使用浏览器自带的隐私浏览模式，拿到Token后，关闭隐私窗口，再登录一次即可
 - 注意：电脑在用密码登录后，手机客户端有可能会被挤掉，但一定不要点客户端里的清理会话，否则所有的登录状态**都会被清空！**
 
 4. 报错`{'code': 10001, 'message': '当前用户未经授权'}`？
+
 - 参考 [#新增账号](#新增账号) 一栏重新绑定舟游戏ID
 - 参考issue：[#29](https://github.com/GuGuMur/nonebot-plugin-skland-arksign/issues/29)
 
 5. 报错`Client error '400 Bad Request' for url xxx`？
+
 - 请检查token复制过程中是否有错漏，以及舟游戏ID是否与您输入的token相符
 
 ## 🤗 致谢
