@@ -4,7 +4,19 @@ on:
   push:
     branches:
       - main
+    paths:
+      - nonebot_plugin_skland_arksign/**
+      - tests/**
+      - pyproject.toml
+      - poetry.lock
+      - .github/**
   pull_request:
+    paths:
+      - nonebot_plugin_skland_arksign/**
+      - tests/**
+      - pyproject.toml
+      - poetry.lock
+      - .github/**
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
