@@ -81,8 +81,10 @@ plugins = ["nonebot_plugin_skland_arksign"]
 </details>
 
 > [!IMPORTANT]
-> 如果想在 **Python <= 3.9** 的环境中使用，请选择 `v0.5.8`，这是最后一个支持 **Python <= 3.9** 的 Release  
-> ~严格来说其实是第一个以及最后一个，因为之前的版本有不适用于**非3.10以下**的类型注解语法，为此专门发布的一个可用的支持版本~  
+> 如果想在 **Python <= 3.9** 的环境中使用，请选择 `v0.5.8`，这是最后一个支持 **Python <= 3.9** 的 Release
+>
+> ~严格来说其实是第一个以及最后一个，因为之前的版本有不适用于**非3.10以下**的类型注解语法，为此专门发布的一个可用的支持版本~
+>
 > 对于其他**非** `v0.5.8` 版本，都有可能不兼容 **Python <= 3.9**
 
 ## 🎉 使用
@@ -103,16 +105,20 @@ skland_arksign_allow_group=True
 
 > [!IMPORTANT]
 > 在群聊中使用命令时，命令的权限会受到较大限制
+>
 > 基本只有[超级用户](https://nonebot.dev/docs/appendices/config#superusers)可以使用
 
 ### 新增账号
 
 ```shell
-skland add 舟游戏ID [森空岛token] [-n 可选备注]
+skland add [游戏账号ID] [森空岛token] [-n 可选备注]
 ```
 
 > [!IMPORTANT]
+> 游戏账号ID为游戏主界面博士名下面那串数字（如`114514`）
+>
 > 在群聊中使用时，一定不要带上token，否则会有盗号风险
+>
 > 缺少的token会在私聊中补充：[使用 bind 命令](#私信补充token)
 
 #### 获取Token
@@ -136,9 +142,12 @@ skland add 舟游戏ID [森空岛token] [-n 可选备注]
 3. 将`<Token>`填入命令中
 
 > [!NOTE]
-> 例子: `"content": "1145141919810"`
+> 例子: 游戏账号ID为114514，访问得到内容 `"content": "1919810"`
 >
-> 则命令为 `森空岛 add 你的游戏UID 1145141919810`
+> 则命令为 `森空岛 add 114514 1919810`
+
+> [!IMPORTANT]
+> 注意不要把包裹`content`内容的引号，或是页面返回的整个内容输入到命令中！
 
 #### 私信补充token
 
@@ -151,7 +160,7 @@ skland bind 森空岛token
 ### 删除账号
 
 ```shell
-skland del 舟游戏ID/备注
+skland del 游戏账号ID/备注
 ```
 
 > [!WARNING]
@@ -169,7 +178,7 @@ skland list
 ### 更新账号
 
 ```shell
-skland update 舟游戏ID/备注 [-u 可选UID] [-t 可选token] [-n 可选备注]
+skland update 游戏账号ID/备注 [-u 可选UID] [-t 可选token] [-n 可选备注]
 ```
 
 > [!WARNING]
@@ -180,7 +189,7 @@ skland update 舟游戏ID/备注 [-u 可选UID] [-t 可选token] [-n 可选备�
 #### 特定用户
 
 ```shell
-skland signin 舟游戏ID/备注
+skland signin 游戏账号ID/备注
 ```
 
 #### 所有用户
@@ -191,6 +200,7 @@ skland signin !all
 
 > [!WARNING]
 > 仅超级用户可用
+>
 > 签到全部用户时，会分发到原本对应的聊天目标
 
 ## ♿️ FAQ
@@ -212,6 +222,21 @@ skland signin !all
    skland update hhhaaaaa -t 0189191
    skland signin 1919810
    ```
+
+3. 为什么我刚获取token并绑定好，一会就用不了了？
+
+- 当您使用浏览器获取token时，**不要去登出账号，否则鹰角网络通行证会失效！**
+- 如果要添加多个账号，请删除浏览器缓存。或者使用浏览器自带的隐私浏览模式，拿到Token后，关闭隐私窗口，再登录一次即可
+- 注意：电脑在用密码登录后，手机客户端有可能会被挤掉，但一定不要点客户端里的清理会话，否则所有的登录状态**都会被清空！**
+
+4. 报错`{'code': 10001, 'message': '当前用户未经授权'}`？
+
+- 参考 [#更新账号](#更新账号) 一栏重新绑定游戏账号ID
+- 参考issue：[#29](https://github.com/GuGuMur/nonebot-plugin-skland-arksign/issues/29)
+
+5. 报错`Client error '400 Bad Request' for url xxx`？
+
+- 请检查token复制过程中是否有错漏，以及游戏账号ID是否与您输入的token相符
 
 ## 🤗 致谢
 
