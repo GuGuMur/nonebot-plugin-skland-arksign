@@ -21,6 +21,7 @@ class Config(BaseModel):
             return cleantext("""
                 森空岛自动签到插件
                 使用：森空岛 add [游戏账号ID] [森空岛token]
+                如何获取token：登录森空岛（https://www.skland.com/ ）后访问网址（https://web-api.skland.com/account/info/hg ），看到的"content"中内容即为token。
                 """)
 
     @property
@@ -34,8 +35,8 @@ class Config(BaseModel):
     @property
     def use_example(self) -> str:
         return cleantext("""
-            /森空岛 add [游戏账号ID] [森空岛token]
-            /森空岛 del [游戏账号ID]
+            /森空岛 add 1234567890 ABCDEFG*/a
+            /森空岛 del 1234567890
             /森空岛 list
             """)
 
