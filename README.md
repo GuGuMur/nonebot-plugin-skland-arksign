@@ -82,9 +82,9 @@ plugins = ["nonebot_plugin_skland_arksign"]
 
 > [!IMPORTANT]
 > 如果想在 **Python <= 3.9** 的环境中使用，请选择 `v0.5.8`，这是最后一个支持 **Python <= 3.9** 的 Release
-> 
+>
 > ~严格来说其实是第一个以及最后一个，因为之前的版本有不适用于**非3.10以下**的类型注解语法，为此专门发布的一个可用的支持版本~
-> 
+>
 > 对于其他**非** `v0.5.8` 版本，都有可能不兼容 **Python <= 3.9**
 
 ## 🎉 使用
@@ -105,7 +105,7 @@ skland_arksign_allow_group=True
 
 > [!IMPORTANT]
 > 在群聊中使用命令时，命令的权限会受到较大限制
-> 
+>
 > 基本只有[超级用户](https://nonebot.dev/docs/appendices/config#superusers)可以使用
 
 ### 新增账号
@@ -116,9 +116,9 @@ skland add 舟游戏ID [森空岛token] [-n 可选备注]
 
 > [!IMPORTANT]
 > 舟游戏ID为游戏主界面博士名下面那串数字（如`114514`）
-> 
+>
 > 在群聊中使用时，一定不要带上token，否则会有盗号风险
-> 
+>
 > 缺少的token会在私聊中补充：[使用 bind 命令](#私信补充token)
 
 #### 获取Token
@@ -200,7 +200,7 @@ skland signin !all
 
 > [!WARNING]
 > 仅超级用户可用
-> 
+>
 > 签到全部用户时，会分发到原本对应的聊天目标
 
 ## ♿️ FAQ
