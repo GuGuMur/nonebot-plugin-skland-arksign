@@ -35,9 +35,10 @@ class Config(BaseModel):
     @property
     def use_example(self) -> str:
         return cleantext("""
-            /森空岛 add 1234567890 ABCDEFG*/a
-            /森空岛 del 1234567890
+            /森空岛 add [游戏账号ID] [森空岛token]
+            /森空岛 del [游戏账号ID]
             /森空岛 list
+            * 注意检查 游戏账号ID 和 森空岛token 是否正确和配对
             """)
 
 

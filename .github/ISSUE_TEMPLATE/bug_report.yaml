@@ -79,6 +79,7 @@ body:
       description: |
         我们需要执行哪些操作才能让 bug 出现？
         简洁清晰的重现步骤能够帮助我们更迅速地定位问题所在。
+        * 反馈信息注意隐藏敏感信息（游戏ID，token等），但不要改变消息结构。
     validations:
       required: true
 
