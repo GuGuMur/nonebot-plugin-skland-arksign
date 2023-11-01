@@ -8,7 +8,7 @@ require("nonebot_plugin_session")
 require("nonebot_plugin_alconna")
 require("nonebot_plugin_session_saa")
 
-from nonebot_plugin_saa.utils.auto_select_bot import enable_auto_select_bot
+from nonebot_plugin_saa import enable_auto_select_bot
 
 from .command import skland as skland
 from .sched import scheduler as scheduler
