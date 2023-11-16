@@ -11,10 +11,11 @@ from nonebot_plugin_saa import Text, PlatformTarget
 from nonebot_plugin_session_saa import get_saa_target
 from nonebot_plugin_session import EventSession, extract_session
 
+from .utils import cleantext
 from .sched import sched_sign
+from .signin import run_signin
 from .alc_parser import skland_alc
 from .model import SklandSubscribe
-from .utils import run_sign, cleantext
 from .depends import skland_session_extract
 
 SessionId1 = str
@@ -85,8 +86,8 @@ async def add(
                 TOKEN：{token}
                 备注：{note or "无"}
                 """))
-        runres = await run_sign(uid=uid, token=token)
-        await skland.finish(f"立即执行签到操作完成！\n{runres['text']}")
+        runres = await run_signin(uid=uid, token=token)
+        await skland.finish(f"立即执行签到操作完成！\n{runres.text}")
 
 
 @skland.assign("bind")
@@ -133,11 +134,11 @@ async def bind(
             备注：{note}
             """))
     # 再到群聊通知一下
-    runres = await run_sign(uid=uid, token=token)
+    runres = await run_signin(uid=uid, token=token)
     msg = Text(cleantext(f"""
         [森空岛明日方舟签到器]用户{event_session.id1}已经通过私信绑定账号{uid}的token！
         立即执行签到操作完成！
-        信息如下：{runres['text']}"""))
+        信息如下：{runres.text}"""))
     await msg.send_to(PlatformTarget.deserialize(user))
 
 
@@ -270,8 +271,8 @@ async def signin(
     if not result:
         await skland.finish("未能使用uid或备注匹配到任何账号，请检查")
 
-    sign_res = await run_sign(uid=result.uid, token=result.token)
+    sign_res = await run_signin(uid=result.uid, token=result.token)
     await skland.finish(cleantext(f"""
             [森空岛明日方舟签到器]已为账号{result.uid}手动签到！
-            信息如下：{sign_res['text']}
+            信息如下：{sign_res.text}
             """))
