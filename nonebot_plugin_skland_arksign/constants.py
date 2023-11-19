@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+
 from .config import plugin_config
 
 

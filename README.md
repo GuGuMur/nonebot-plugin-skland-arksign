@@ -252,6 +252,7 @@ skland signin !all
 
 - 参考 [#调整签名时间戳减数](#调整签名时间戳减数) 一栏修改
 - 参考值：`5`,`10`
+
 ## 🤗 致谢
 
 - `xxyz30/skyland-auto-sign`([<del>Github</del>](https://github.com/xxyz30/skyland-auto-sign)/[Gitee](https://gitee.com/FancyCabbage/skyland-auto-sign))、[`Yanstory/skland-checkin-ghaction`](https://github.com/Yanstory/skland-checkin-ghaction)、[`Maojuan-lang/SenKongDao`](https://github.com/Maojuan-lang/SenKongDao)：感谢以上项目提供的参考！
