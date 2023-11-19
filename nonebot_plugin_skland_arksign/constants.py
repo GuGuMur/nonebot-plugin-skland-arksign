@@ -12,14 +12,14 @@ class _CONSTANTS:
     @property
     def REQUEST_HEADERS_BASE(self) -> dict[str, str]:
         return {
-            "User-Agent": "Skland/1.4.1 (com.hypergryph.skland; build:100001014; Android 31; ) Okhttp/4.11.0",
+            "User-Agent": "Skland/1.5.1 (com.hypergryph.skland; build:100501001; Android 34; ) Okhttp/4.11.0",
             "Accept-Encoding": "gzip",
             "Connection": "close",
         }
 
     @property
     def SIGN_HEADERS_BASE(self) -> dict[str, str]:
-        return {"platform": "1", "timestamp": "", "dId": "de9759a5afaa634f", "vName": "1.4.1"}
+        return {"platform": "1", "timestamp": "", "dId": "de9759a5afaa634f", "vName": "1.5.1"}
 
 
 CONSTANTS = _CONSTANTS()

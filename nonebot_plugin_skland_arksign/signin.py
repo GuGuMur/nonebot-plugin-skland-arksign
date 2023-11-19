@@ -10,6 +10,7 @@ from urllib import parse as URLParse
 from httpx import AsyncClient
 
 from .constants import CONSTANTS
+from .config import plugin_config
 
 
 @dataclass(frozen=True)
@@ -18,7 +19,17 @@ class SignResult:
     text: str
 
 
-def generate_signature(token: str, path: str, body_or_query: str):
+async def get_timestamp() -> str:
+    if plugin_config.skland_use_web_timestamp:
+        async with AsyncClient() as client:
+            response = await client.get(CONSTANTS.BINDING_URL)
+            response = response.json()
+            return response["timestamp"]
+    else:
+        return str(int(time()) - plugin_config.skland_timestamp_delay)
+
+
+def generate_signature(token: str, path: str, body_or_query: str, timestamp: str):
     """
     代码来源自https://gitee.com/FancyCabbage/skyland-auto-sign
     获得签名头
@@ -28,10 +39,9 @@ def generate_signature(token: str, path: str, body_or_query: str):
     :param token: 拿cred时候的token
     :param path: 请求路径（不包括网址）
     :param body_or_query: 如果是GET，则是它的query。POST则为它的body
+    :param timestamp: await get_timestamp() 生成的timestamp
     :return: 计算完毕的sign
     """
-    # 总是说请勿修改设备时间，怕不是yj你的服务器有问题吧，所以这里特地-2
-    timestamp = str(int(time()) - 2)
     token_bytes = token.encode("utf-8")
     header_ca = CONSTANTS.SIGN_HEADERS_BASE
     header_ca["timestamp"] = timestamp
@@ -43,14 +53,19 @@ def generate_signature(token: str, path: str, body_or_query: str):
 
 
 def get_sign_header(
-    url: str, method: Literal["get", "post"], body: dict | None, old_header: dict[str, Any], sign_token: str
+    url: str,
+    method: Literal["get", "post"],
+    body: dict | None,
+    old_header: dict[str, Any],
+    sign_token: str,
+    timestamp: str,
 ) -> dict:
     header = old_header.copy()
     url_parsed = URLParse.urlparse(url)
     if method == "get":
-        header["sign"], header_ca = generate_signature(sign_token, url_parsed.path, url_parsed.query)
+        header["sign"], header_ca = generate_signature(sign_token, url_parsed.path, url_parsed.query, timestamp)
     else:
-        header["sign"], header_ca = generate_signature(sign_token, url_parsed.path, json.dumps(body))
+        header["sign"], header_ca = generate_signature(sign_token, url_parsed.path, json.dumps(body), timestamp)
 
     return header | header_ca
 
@@ -82,10 +97,11 @@ async def get_cred_resp(grant_code: str) -> dict[str, Any]:
 async def get_binding_list(cred_resp: dict[str, Any]) -> list[dict[str, Any]]:
     headers = CONSTANTS.REQUEST_HEADERS_BASE
     headers["cred"] = cred_resp["cred"]
+    timestamp = await get_timestamp()
     async with AsyncClient() as client:
         response = await client.get(
             CONSTANTS.BINDING_URL,
-            headers=get_sign_header(CONSTANTS.BINDING_URL, "get", None, headers, cred_resp["token"]),
+            headers=get_sign_header(CONSTANTS.BINDING_URL, "get", None, headers, cred_resp["token"], timestamp),
         )
         response.raise_for_status()
         response = response.json()
@@ -99,6 +115,7 @@ async def do_signin(uid: str, cred_resp: dict[str, Any], binding_list: list[dict
     headers = CONSTANTS.REQUEST_HEADERS_BASE
     headers["cred"] = cred_resp["cred"]
     data = {"uid": uid, "gameId": "0"}
+    timestamp = await get_timestamp()
     if not binding_list:
         raise RuntimeError("未绑定明日方舟账号")
     for i in binding_list:
@@ -131,7 +148,7 @@ async def do_signin(uid: str, cred_resp: dict[str, Any], binding_list: list[dict
     async with AsyncClient() as client:
         sign_response = await client.post(
             CONSTANTS.SIGN_URL,
-            headers=get_sign_header(CONSTANTS.SIGN_URL, "post", data, headers, cred_resp["token"]),
+            headers=get_sign_header(CONSTANTS.SIGN_URL, "post", data, headers, cred_resp["token"], timestamp),
             json=data,
         )
         sign_response = sign_response.json()
