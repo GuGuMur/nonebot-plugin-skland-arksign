@@ -1,7 +1,5 @@
 from dataclasses import dataclass
 
-from .config import plugin_config
-
 
 @dataclass(frozen=True)
 class _CONSTANTS:
@@ -10,7 +8,6 @@ class _CONSTANTS:
     BINDING_URL = "https://zonai.skland.com/api/v1/game/player/binding"
     GRANT_CODE_URL = "https://as.hypergryph.com/user/oauth2/v2/grant"
     CRED_CODE_URL = "https://zonai.skland.com/api/v1/user/auth/generate_cred_by_code"
-    TIMESTAMP_DELAY = plugin_config.skland_timestamp_delay
 
     @property
     def REQUEST_HEADERS_BASE(self) -> dict[str, str]:

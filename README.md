@@ -93,30 +93,15 @@ plugins = ["nonebot_plugin_skland_arksign"]
 
 ### 配置
 
-#### 群聊中使用
+在 bot 项目的`.env`文件中添加下表中的配置
 
-在bot文件夹下的`.env.dev`文件中追加
-
-```dotnet
-skland_arksign_allow_group=True
-```
-
-这将允许群组等私信用户以上的对话模型注册模型而不会警告 _请在私聊中使用_ 字样
-
-> [!IMPORTANT]
-> 在群聊中使用命令时，命令的权限会受到较大限制
->
-> 基本只有[超级用户](https://nonebot.dev/docs/appendices/config#superusers)可以使用
-
-#### 调整签名时间戳减数
-
-在bot文件夹下的`.env.dev`文件中追加
-
-```dotnet
-skland_timestamp_delay=5 #任意正整数，默认值为2
-```
-
-这将可以针对bot机器调整bot生成森空岛签名时进行运算的减数
+<!-- prettier-ignore-start -->
+|             配置项            |  类型  | 必填 |  默认值  | 说明 |
+|:----------------------------:|:------:|:--:|:-------:|:------------------------:|
+| `skland_arksign_allow_group` | `bool` | 否 | `False` | 允许群组等私信用户以上的对话模型注册模型而不会警告 _请在私聊中使用_ 字样<br><li>**在群聊中使用命令时，命令的权限会受到较大限制**</li> |
+|   `skland_timestamp_delay`   | `int`  | 否 |    2    | 针对bot所在机器调整bot生成森空岛签名时进行运算的减数 |  
+|  `skland_use_web_timestamp`  | `bool` | 否 | `False` | 无法调到合适的`timestamp_delay`时使用的方案 |
+<!-- prettier-ignore-end -->
 
 ### 新增账号
 
@@ -239,23 +224,24 @@ skland signin !all
 - 如果要添加多个账号，请删除浏览器缓存。或者使用浏览器自带的隐私浏览模式，拿到Token后，关闭隐私窗口，再登录一次即可
 - 注意：电脑在用密码登录后，手机客户端有可能会被挤掉，但一定不要点客户端里的清理会话，否则所有的登录状态**都会被清空！**
 
-4. 报错`{'code': 10001, 'message': '当前用户未经授权'}`？
+4. 报错`{'code': 10001, 'message': '当前用户未经授权'}`？<!-- markdownlint-disable -->
 
 - 参考 [#更新账号](#更新账号) 一栏重新绑定游戏账号ID
 - 参考issue：[#29](https://github.com/GuGuMur/nonebot-plugin-skland-arksign/issues/29)
 
-5. 报错`Client error '400 Bad Request' for url xxx`？
+5. 报错`Client error '400 Bad Request' for url xxx`？<!-- markdownlint-disable -->
 
 - 请检查token复制过程中是否有错漏，以及游戏账号ID是否与您输入的token相符
 
-6. 报错`Client error '401 Unauthorized' for url xxx`？
+6. 报错`Client error '401 Unauthorized' for url xxx`？<!-- markdownlint-disable -->
 
-- 参考 [#调整签名时间戳减数](#调整签名时间戳减数) 一栏修改
-- 参考值：`5`,`10`
+- 参考 [#配置](#配置) 一栏修改`skland_timestamp_delay`的数值
+  - 参考值：`5`，`10`
+- 修改 `skland_use_web_timestamp` 值为 `True`
 
 ## 🤗 致谢
 
-- `xxyz30/skyland-auto-sign`([<del>Github</del>](https://github.com/xxyz30/skyland-auto-sign)/[Gitee](https://gitee.com/FancyCabbage/skyland-auto-sign))、[`Yanstory/skland-checkin-ghaction`](https://github.com/Yanstory/skland-checkin-ghaction)、[`Maojuan-lang/SenKongDao`](https://github.com/Maojuan-lang/SenKongDao)：感谢以上项目提供的参考！
+- `xxyz30/skyland-auto-sign`([<del>Github</del>](https://github.com/xxyz30/skyland-auto-sign)/[Gitee](https://gitee.com/FancyCabbage/skyland-auto-sign))、[`Yanstory/skland-checkin-ghaction`](https://github.com/Yanstory/skland-checkin-ghaction)、[`Maojuan-lang/SenKongDao`](https://github.com/Maojuan-lang/SenKongDao)、[`enpitsuLin/skland-daily-attendance`](https://github.com/enpitsuLin/skland-daily-attendance)：感谢以上项目提供的参考！
 - [`AzideCupric`](https://github.com/AzideCupric)：感谢大佬的技术支持！orz
 - [`he0119/nonebot-plugin-datastore`](https://github.com/he0119/nonebot-plugin-datastore)：超好用的数据存储插件！
 - [`MountainDash/nonebot-plugin-send-anything-anywhere`](https://github.com/MountainDash/nonebot-plugin-send-anything-anywhere)：峯驰物流部门的全能转接信使！

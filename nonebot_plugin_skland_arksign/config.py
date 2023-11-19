@@ -7,6 +7,7 @@ from .utils import cleantext
 class Config(BaseModel):
     skland_arksign_allow_group: bool = False
     skland_timestamp_delay: int = 2
+    skland_use_web_timestamp: bool = False
 
     @property
     def init_des(self) -> str:

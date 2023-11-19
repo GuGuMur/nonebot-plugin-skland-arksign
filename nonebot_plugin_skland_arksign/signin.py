@@ -10,6 +10,7 @@ from urllib import parse as URLParse
 from httpx import AsyncClient
 
 from .constants import CONSTANTS
+from .config import plugin_config
 
 
 @dataclass(frozen=True)
@@ -18,11 +19,14 @@ class SignResult:
     text: str
 
 
-async def return_web_timestamp() -> str:
-    async with AsyncClient() as client:
-        response = await client.get(CONSTANTS.BINDING_URL)
-        response = response.json()
-        return response["timestamp"]
+async def get_timestamp() -> str:
+    if plugin_config.skland_use_web_timestamp:
+        async with AsyncClient() as client:
+            response = await client.get(CONSTANTS.BINDING_URL)
+            response = response.json()
+            return response["timestamp"]
+    else:
+        return str(int(time()) - plugin_config.skland_timestamp_delay)
 
 
 def generate_signature(token: str, path: str, body_or_query: str, timestamp: str):
@@ -35,7 +39,7 @@ def generate_signature(token: str, path: str, body_or_query: str, timestamp: str
     :param token: 拿cred时候的token
     :param path: 请求路径（不包括网址）
     :param body_or_query: 如果是GET，则是它的query。POST则为它的body
-    :param timestamp: str(int(time()) - CONSTANTS.TIMESTAMP_DELAY) 或 await return_web_timestamp() 搞来的timestamp
+    :param timestamp: await get_timestamp() 生成的timestamp
     :return: 计算完毕的sign
     """
     token_bytes = token.encode("utf-8")
@@ -54,7 +58,7 @@ def get_sign_header(
     body: dict | None,
     old_header: dict[str, Any],
     sign_token: str,
-    timestamp: str = str(int(time()) - CONSTANTS.TIMESTAMP_DELAY),
+    timestamp: str,
 ) -> dict:
     header = old_header.copy()
     url_parsed = URLParse.urlparse(url)
@@ -93,7 +97,7 @@ async def get_cred_resp(grant_code: str) -> dict[str, Any]:
 async def get_binding_list(cred_resp: dict[str, Any]) -> list[dict[str, Any]]:
     headers = CONSTANTS.REQUEST_HEADERS_BASE
     headers["cred"] = cred_resp["cred"]
-    timestamp = await return_web_timestamp()
+    timestamp = await get_timestamp()
     async with AsyncClient() as client:
         response = await client.get(
             CONSTANTS.BINDING_URL,
@@ -111,7 +115,7 @@ async def do_signin(uid: str, cred_resp: dict[str, Any], binding_list: list[dict
     headers = CONSTANTS.REQUEST_HEADERS_BASE
     headers["cred"] = cred_resp["cred"]
     data = {"uid": uid, "gameId": "0"}
-    timestamp = await return_web_timestamp()
+    timestamp = await get_timestamp()
     if not binding_list:
         raise RuntimeError("未绑定明日方舟账号")
     for i in binding_list:

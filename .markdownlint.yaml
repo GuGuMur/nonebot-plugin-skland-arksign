@@ -1,6 +1,9 @@
 MD013: false
 MD024: # 重复标题
   siblings_only: true
+MD028: false # 多个quote之间带空行
+MD029:
+  style: ordered
 MD033: false # 允许 html
 MD041: false # 不需要 first-line-h1
 MD046:
