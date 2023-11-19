@@ -108,6 +108,16 @@ skland_arksign_allow_group=True
 >
 > 基本只有[超级用户](https://nonebot.dev/docs/appendices/config#superusers)可以使用
 
+#### 调整签名时间戳减数
+
+在bot文件夹下的`.env.dev`文件中追加
+
+```dotnet
+skland_timestamp_delay=5 #任意正整数，默认值为2
+```
+
+这将可以针对bot机器调整bot生成森空岛签名时进行运算的减数
+
 ### 新增账号
 
 ```shell
@@ -238,6 +248,10 @@ skland signin !all
 
 - 请检查token复制过程中是否有错漏，以及游戏账号ID是否与您输入的token相符
 
+6. 报错`Client error '401 Unauthorized' for url xxx`？
+
+- 参考 [#调整签名时间戳减数](#调整签名时间戳减数) 一栏修改
+- 参考值：`5`,`10`
 ## 🤗 致谢
 
 - `xxyz30/skyland-auto-sign`([<del>Github</del>](https://github.com/xxyz30/skyland-auto-sign)/[Gitee](https://gitee.com/FancyCabbage/skyland-auto-sign))、[`Yanstory/skland-checkin-ghaction`](https://github.com/Yanstory/skland-checkin-ghaction)、[`Maojuan-lang/SenKongDao`](https://github.com/Maojuan-lang/SenKongDao)：感谢以上项目提供的参考！
