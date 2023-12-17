@@ -6,10 +6,9 @@ Create Date: 2023-12-17 10:43:59.367604
 
 """
 
-from alembic import op
 import sqlalchemy as sa
-from sqlalchemy.dialects import postgresql
-from sqlalchemy.dialects import sqlite
+from alembic import op
+from sqlalchemy.dialects import sqlite, postgresql
 
 # revision identifiers, used by Alembic.
 revision = "f9eda5d9d24e"
@@ -30,7 +29,6 @@ def upgrade() -> None:
         batch_op.alter_column("user", existing_type=sqlite.JSON(), nullable=True)
 
 
-
 def downgrade() -> None:
     with op.batch_alter_table("skland_subscribe", schema=None) as batch_op:
         batch_op.alter_column("user", existing_type=sqlite.JSON(), nullable=False)
@@ -38,4 +36,3 @@ def downgrade() -> None:
     op.execute("UPDATE skland_subscribe SET user = sendto")
     with op.batch_alter_table("skland_subscribe", schema=None) as batch_op:
         batch_op.drop_column("sendto")
-

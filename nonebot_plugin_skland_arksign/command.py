@@ -1,23 +1,24 @@
 from typing import TYPE_CHECKING
+
 from sqlalchemy import select
 from nonebot.log import logger
 from nonebot.params import Depends
 from nonebot.typing import T_State
 from nonebot.adapters import Bot, Event
 from nonebot.permission import SUPERUSER
-from nonebot_plugin_alconna import on_alconna, AlconnaMatcher, UniMessage
 from sqlalchemy.ext.asyncio import AsyncSession
 from nonebot_plugin_datastore import get_session
 from nonebot_plugin_saa import Text, PlatformTarget
 from nonebot_plugin_session_saa import get_saa_target
 from nonebot_plugin_session import EventSession, extract_session
+from nonebot_plugin_alconna import UniMessage, AlconnaMatcher, on_alconna
 
-from .utils import cleantext, report_maker, compare_user_info
 from .sched import sched_sign
 from .signin import run_signin
 from .alc_parser import skland_alc
 from .model import SklandSubscribe
 from .depends import skland_session_extract
+from .utils import cleantext, report_maker, compare_user_info
 
 SessionId1 = str
 BindUid = str
