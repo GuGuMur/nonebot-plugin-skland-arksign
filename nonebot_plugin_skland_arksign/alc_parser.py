@@ -16,12 +16,12 @@ skland_alc = Alconna(
     ),
     Subcommand(
         "del",
-        Args["identifier", str],
+        Args["identifier", str]["position?", int],
         help_text="使用uid或者备注删除一个签到账号",
     ),
     Subcommand(
         "update",
-        Args["identifier", str],
+        Args["identifier", str]["position?", int],
         [
             Option("-u|--uid", Args["uid", str]),
             Option("-t|--token", Args["token", str]),
@@ -36,7 +36,7 @@ skland_alc = Alconna(
     ),
     Subcommand(
         "signin",
-        Args["identifier", str],
+        Args["identifier", str]["position?", int],
         help_text="使用uid或者备注立刻签到一个账号",
     ),
     meta=CommandMeta(

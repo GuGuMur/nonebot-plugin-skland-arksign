@@ -24,7 +24,7 @@ async def sched_sign():
 
     sub_groups: dict[PlatformTarget, list[SignResult]] = {}
     for sub in subscribes:
-        target = PlatformTarget.deserialize(sub.user)
+        target = PlatformTarget.deserialize(sub.sendto)
         logger.debug(f"target: {target.dict()}")
         if not sub.token:
             await Text(f"账号{sub.uid}未绑定Token，请重新绑定！").send_to(target)

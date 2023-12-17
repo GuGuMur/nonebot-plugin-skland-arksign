@@ -139,11 +139,11 @@ async def do_signin(uid: str, cred_resp: dict[str, Any], binding_list: list[dict
                 resource.update(award.get("resource", {}))
                 text += f"奖励ID：{resource['id']}\n"
                 text += f"签到奖励：{resource['name']} × {award.get('count')}\n"
-                text += f"类型：{resource['type']} {award.get('type', '<Err>')}\n"
+                text += f"类型：{resource['type']} {award.get('type', '<Err>')}\n\n"
         else:
             status = False
             text = f"[{server}] {drname} UID:{uid} 签到失败\n请检查以下信息：\n{sign_response}"
-        return SignResult(status, text)
+        return SignResult(status, text.strip())
 
     async with AsyncClient() as client:
         sign_response = await client.post(

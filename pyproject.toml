@@ -1,6 +1,6 @@
 [project]
 name = "nonebot-plugin-skland-arksign"
-version = "0.6.4"
+version = "0.7.0"
 description = "用于每日定时签到森空岛明日方舟的Nonebot插件"
 authors = [
     {name = "GuGuMur", email = "222153315@qq.com"},
@@ -8,14 +8,14 @@ authors = [
 ]
 dependencies = [
     "nonebot2>=2.1.2",
-    "httpx>=0.25.1",
+    "httpx>=0.25.2",
     "pydantic>=1.10.13",
     "nonebot-plugin-apscheduler>=0.3.0",
-    "nonebot-plugin-alconna>=0.33.5",
+    "nonebot-plugin-alconna>=0.34.1",
     "nonebot-plugin-datastore>=1.1.2",
-    "nonebot-plugin-session>=0.2.0",
-    "nonebot-plugin-session-saa>=0.1.0",
-    "nonebot-plugin-send-anything-anywhere>=0.3.2",
+    "nonebot-plugin-session>=0.2.3",
+    "nonebot-plugin-session-saa>=0.1.1",
+    "nonebot-plugin-send-anything-anywhere>=0.4.0",
 ]
 requires-python = ">=3.10"
 readme = "README.md"
@@ -32,18 +32,18 @@ build-backend = "pdm.backend"
 
 [tool.pdm.dev-dependencies]
 dev = [
-    "pre-commit>=3.5.0",
-    "black>=23.11.0",
-    "ruff>=0.1.6",
-    "isort>=5.12.0",
-    "nb-cli>=1.2.6",
+    "pre-commit>=3.6.0",
+    "black>=23.12.0",
+    "ruff>=0.1.8",
+    "isort>=5.13.2",
+    "nb-cli>=1.2.8",
     "nonebot-adapter-onebot>=2.3.1",
 ]
 test = [
     "nonebug>=0.3.5",
     "pytest>=7.4.3",
-    "pytest-asyncio>=0.21.1",
-    "pytest-xdist>=3.4.0",
+    "pytest-asyncio>=0.23.2",
+    "pytest-xdist>=3.5.0",
 ]
 
 [tool.nonebot]
