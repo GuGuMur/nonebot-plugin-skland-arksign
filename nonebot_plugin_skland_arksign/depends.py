@@ -9,8 +9,8 @@ from nonebot_plugin_alconna import AlconnaMatcher
 from nonebot_plugin_session import Session, SessionLevel, extract_session
 
 from .config import plugin_config
-from .utils import compare_user_info
 from .model import SklandSubscribe
+from .utils import compare_user_info
 
 
 async def skland_session_extract(bot: Bot, event: Event, matcher: AlconnaMatcher, state: T_State) -> Session:
