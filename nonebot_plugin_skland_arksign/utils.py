@@ -12,8 +12,11 @@ def compare_user_info(dict1, dict2: dict[any, any]):
     # excludes = ["bot_id", "level", "id2", "id3"]
     # includes = [i for i in dict2.keys() if i not in excludes]
     includes = ["bot_type", "platform", "id1"]
-    filter1 = {k: dict1[k] for k in includes}
-    filter2 = {k: dict2[k] for k in includes}
+    print(type(dict1))
+    print(dict1)
+    print(dict2)
+    filter1 = {k: dict1[k] for k in includes if k.get(k,"False")}
+    filter2 = {k: dict2[k] for k in includes if k.get(k,"False")}
     return filter1 == filter2
 
 

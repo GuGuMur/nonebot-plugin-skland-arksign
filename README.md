@@ -224,6 +224,7 @@ skland signin !all
 4. 报错`Client error '400 Bad Request' for url xxx`？<!-- markdownlint-disable -->
 
 - 请检查token复制过程中是否有错漏，以及游戏账号ID是否与您输入的token相符
+- 参考[#立即手动签到](#立即手动签到) 一栏执行手动签到操作
 
 5. 报错`Client error '401 Unauthorized' for url xxx`？<!-- markdownlint-disable -->
 

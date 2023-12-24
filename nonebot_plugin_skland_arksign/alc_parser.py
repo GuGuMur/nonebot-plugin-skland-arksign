@@ -2,13 +2,18 @@ from nonebot_plugin_alconna import Args, Option, Alconna, Subcommand, CommandMet
 
 from .config import plugin_config
 
-skland_alc = Alconna(
+skland_cmd = Alconna(
     "skland",
     Subcommand(
         "add",
         Args["uid", str]["token?", str],
         Option("-n|--note", Args["note", str]),
         help_text="添加一个新的签到账号",
+    ),
+    Subcommand(
+        "bind",
+        Args["token", str],
+        help_text="在私聊绑定一个在群聊中添加的签到账号",
     ),
     Subcommand(
         "list",
@@ -28,11 +33,6 @@ skland_alc = Alconna(
             Option("-n|--note", Args["note", str]),
         ],
         help_text="使用uid或者备注更新一个签到账号",
-    ),
-    Subcommand(
-        "bind",
-        Args["token", str],
-        help_text="在私聊绑定一个在群聊中添加的签到账号",
     ),
     Subcommand(
         "signin",

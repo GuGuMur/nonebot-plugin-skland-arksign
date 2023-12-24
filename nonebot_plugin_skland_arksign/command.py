@@ -1,24 +1,22 @@
-from typing import TYPE_CHECKING
-
 from sqlalchemy import select
 from nonebot.log import logger
 from nonebot.params import Depends
 from nonebot.typing import T_State
 from nonebot.adapters import Bot, Event
 from nonebot.permission import SUPERUSER
+from nonebot_plugin_alconna import on_alconna, AlconnaMatcher, UniMessage, AlconnaArg
 from sqlalchemy.ext.asyncio import AsyncSession
 from nonebot_plugin_datastore import get_session
 from nonebot_plugin_saa import Text, PlatformTarget
 from nonebot_plugin_session_saa import get_saa_target
-from nonebot_plugin_session import EventSession, extract_session
-from nonebot_plugin_alconna import UniMessage, AlconnaMatcher, on_alconna
+from nonebot_plugin_session import EventSession
 
+from .utils import cleantext, report_maker, compare_user_info
 from .sched import sched_sign
 from .signin import run_signin
-from .alc_parser import skland_alc
+from .alc_parser import skland_cmd
 from .model import SklandSubscribe
-from .depends import skland_session_extract
-from .utils import cleantext, report_maker, compare_user_info
+from .depends import skland_session_extract, skland_list_subscribes
 
 SessionId1 = str
 BindUid = str
@@ -26,12 +24,16 @@ BindUid = str
 wait_bind_dict: dict[SessionId1, BindUid] = {}
 
 skland = on_alconna(
-    skland_alc,
+    skland_cmd,
     aliases={"skd", "skl", "森空岛"},
     use_cmd_start=True,
     # use_cmd_sep=True,
     auto_send_output=True,
 )
+skland_list = skland.dispatch("list")
+skland_del = skland.dispatch("del")
+skland_update = skland.dispatch("update")
+skland_signin = skland.dispatch("signin")
 
 
 @skland.assign("add")
@@ -40,7 +42,7 @@ async def add(
     uid: str,
     token: str | None = None,
     note: str | None = None,
-    event_session: EventSession = Depends(skland_session_extract),
+    event_session: EventSession = Depends(skland_list_subscribes),
     db_session: AsyncSession = Depends(get_session),
 ):
     logger.debug(f"匹配到的参数：{state}")
@@ -108,7 +110,7 @@ async def add(
 async def bind(
     state: T_State,
     token: str,
-    event_session: EventSession = Depends(skland_session_extract),
+    event_session: EventSession = Depends(skland_list_subscribes),
     db_session: AsyncSession = Depends(get_session),
 ):
     logger.debug(f"匹配到的参数：{state}")
@@ -156,79 +158,53 @@ async def bind(
     await msg.send_to(PlatformTarget.deserialize(user))
 
 
-# 删除功能可以在各处使用
-@skland.assign("del")
+@skland_list.handle()
+async def list_(
+    bot: Bot,
+    event: Event,
+    state: T_State,
+    event_session: EventSession = Depends(skland_list_subscribes),
+    db_session: AsyncSession = Depends(get_session),
+):
+    is_group = state.get("is_group")
+    all_subscribes: list[SklandSubscribe] = state.get("all_subscribes")
+
+    await skland.finish("您可查询的森空岛签到账号如下：\n" + report_maker(all_subscribes, is_group))
+
+
+@skland_del.handle()
 async def del_1(
     bot: Bot,
     event: Event,
     state: T_State,
     identifier: str,
     matcher: AlconnaMatcher,
-    event_session: EventSession = Depends(extract_session),
+    position: AlconnaArg("position"),
+    event_session: EventSession = Depends(skland_list_subscribes),
     db_session: AsyncSession = Depends(get_session),
 ):
     is_group = state.get("is_group")
-    flag: bool = False
-    # SUPERUSER：返回全部
-    if await SUPERUSER(bot, event):
-        flag = True
-        stmt = select(SklandSubscribe).where((SklandSubscribe.uid == identifier) | (SklandSubscribe.note == identifier))
-        result = (await db_session.scalars(stmt)).all()
-        if not result:
-            await skland.finish("未能查询到任何账号，请检查")
+    all_subscribes: list[SklandSubscribe] = state.get("all_subscribes")
 
-    # QQ群管理：返回当前群聊的所有绑定
-    if is_group and flag is False:
-        if not bot.adapter.get_name() == "OneBot V11":
-            await skland.finish("当前的森空岛签到插件无法提供Onebot V11外的群聊绑定记录...")
-        if TYPE_CHECKING:
-            from nonebot.adapters.onebot.v11.bot import Bot as OneBotV11Bot
-
-            assert isinstance(bot, OneBotV11Bot)
-        from nonebot.adapters.onebot.v11 import GROUP_ADMIN, GROUP_OWNER
-
-        if not (await GROUP_ADMIN(bot, event) or await GROUP_OWNER(bot, event)):
-            await skland.finish("您不是本群的管理员或群主，无法在此进行删除账号操作！")
-
-        stmt = select(SklandSubscribe).where(
-            SklandSubscribe.sendto.group_id == event_session.id2
-            and (SklandSubscribe.uid == identifier) | (SklandSubscribe.note == identifier)
-        )
-        result = (await db_session.scalars(stmt)).all()
-        if not result:
-            await skland.finish("未能查询到任何账号，请检查")
-        state["prompt"] = (
-            "本群可删除的森空岛签到账号如下：\n" + report_maker(list(result), is_group) + "请输入对应序号完成删除操作！"
-        )
-
-    # 普通用户的list：返回该用户绑定的所有账号
-    if flag is False:
-        stmt = select(SklandSubscribe).where((SklandSubscribe.uid == identifier) | (SklandSubscribe.note == identifier))
-        result: list[SklandSubscribe] = (await db_session.scalars(stmt)).all()
-
-    result = [i for i in result if compare_user_info(i.user, event_session.dict())]
-    if not result:
-        await skland.finish("未能查询到任何账号，请检查")
-    if len(result) == 1:
+    all_subscribes = [i for i in all_subscribes if (i.uid == identifier) | (i.note == identifier)]
+    state["prompt"] = (
+        "您可执行操作的森空岛签到账号如下：\n" + report_maker(all_subscribes, is_group) + "\n请输入对应序号完成操作！"
+    )
+    if len(all_subscribes) == 1:
         matcher.set_path_arg("position", 0)
 
-    state["prompt"] = (
-        "您可手动删除的森空岛签到账号如下：\n" + report_maker(list(result), is_group) + "请输入对应序号完成删除操作！"
-    )
-    state["all_accounts"] = result
 
-
-@skland.got_path("~del.position", prompt=UniMessage.template("{prompt}"))
+@skland_del.got_path("position", prompt=UniMessage.template("{prompt}"))
 async def del_2(
     bot: Bot,
     event: Event,
     state: T_State,
     matcher: AlconnaMatcher,
-    position: int,
-    event_session: EventSession = Depends(skland_session_extract),
+    position: int = AlconnaArg("position"),
+    event_session: EventSession = Depends(skland_list_subscribes),
     db_session: AsyncSession = Depends(get_session),
 ):
-    result = state["all_accounts"][position]
+    result = state["all_subscribes"][position]
     uid = result.uid
     note = result.note or "无"
     await db_session.delete(result)
@@ -241,55 +217,7 @@ async def del_2(
             """))
 
 
-@skland.assign("list", parameterless=[Depends(skland_session_extract)])
-async def list_(
-    bot: Bot,
-    event: Event,
-    state: T_State,
-    event_session: EventSession = Depends(skland_session_extract),
-    db_session: AsyncSession = Depends(get_session),
-):
-    is_group = state.get("is_group")
-    flag: bool = False
-    # SUPERUSER 的 list：返回全部
-    if await SUPERUSER(bot, event):
-        flag = True
-        stmt = select(SklandSubscribe)
-        result = (await db_session.scalars(stmt)).all()
-        if not result:
-            await skland.finish("未能查询到任何账号，请检查")
-        await skland.finish("机器人绑定的所有森空岛签到账号如下：" + report_maker(list(result), is_group))
-
-    # QQ群管理的list：返回当前群聊的所有绑定
-    if is_group and flag is False:
-        if not bot.adapter.get_name() == "OneBot V11":
-            await skland.finish("当前的森空岛签到插件无法提供Onebot V11外的群聊绑定记录...")
-        if TYPE_CHECKING:
-            from nonebot.adapters.onebot.v11.bot import Bot as OneBotV11Bot
-
-            assert isinstance(bot, OneBotV11Bot)
-        from nonebot.adapters.onebot.v11 import GROUP_ADMIN, GROUP_OWNER
-
-        if not (await GROUP_ADMIN(bot, event) or await GROUP_OWNER(bot, event)):
-            await skland.finish("您不是本群的管理员或群主，请通过私聊获取您的个人绑定记录！")
-
-        stmt = select(SklandSubscribe).where(SklandSubscribe.sendto.group_id == event_session.id2)
-        result = (await db_session.scalars(stmt)).all()
-        if not result:
-            await skland.finish("未能查询到任何账号，请检查")
-        await skland.finish("本群绑定的森空岛签到账号如下：" + report_maker(list(result), is_group))
-
-    # 普通用户的list：返回该用户绑定的所有账号
-    if flag is False:
-        stmt = select(SklandSubscribe)
-        result: list[SklandSubscribe] = (await db_session.scalars(stmt)).all()
-        result = [i for i in result if compare_user_info(i.user, event_session.dict())]
-        if not result:
-            await skland.finish("未能查询到任何账号，请检查")
-        await skland.finish("您绑定的森空岛签到账号如下：" + report_maker(list(result)), is_group)
-
-
-@skland.assign("update", parameterless=[Depends(skland_session_extract)])
+@skland_update.handle()
 async def update_1(
     bot: Bot,
     event: Event,
@@ -302,6 +230,7 @@ async def update_1(
     event_session: EventSession = Depends(skland_session_extract),
     db_session: AsyncSession = Depends(get_session),
 ):
+    # 动token的操作 还是自己来吧
     is_group = state.get("is_group")
     stmt = select(SklandSubscribe).where((SklandSubscribe.uid == identifier) | (SklandSubscribe.note == identifier))
     result = (await db_session.scalars(stmt)).all()
@@ -315,24 +244,24 @@ async def update_1(
     state["prompt"] = (
         "以下是您能管理的所有账号：\n" + report_maker(result, is_group) + "请回复对应序号来完成您的 update 指令！"
     )
-    state["all_accounts"] = result
+    state["all_subscribes"] = result
 
 
-@skland.got_path("~update.position", prompt=UniMessage.template("{prompt}"))
+@skland_update.got_path("position", prompt=UniMessage.template("{prompt}"))
 async def update_2(
     bot: Bot,
     event: Event,
     identifier: str,
     matcher: AlconnaMatcher,
     state: T_State,
-    position: int,
+    position: int = AlconnaArg("position"),
     uid: str | None = None,
     token: str | None = None,
     note: str | None = None,
-    event_session: EventSession = Depends(skland_session_extract),
+    event_session: EventSession = Depends(skland_list_subscribes),
     db_session: AsyncSession = Depends(get_session),
 ):
-    result = state["all_accounts"][position]
+    result = state["all_subscribes"][position]
     if uid:
         result.uid = uid
     if token:
@@ -349,86 +278,45 @@ async def update_2(
             """))
 
 
-@skland.assign("signin.identifier", "!all")
+@skland_signin.assign("identifier", "!all")
 async def signin_all():
     await sched_sign()
     await skland.finish("所有账号已经手动重新触发签到！")
 
 
 # 手动签到功能可以在各处使用
-@skland.assign("signin")
+@skland_signin.handle()
 async def signin_1(
     bot: Bot,
     event: Event,
     state: T_State,
     identifier: str,
     matcher: AlconnaMatcher,
-    event_session: EventSession = Depends(skland_session_extract),
+    event_session: EventSession = Depends(skland_list_subscribes),
     db_session: AsyncSession = Depends(get_session),
 ):
     is_group = state.get("is_group")
-    flag: bool = False
+    all_subscribes: list[SklandSubscribe] = state.get("all_subscribes")
 
-    # SUPERUSER：返回全部
-    if await SUPERUSER(bot, event):
-        flag = True
-        stmt = select(SklandSubscribe).where((SklandSubscribe.uid == identifier) | (SklandSubscribe.note == identifier))
-        result = (await db_session.scalars(stmt)).all()
-
-    # QQ群管理：返回当前群聊的所有绑定
-    if is_group and flag is False:
-        if not bot.adapter.get_name() == "OneBot V11":
-            await skland.finish("当前的森空岛签到插件无法提供Onebot V11外的群聊绑定记录...")
-        if TYPE_CHECKING:
-            from nonebot.adapters.onebot.v11.bot import Bot as OneBotV11Bot
-
-            assert isinstance(bot, OneBotV11Bot)
-        from nonebot.adapters.onebot.v11 import GROUP_ADMIN, GROUP_OWNER
-
-        if not (await GROUP_ADMIN(bot, event) or await GROUP_OWNER(bot, event)):
-            await skland.finish("您不是本群的管理员或群主，请通过私聊完成您的个人手动签到！")
-
-        stmt = select(SklandSubscribe).where(
-            SklandSubscribe.sendto.group_id == event_session.id2
-            and (SklandSubscribe.uid == identifier) | (SklandSubscribe.note == identifier)
-        )
-        result = (await db_session.scalars(stmt)).all()
-        if not result:
-            await skland.finish("未能查询到任何账号，请检查")
-        state["prompt"] = (
-            "本群可手动签到的森空岛签到账号如下：\n"
-            + report_maker(list(result), is_group)
-            + "请输入对应序号完成签到操作！"
-        )
-
-    # 普通用户的list：返回该用户绑定的所有账号
-    if flag is False:
-        stmt = select(SklandSubscribe).where((SklandSubscribe.uid == identifier) | (SklandSubscribe.note == identifier))
-        result: list[SklandSubscribe] = (await db_session.scalars(stmt)).all()
-
-    result = [i for i in result if compare_user_info(i.user, event_session.dict())]
-    if not result:
-        await skland.finish("未能查询到任何账号，请检查")
-    if len(result) == 1:
+    all_subscribes = [i for i in all_subscribes if (i.uid == identifier) | (i.note == identifier)]
+    state["prompt"] = (
+        "您可执行操作的森空岛签到账号如下：\n" + report_maker(all_subscribes, is_group) + "\n请输入对应序号完成操作！"
+    )
+    if len(all_subscribes) == 1:
         matcher.set_path_arg("position", 0)
 
-    state["prompt"] = (
-        "您可手动签到的森空岛签到账号如下：\n" + report_maker(list(result), is_group) + "请输入对应序号完成签到操作！"
-    )
-    state["all_accounts"] = result
 
-
-@skland.got_path("~signin.position", prompt=UniMessage.template("{prompt}"))
+@skland_signin.got_path("position", prompt=UniMessage.template("{prompt}"))
 async def signin_2(
     bot: Bot,
     event: Event,
     state: T_State,
     matcher: AlconnaMatcher,
-    position: int,
-    event_session: EventSession = Depends(skland_session_extract),
+    position: int = AlconnaArg("position"),
+    event_session: EventSession = Depends(skland_list_subscribes),
     db_session: AsyncSession = Depends(get_session),
 ):
-    result = state["all_accounts"][position]
+    result = state["all_subscribes"][position]
     sign_res = await run_signin(uid=result.uid, token=result.token)
     await skland.finish(cleantext(f"""
             [森空岛明日方舟签到器]已为账号{result.uid}手动签到！
