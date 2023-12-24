@@ -166,7 +166,7 @@ async def list_(
     bot: Bot,
     event: Event,
     state: T_State,
-    event_session: EventSession = Depends(skland_list_subscribes),
+    event_session: EventSession,
     db_session: AsyncSession = Depends(get_session),
 ):
     is_group = state.get("is_group")
@@ -182,19 +182,19 @@ async def del_1(
     state: T_State,
     identifier: str,
     matcher: AlconnaMatcher,
-    position: int,
-    event_session: EventSession = Depends(skland_list_subscribes),
+    position: int | None,
+    event_session: EventSession,
     db_session: AsyncSession = Depends(get_session),
 ):
+    all_subscribes = await skland_list_subscribes(bot, event, matcher, db_session)
     is_group = state.get("is_group")
-    all_subscribes: list[SklandSubscribe] = state.get("all_subscribes")
 
     all_subscribes = [i for i in all_subscribes if (i.uid == identifier) | (i.note == identifier)]
-    state["all_subscribes"] = all_subscribes
-    await skland.send(len(all_subscribes))
     state["prompt"] = (
         "您可执行操作的森空岛签到账号如下：\n" + report_maker(all_subscribes, is_group) + "\n请输入对应序号完成操作！"
     )
+
+    state["all_subscribes"] = all_subscribes
     # if len(all_subscribes) == 1:
     #     matcher.set_path_arg("del.position", 0)
 
@@ -205,8 +205,8 @@ async def del_2(
     event: Event,
     state: T_State,
     matcher: AlconnaMatcher,
-    position: int,
-    event_session: EventSession = Depends(skland_list_subscribes),
+    position: int | None,
+    event_session: EventSession,
     db_session: AsyncSession = Depends(get_session),
 ):
     if position >= len(state["all_subscribes"]):
@@ -231,10 +231,10 @@ async def update_1(
     state: T_State,
     identifier: str,
     matcher: AlconnaMatcher,
+    event_session: EventSession,
     uid: str | None = None,
     token: str | None = None,
     note: str | None = None,
-    event_session: EventSession = Depends(skland_session_extract),
     db_session: AsyncSession = Depends(get_session),
 ):
     # 动token的操作 还是自己来吧
@@ -250,8 +250,9 @@ async def update_1(
     #     matcher.set_path_arg("update.position", 9)
     #     await skland.send(repr(state))
     state["prompt"] = (
-        "以下是您能管理的所有账号：\n" + report_maker(result, is_group) + "\n请回复对应序号来完成您的 update 指令！"
+        "您可执行操作的森空岛签到账号如下：\n" + report_maker(result, is_group) + "\n请输入对应序号完成操作！"
     )
+
     state["all_subscribes"] = result
 
 
@@ -262,16 +263,16 @@ async def update_2(
     identifier: str,
     matcher: AlconnaMatcher,
     state: T_State,
-    position: int,
+    position: int | None,
+    event_session: EventSession,
     uid: str | None = None,
     token: str | None = None,
     note: str | None = None,
-    event_session: EventSession = Depends(skland_list_subscribes),
     db_session: AsyncSession = Depends(get_session),
 ):
     # await skland.send(str(position))
     if position >= len(state["all_subscribes"]):
-        await skland.send(repr(state))
+        # await skland.send(repr(state))
         await skland.reject("输入的序号超出了您所能控制的账号数，请重新输入！")
     result = state["all_subscribes"][position]
     if uid:
@@ -303,16 +304,16 @@ async def signin_1(
     state: T_State,
     identifier: str,
     matcher: AlconnaMatcher,
-    event_session: EventSession = Depends(skland_list_subscribes),
+    event_session: EventSession,
     db_session: AsyncSession = Depends(get_session),
 ):
     is_group = state.get("is_group")
-    all_subscribes: list[SklandSubscribe] = state.get("all_subscribes")
-
+    all_subscribes = await skland_list_subscribes(bot, event, matcher, state, db_session)
     all_subscribes = [i for i in all_subscribes if (i.uid == identifier) | (i.note == identifier)]
     state["prompt"] = (
         "您可执行操作的森空岛签到账号如下：\n" + report_maker(all_subscribes, is_group) + "\n请输入对应序号完成操作！"
     )
+    state["all_subscribes"] = all_subscribes
     # if len(all_subscribes) == 1:
     #     matcher.set_path_arg("signin.position", 0)
 
@@ -323,8 +324,8 @@ async def signin_2(
     event: Event,
     state: T_State,
     matcher: AlconnaMatcher,
-    position: int,
-    event_session: EventSession = Depends(skland_list_subscribes),
+    position: int | None,
+    event_session: EventSession,
     db_session: AsyncSession = Depends(get_session),
 ):
     if position >= len(state["all_subscribes"]):
