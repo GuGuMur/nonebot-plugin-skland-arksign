@@ -158,7 +158,7 @@ async def bind(
     await msg.send_to(PlatformTarget.deserialize(user))
 
 
-@skland_list.handle()
+@skland_list.handle(parameterless=[Depends(skland_session_extract)])
 async def list_(
     bot: Bot,
     event: Event,
@@ -172,7 +172,7 @@ async def list_(
     await skland.finish("您可查询的森空岛签到账号如下：\n" + report_maker(all_subscribes, is_group))
 
 
-@skland_del.handle()
+@skland_del.handle(parameterless=[Depends(skland_session_extract)])
 async def del_1(
     bot: Bot,
     event: Event,
@@ -200,7 +200,7 @@ async def del_2(
     event: Event,
     state: T_State,
     matcher: AlconnaMatcher,
-    position: int = AlconnaArg("position"),
+    position: int,
     event_session: EventSession = Depends(skland_list_subscribes),
     db_session: AsyncSession = Depends(get_session),
 ):
@@ -217,7 +217,7 @@ async def del_2(
             """))
 
 
-@skland_update.handle()
+@skland_update.handle(parameterless=[Depends(skland_session_extract)])
 async def update_1(
     bot: Bot,
     event: Event,
@@ -254,7 +254,7 @@ async def update_2(
     identifier: str,
     matcher: AlconnaMatcher,
     state: T_State,
-    position: int = AlconnaArg("position"),
+    position: int,
     uid: str | None = None,
     token: str | None = None,
     note: str | None = None,
@@ -284,8 +284,7 @@ async def signin_all():
     await skland.finish("所有账号已经手动重新触发签到！")
 
 
-# 手动签到功能可以在各处使用
-@skland_signin.handle()
+@skland_signin.handle(parameterless=[Depends(skland_session_extract)])
 async def signin_1(
     bot: Bot,
     event: Event,
@@ -312,7 +311,7 @@ async def signin_2(
     event: Event,
     state: T_State,
     matcher: AlconnaMatcher,
-    position: int = AlconnaArg("position"),
+    position: int,
     event_session: EventSession = Depends(skland_list_subscribes),
     db_session: AsyncSession = Depends(get_session),
 ):

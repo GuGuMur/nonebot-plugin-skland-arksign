@@ -48,9 +48,6 @@ async def skland_list_subscribes(
         flag = True
         stmt = select(SklandSubscribe)
         result = (await db_session.scalars(stmt)).all()
-        if not result:
-            await matcher.finish("未能查询到任何账号，请检查")
-        state["all_subscribes"] = result
 
     # QQ群管理的list：返回当前群聊的所有绑定
     elif is_group and flag is False:
@@ -68,17 +65,15 @@ async def skland_list_subscribes(
 
         stmt = select(SklandSubscribe).where(SklandSubscribe.sendto.group_id == event_session.id2)
         result = (await db_session.scalars(stmt)).all()
-        if not result:
-            await matcher.finish("未能查询到任何账号，请检查")
-        state["all_subscribes"] = result
 
     # 普通用户的list：返回该用户绑定的所有账号
     else:
         stmt = select(SklandSubscribe)
         result: list[SklandSubscribe] = (await db_session.scalars(stmt)).all()
         result = [i for i in result if compare_user_info(i.user, event_session.dict())]
-        if not result:
-            await matcher.finish("未能查询到任何账号，请检查")
-        state["all_subscribes"] = result
+
+    if not result:
+        await matcher.finish("未能查询到任何账号，请检查")
+    state["all_subscribes"] = result
 
     return event_session
