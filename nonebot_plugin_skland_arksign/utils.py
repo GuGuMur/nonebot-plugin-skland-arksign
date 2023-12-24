@@ -15,8 +15,8 @@ def compare_user_info(dict1, dict2: dict[any, any]):
     print(type(dict1))
     print(dict1)
     print(dict2)
-    filter1 = {k: dict1[k] for k in includes if k.get(k,"False")}
-    filter2 = {k: dict2[k] for k in includes if k.get(k,"False")}
+    filter1 = {k: dict1[k] for k in includes if k.get(k, "False")}
+    filter2 = {k: dict2[k] for k in includes if k.get(k, "False")}
     return filter1 == filter2
 
 

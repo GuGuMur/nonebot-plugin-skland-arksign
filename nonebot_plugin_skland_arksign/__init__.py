@@ -11,6 +11,7 @@ require("nonebot_plugin_session_saa")
 from nonebot_plugin_saa import enable_auto_select_bot
 
 from .command import skland as skland
+
 # from .command import skland_del as skland_del
 # from .command import skland_list as skland_list
 # from .command import skland_update as skland_update
