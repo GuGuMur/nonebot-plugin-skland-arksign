@@ -9,8 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from nonebot_plugin_datastore import get_session
 from nonebot_plugin_saa import Text, PlatformTarget
 from nonebot_plugin_session_saa import get_saa_target
-from nonebot_plugin_alconna import AlconnaArg, UniMessage, AlconnaMatcher, on_alconna
-
+from nonebot_plugin_alconna import UniMessage, AlconnaMatcher, on_alconna
 from .sched import sched_sign
 from .signin import run_signin
 from .alc_parser import skland_cmd
@@ -30,19 +29,22 @@ skland = on_alconna(
     # use_cmd_sep=True,
     auto_send_output=True,
 )
+skland_add = skland.dispatch("add")
+skland_bind = skland.dispatch("bind")
 skland_list = skland.dispatch("list")
 skland_del = skland.dispatch("del")
 skland_update = skland.dispatch("update")
 skland_signin = skland.dispatch("signin")
+skland_signin_all = skland.dispatch("signin.identifier", "!all")
 
 
-@skland.assign("add")
+@skland_add.handle()
 async def add(
     state: T_State,
     uid: str,
     token: str | None = None,
     note: str | None = None,
-    event_session: EventSession = Depends(skland_list_subscribes),
+    event_session: EventSession = Depends(skland_session_extract),
     db_session: AsyncSession = Depends(get_session),
 ):
     logger.debug(f"匹配到的参数：{state}")
@@ -106,11 +108,11 @@ async def add(
         await skland.finish(f"立即执行签到操作完成！\n{runres.text}")
 
 
-@skland.assign("bind")
+@skland_bind.handle()
 async def bind(
     state: T_State,
     token: str,
-    event_session: EventSession = Depends(skland_list_subscribes),
+    event_session: EventSession = Depends(skland_session_extract),
     db_session: AsyncSession = Depends(get_session),
 ):
     logger.debug(f"匹配到的参数：{state}")
@@ -158,7 +160,7 @@ async def bind(
     await msg.send_to(PlatformTarget.deserialize(user))
 
 
-@skland_list.handle(parameterless=[Depends(skland_session_extract)])
+@skland_list.handle()
 async def list_(
     bot: Bot,
     event: Event,
@@ -172,14 +174,14 @@ async def list_(
     await skland.finish("您可查询的森空岛签到账号如下：\n" + report_maker(all_subscribes, is_group))
 
 
-@skland_del.handle(parameterless=[Depends(skland_session_extract)])
+@skland_del.handle()
 async def del_1(
     bot: Bot,
     event: Event,
     state: T_State,
     identifier: str,
     matcher: AlconnaMatcher,
-    position: AlconnaArg("position"),
+    position: int,
     event_session: EventSession = Depends(skland_list_subscribes),
     db_session: AsyncSession = Depends(get_session),
 ):
@@ -187,14 +189,16 @@ async def del_1(
     all_subscribes: list[SklandSubscribe] = state.get("all_subscribes")
 
     all_subscribes = [i for i in all_subscribes if (i.uid == identifier) | (i.note == identifier)]
+    state["all_subscribes"] = all_subscribes
+    await skland.send(len(all_subscribes))
     state["prompt"] = (
         "您可执行操作的森空岛签到账号如下：\n" + report_maker(all_subscribes, is_group) + "\n请输入对应序号完成操作！"
     )
-    if len(all_subscribes) == 1:
-        matcher.set_path_arg("position", 0)
+    # if len(all_subscribes) == 1:
+    #     matcher.set_path_arg("del.position", 0)
 
 
-@skland_del.got_path("position", prompt=UniMessage.template("{prompt}"))
+@skland_del.got_path("del.position", prompt=UniMessage.template("{prompt}"))
 async def del_2(
     bot: Bot,
     event: Event,
@@ -204,6 +208,8 @@ async def del_2(
     event_session: EventSession = Depends(skland_list_subscribes),
     db_session: AsyncSession = Depends(get_session),
 ):
+    if position >= len(state["all_subscribes"]):
+        await skland.reject("输入的序号超出了您所能控制的账号数，请重新输入！")
     result = state["all_subscribes"][position]
     uid = result.uid
     note = result.note or "无"
@@ -217,7 +223,7 @@ async def del_2(
             """))
 
 
-@skland_update.handle(parameterless=[Depends(skland_session_extract)])
+@skland_update.handle()
 async def update_1(
     bot: Bot,
     event: Event,
@@ -239,15 +245,16 @@ async def update_1(
     if not result:
         await skland.finish("未能使用uid或备注匹配到任何账号，请检查")
 
-    if len(result) == 1:
-        matcher.set_path_arg("position", 0)
+    # if len(result) == 1:
+    #     matcher.set_path_arg("update.position", 9)
+    #     await skland.send(repr(state))
     state["prompt"] = (
-        "以下是您能管理的所有账号：\n" + report_maker(result, is_group) + "请回复对应序号来完成您的 update 指令！"
+        "以下是您能管理的所有账号：\n" + report_maker(result, is_group) + "\n请回复对应序号来完成您的 update 指令！"
     )
     state["all_subscribes"] = result
 
 
-@skland_update.got_path("position", prompt=UniMessage.template("{prompt}"))
+@skland_update.got_path("update.position", prompt=UniMessage.template("{prompt}"))
 async def update_2(
     bot: Bot,
     event: Event,
@@ -261,6 +268,10 @@ async def update_2(
     event_session: EventSession = Depends(skland_list_subscribes),
     db_session: AsyncSession = Depends(get_session),
 ):
+    # await skland.send(str(position))
+    if position >= len(state["all_subscribes"]):
+        await skland.send(repr(state))
+        await skland.reject("输入的序号超出了您所能控制的账号数，请重新输入！")
     result = state["all_subscribes"][position]
     if uid:
         result.uid = uid
@@ -278,13 +289,13 @@ async def update_2(
             """))
 
 
-@skland_signin.assign("identifier", "!all")
+@skland_signin_all.handle()
 async def signin_all():
     await sched_sign()
     await skland.finish("所有账号已经手动重新触发签到！")
 
 
-@skland_signin.handle(parameterless=[Depends(skland_session_extract)])
+@skland_signin.handle()
 async def signin_1(
     bot: Bot,
     event: Event,
@@ -301,11 +312,11 @@ async def signin_1(
     state["prompt"] = (
         "您可执行操作的森空岛签到账号如下：\n" + report_maker(all_subscribes, is_group) + "\n请输入对应序号完成操作！"
     )
-    if len(all_subscribes) == 1:
-        matcher.set_path_arg("position", 0)
+    # if len(all_subscribes) == 1:
+    #     matcher.set_path_arg("signin.position", 0)
 
 
-@skland_signin.got_path("position", prompt=UniMessage.template("{prompt}"))
+@skland_signin.got_path("signin.position", prompt=UniMessage.template("{prompt}"))
 async def signin_2(
     bot: Bot,
     event: Event,
@@ -315,6 +326,8 @@ async def signin_2(
     event_session: EventSession = Depends(skland_list_subscribes),
     db_session: AsyncSession = Depends(get_session),
 ):
+    if position >= len(state["all_subscribes"]):
+        await skland.reject("输入的序号超出了您所能控制的账号数，请重新输入！")
     result = state["all_subscribes"][position]
     sign_res = await run_signin(uid=result.uid, token=result.token)
     await skland.finish(cleantext(f"""
