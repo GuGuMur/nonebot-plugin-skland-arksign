@@ -40,7 +40,7 @@ async def skland_list_subscribes(
     """
     根据用户组生成其能获取的订阅列表，文本生成逻辑应写在业务处
     """
-    event_session = skland_session_extract(bot, event, matcher, state)
+    event_session = await skland_session_extract(bot, event, matcher, state)
     is_group = state.get("is_group")
     flag: bool = False
     # SUPERUSER 的 list：返回全部
