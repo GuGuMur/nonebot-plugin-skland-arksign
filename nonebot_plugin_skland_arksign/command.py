@@ -10,6 +10,7 @@ from nonebot_plugin_datastore import get_session
 from nonebot_plugin_saa import Text, PlatformTarget
 from nonebot_plugin_session_saa import get_saa_target
 from nonebot_plugin_alconna import UniMessage, AlconnaMatcher, on_alconna
+
 from .sched import sched_sign
 from .signin import run_signin
 from .alc_parser import skland_cmd
