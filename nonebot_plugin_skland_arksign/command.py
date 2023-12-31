@@ -9,14 +9,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from nonebot_plugin_datastore import get_session
 from nonebot_plugin_saa import Text, PlatformTarget
 from nonebot_plugin_session_saa import get_saa_target
-from nonebot_plugin_alconna import UniMessage, AlconnaMatcher, on_alconna, AlconnaArg
+from nonebot_plugin_alconna import AlconnaArg, UniMessage, AlconnaMatcher, on_alconna
 
 from .sched import sched_sign
 from .signin import run_signin
 from .alc_parser import skland_cmd
 from .model import SklandSubscribe
 from .utils import cleantext, report_maker, compare_user_info
-from .depends import skland_list_subscribes, skland_session_extract, skland_is_group
+from .depends import skland_is_group, skland_list_subscribes, skland_session_extract
 
 SessionId1 = str
 BindUid = str
