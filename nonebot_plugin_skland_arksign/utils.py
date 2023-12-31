@@ -9,8 +9,6 @@ def cleantext(text: str) -> str:
 
 
 def compare_user_info(dict1, dict2: dict[any, any]):
-    # excludes = ["bot_id", "level", "id2", "id3"]
-    # includes = [i for i in dict2.keys() if i not in excludes]
     includes = ["bot_type", "platform", "id1"]
     filter1 = {k: dict1.get(k) for k in includes}
     filter2 = {k: dict2.get(k) for k in includes}
@@ -32,7 +30,7 @@ def report_maker(subscribes: list[SklandSubscribe], is_group: bool) -> str:
         report.append(cleantext(f"""
                 {n}：
                 UID：{i.uid}
-                TOKEN：{show_token(i.token,is_group)}
+                TOKEN：{show_token(i.token, is_group)}
                 备注：{i.note}
                 """))
     return "\n\n".join(report)

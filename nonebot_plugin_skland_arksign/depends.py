@@ -13,6 +13,15 @@ from .model import SklandSubscribe
 from .utils import compare_user_info
 
 
+def skland_is_group(bot: Bot, event: Event) -> bool:
+    """不用于会话处理的群消息判断"""
+    session = extract_session(bot, event)
+    if session.level != SessionLevel.LEVEL1:
+        if plugin_config.skland_arksign_allow_group:
+            return True
+    return False
+
+
 async def skland_session_extract(bot: Bot, event: Event, matcher: AlconnaMatcher, state: T_State) -> Session:
     """
     从当前会话中提取Session, 按照 plugin_config.skland_arksign_allow_group 的值判断是否允许群聊使用
@@ -38,7 +47,7 @@ async def skland_list_subscribes(
     根据用户组生成其能获取的订阅列表，文本生成逻辑应写在业务处
     """
     event_session = extract_session(bot, event)
-    is_group = plugin_config.skland_arksign_allow_group
+    is_group = skland_is_group(bot, event)
     flag: bool = False
     # SUPERUSER 的 list：返回全部
     if await SUPERUSER(bot, event):

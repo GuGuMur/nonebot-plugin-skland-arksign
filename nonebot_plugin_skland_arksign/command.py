@@ -9,14 +9,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from nonebot_plugin_datastore import get_session
 from nonebot_plugin_saa import Text, PlatformTarget
 from nonebot_plugin_session_saa import get_saa_target
-from nonebot_plugin_alconna import UniMessage, AlconnaMatcher, on_alconna
+from nonebot_plugin_alconna import UniMessage, AlconnaMatcher, on_alconna, AlconnaArg
 
 from .sched import sched_sign
 from .signin import run_signin
 from .alc_parser import skland_cmd
 from .model import SklandSubscribe
 from .utils import cleantext, report_maker, compare_user_info
-from .depends import skland_list_subscribes, skland_session_extract
+from .depends import skland_list_subscribes, skland_session_extract, skland_is_group
 
 SessionId1 = str
 BindUid = str
@@ -166,12 +166,14 @@ async def list_(
     bot: Bot,
     event: Event,
     state: T_State,
+    matcher: AlconnaMatcher,
     event_session: EventSession,
     db_session: AsyncSession = Depends(get_session),
 ):
-    is_group = state.get("is_group")
-    all_subscribes: list[SklandSubscribe] = state.get("all_subscribes")
-
+    is_group = skland_is_group(bot, event)
+    all_subscribes: list[SklandSubscribe] = await skland_list_subscribes(bot, event, matcher, db_session)
+    if not all_subscribes:
+        await skland.finish("当前没有绑定任何森空岛签到账号！")
     await skland.finish("您可查询的森空岛签到账号如下：\n" + report_maker(all_subscribes, is_group))
 
 
@@ -182,21 +184,22 @@ async def del_1(
     state: T_State,
     identifier: str,
     matcher: AlconnaMatcher,
-    position: int | None,
     event_session: EventSession,
     db_session: AsyncSession = Depends(get_session),
 ):
     all_subscribes = await skland_list_subscribes(bot, event, matcher, db_session)
-    is_group = state.get("is_group")
+    is_group = skland_is_group(bot, event)
 
     all_subscribes = [i for i in all_subscribes if (i.uid == identifier) | (i.note == identifier)]
+    if not all_subscribes:
+        await skland.finish("未能使用uid或备注匹配到任何账号，请检查")
     state["prompt"] = (
         "您可执行操作的森空岛签到账号如下：\n" + report_maker(all_subscribes, is_group) + "\n请输入对应序号完成操作！"
     )
 
     state["all_subscribes"] = all_subscribes
-    # if len(all_subscribes) == 1:
-    #     matcher.set_path_arg("del.position", 0)
+    if len(all_subscribes) == 1:
+        matcher.set_path_arg("del.position", 0)
 
 
 @skland_del.got_path("del.position", prompt=UniMessage.template("{prompt}"))
@@ -205,8 +208,8 @@ async def del_2(
     event: Event,
     state: T_State,
     matcher: AlconnaMatcher,
-    position: int | None,
     event_session: EventSession,
+    position: int | None = AlconnaArg("del.position"),
     db_session: AsyncSession = Depends(get_session),
 ):
     if position >= len(state["all_subscribes"]):
@@ -238,22 +241,21 @@ async def update_1(
     db_session: AsyncSession = Depends(get_session),
 ):
     # 动token的操作 还是自己来吧
-    is_group = state.get("is_group")
+    is_group = skland_is_group(bot, event)
     stmt = select(SklandSubscribe).where((SklandSubscribe.uid == identifier) | (SklandSubscribe.note == identifier))
-    result = (await db_session.scalars(stmt)).all()
+    all_subscribes = (await db_session.scalars(stmt)).all()
     if not await SUPERUSER(bot, event):
-        result = [i for i in result if compare_user_info(i.user, event_session.dict())]
-    if not result:
+        all_subscribes = [i for i in all_subscribes if compare_user_info(i.user, event_session.dict())]
+    if not all_subscribes:
         await skland.finish("未能使用uid或备注匹配到任何账号，请检查")
 
-    # if len(result) == 1:
-    #     matcher.set_path_arg("update.position", 9)
-    #     await skland.send(repr(state))
+    if len(all_subscribes) == 1:
+        matcher.set_path_arg("update.position", 0)
     state["prompt"] = (
-        "您可执行操作的森空岛签到账号如下：\n" + report_maker(result, is_group) + "\n请输入对应序号完成操作！"
+        "您可执行操作的森空岛签到账号如下：\n" + report_maker(all_subscribes, is_group) + "\n请输入对应序号完成操作！"
     )
 
-    state["all_subscribes"] = result
+    state["all_subscribes"] = all_subscribes
 
 
 @skland_update.got_path("update.position", prompt=UniMessage.template("{prompt}"))
@@ -263,16 +265,14 @@ async def update_2(
     identifier: str,
     matcher: AlconnaMatcher,
     state: T_State,
-    position: int | None,
     event_session: EventSession,
     uid: str | None = None,
     token: str | None = None,
     note: str | None = None,
+    position: int | None = AlconnaArg("update.position"),
     db_session: AsyncSession = Depends(get_session),
 ):
-    # await skland.send(str(position))
     if position >= len(state["all_subscribes"]):
-        # await skland.send(repr(state))
         await skland.reject("输入的序号超出了您所能控制的账号数，请重新输入！")
     result = state["all_subscribes"][position]
     if uid:
@@ -307,15 +307,17 @@ async def signin_1(
     event_session: EventSession,
     db_session: AsyncSession = Depends(get_session),
 ):
-    is_group = state.get("is_group")
-    all_subscribes = await skland_list_subscribes(bot, event, matcher, state, db_session)
+    is_group = skland_is_group(bot, event)
+    all_subscribes = await skland_list_subscribes(bot, event, matcher, db_session)
     all_subscribes = [i for i in all_subscribes if (i.uid == identifier) | (i.note == identifier)]
+    if not all_subscribes:
+        await skland.finish("未能使用uid或备注匹配到任何账号，请检查")
     state["prompt"] = (
         "您可执行操作的森空岛签到账号如下：\n" + report_maker(all_subscribes, is_group) + "\n请输入对应序号完成操作！"
     )
     state["all_subscribes"] = all_subscribes
-    # if len(all_subscribes) == 1:
-    #     matcher.set_path_arg("signin.position", 0)
+    if len(all_subscribes) == 1:
+        matcher.set_path_arg("signin.position", 0)
 
 
 @skland_signin.got_path("signin.position", prompt=UniMessage.template("{prompt}"))
@@ -324,8 +326,8 @@ async def signin_2(
     event: Event,
     state: T_State,
     matcher: AlconnaMatcher,
-    position: int | None,
     event_session: EventSession,
+    position: int | None = AlconnaArg("signin.position"),
     db_session: AsyncSession = Depends(get_session),
 ):
     if position >= len(state["all_subscribes"]):
