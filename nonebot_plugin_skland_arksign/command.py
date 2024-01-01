@@ -37,6 +37,7 @@ skland_del = skland.dispatch("del")
 skland_update = skland.dispatch("update")
 skland_signin = skland.dispatch("signin")
 skland_signin_all = skland.dispatch("signin.identifier", "!all")
+skland_rebind = skland.dispatch("rebind")
 
 
 @skland_add.handle()
@@ -338,3 +339,25 @@ async def signin_2(
             [森空岛明日方舟签到器]已为账号{result.uid}手动签到！
             信息如下：{sign_res.text}
             """))
+
+
+@skland_rebind.handle()
+async def rebind(
+    state: T_State,
+    uid: str,
+    event_session: EventSession,
+    db_session: AsyncSession = Depends(get_session),
+):
+    stmt = select(SklandSubscribe).where(SklandSubscribe.uid == uid)
+    result: SklandSubscribe | None = await db_session.scalar(stmt)
+    if not result:
+        await skland.finish("没有找到需要重新绑定的账户，请检查")
+    old_user = result.sendto
+    now_sendto_dict = get_saa_target(event_session).dict()
+    if old_user == now_sendto_dict:
+        result.user = event_session.dict()
+        await db_session.flush()
+        await db_session.commit()
+        await skland.finish(f"已完成UID:{uid}的森空岛账号的用户信息重绑定！")
+    else:
+        await skland.finish("该账户此前并非您所有，请检查")

@@ -172,13 +172,26 @@ skland list
 ```
 
 
-### 更新账号
+### 更新账号数据
 
 ```shell
 skland update 游戏账号ID/备注 [-u 可选UID] [-t 可选token] [-n 可选备注]
 ```
 > [!WARNING]
 > 因可能涉及token变更，本指令只允许[超级用户](https://nonebot.dev/docs/appendices/config#superusers)或单独的用户删除自己能处理的账户
+
+
+### 重新绑定账号对应的用户数据模型
+
+在更新至[`>=v0.7.0`](https://pypi.org/project/nonebot-plugin-skland-arksign/0.7.0/)(PR `#39`) 后，使用这一指令重新绑定账号对应的用户数据模型
+
+```shell
+skland rebind 游戏账号ID
+```
+
+> [!WARNING]
+> 因涉及用户数据模型变更，本指令只允许用户处理自己的账号，**超级用户亦只可以处理自己的账号**
+
 
 ### 立即手动签到
 

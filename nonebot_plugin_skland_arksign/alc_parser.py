@@ -16,6 +16,11 @@ skland_cmd = Alconna(
         help_text="在私聊绑定一个在群聊中添加的签到账号",
     ),
     Subcommand(
+        "rebind",
+        Args["uid", str],
+        help_text="更新数据库结构后重新绑定账户的信息",
+    ),
+    Subcommand(
         "list",
         help_text="列出所有签到账号",
     ),
