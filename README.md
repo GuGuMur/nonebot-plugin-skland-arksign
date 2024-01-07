@@ -159,7 +159,11 @@ skland del 游戏账号ID/备注
 ```
 
 > [!WARNING]
-> 注意：非[超级用户](https://nonebot.dev/docs/appendices/config#superusers)只可删除自己绑定的账号，超级用户可以删除bot数据库内所有账号
+> 超级用户可以删除bot数据库内的任意账号
+>
+> [OneBot V11](https://onebot.adapters.nonebot.dev/) 适配器中的 QQ 群管理员以上权限的用户可以在群内删除本群内的任意账号
+>
+> 非[超级用户](https://nonebot.dev/docs/appendices/config#superusers)只可在私聊中删除自己绑定的账号
 
 ### 列出账号
 
@@ -167,17 +171,25 @@ skland del 游戏账号ID/备注
 skland list
 ```
 
-> [!WARNING]
-> 仅超级用户可用
-
-### 更新账号
+### 更新账号数据
 
 ```shell
 skland update 游戏账号ID/备注 [-u 可选UID] [-t 可选token] [-n 可选备注]
 ```
 
 > [!WARNING]
-> 仅超级用户可用
+> 因可能涉及token变更，本指令只允许[超级用户](https://nonebot.dev/docs/appendices/config#superusers)或单独的用户删除自己能处理的账户
+
+### 重新绑定账号对应的用户数据模型
+
+在更新至[`>=v0.7.0`](https://pypi.org/project/nonebot-plugin-skland-arksign/0.7.0/)([#39](https://github.com/GuGuMur/nonebot-plugin-skland-arksign/issues/39)) 后，使用这一指令重新绑定账号对应的用户数据模型
+
+```shell
+skland rebind 游戏账号ID
+```
+
+> [!WARNING]
+> 因涉及用户数据模型变更，本指令只允许用户处理自己的账号，**超级用户亦只可以处理自己的账号**
 
 ### 立即手动签到
 
@@ -200,11 +212,7 @@ skland signin !all
 
 ## ♿️ FAQ
 
-1. 为什么这么多仅超级用户可用的命令？
-   因为当前的数据库模型没有记录添加者的信息，只记录了需要发送到的用户信息，所以暂时只能通过超级用户来操作
-   未来可能会加入权限系统，以及增加数据库模型字段
-
-2. 使用例子？
+1. 使用例子？
 
    ```shell
    skland add 114514 1919810 -n hhhaaa
@@ -218,22 +226,23 @@ skland signin !all
    skland signin 1919810
    ```
 
-3. 为什么我刚获取token并绑定好，一会就用不了了？
+2. 为什么我刚获取token并绑定好，一会就用不了了？
 
 - 当您使用浏览器获取token时，**不要去登出账号，否则鹰角网络通行证会失效！**
 - 如果要添加多个账号，请删除浏览器缓存。或者使用浏览器自带的隐私浏览模式，拿到Token后，关闭隐私窗口，再登录一次即可
 - 注意：电脑在用密码登录后，手机客户端有可能会被挤掉，但一定不要点客户端里的清理会话，否则所有的登录状态**都会被清空！**
 
-4. 报错`{'code': 10001, 'message': '当前用户未经授权'}`？<!-- markdownlint-disable -->
+3. 报错`{'code': 10001, 'message': '当前用户未经授权'}`？<!-- markdownlint-disable -->
 
 - 参考 [#更新账号](#更新账号) 一栏重新绑定游戏账号ID
 - 参考issue：[#29](https://github.com/GuGuMur/nonebot-plugin-skland-arksign/issues/29)
 
-5. 报错`Client error '400 Bad Request' for url xxx`？<!-- markdownlint-disable -->
+4. 报错`Client error '400 Bad Request' for url xxx`？<!-- markdownlint-disable -->
 
 - 请检查token复制过程中是否有错漏，以及游戏账号ID是否与您输入的token相符
+- 参考[#立即手动签到](#立即手动签到) 一栏执行手动签到操作
 
-6. 报错`Client error '401 Unauthorized' for url xxx`？<!-- markdownlint-disable -->
+5. 报错`Client error '401 Unauthorized' for url xxx`？<!-- markdownlint-disable -->
 
 - 参考 [#配置](#配置) 一栏修改`skland_timestamp_delay`的数值
   - 参考值：`5`，`10`

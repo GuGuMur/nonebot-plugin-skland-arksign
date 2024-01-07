@@ -11,7 +11,8 @@ class SklandSubscribe(Model):
     __table_args__ = {"extend_existing": True}
 
     uid: Mapped[str] = mapped_column(String, primary_key=True, doc="森空岛账号ID")
-    user: Mapped[dict] = mapped_column(JSON().with_variant(JSONB, "postgresql"), doc="订阅用户信息")
+    user: Mapped[dict] = mapped_column(JSON().with_variant(JSONB, "postgresql"), doc="订阅用户信息", nullable=True)
+    sendto: Mapped[dict] = mapped_column(JSON().with_variant(JSONB, "postgresql"), doc="发送位置", nullable=True)
     cred: Mapped[str] = mapped_column(String, doc="森空岛账号CRED")
     token: Mapped[str] = mapped_column(String, doc="森空岛账号TOKEN", nullable=True)
-    note: Mapped[str] = mapped_column(String, doc="备注", nullable=True, unique=True)
+    note: Mapped[str] = mapped_column(String, doc="备注", nullable=True)
