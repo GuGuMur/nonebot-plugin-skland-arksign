@@ -41,4 +41,4 @@ jobs:
           git remote set-url origin https://${{ secrets.GH_PAT }}@github.com/GuGuMur/nonebot-plugin-skland-arksign.git
           git add .
           git diff-index --quiet HEAD || git commit -m ":memo: Update changelog"
-          git push
+          git push -f

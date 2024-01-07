@@ -33,4 +33,4 @@ jobs:
           git add .
           git commit -m ":bookmark: Release $(poetry version -s)"
           git tag ${{ env.TAG_NAME }}
-          git push && git push --tags
+          git push -f && git push -f --tags
