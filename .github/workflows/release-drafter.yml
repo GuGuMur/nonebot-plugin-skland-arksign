@@ -19,6 +19,9 @@ jobs:
       cancel-in-progress: true
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: main
+          token: ${{ secrets.BOT_TOKEN }}
 
       - uses: release-drafter/release-drafter@v5
         id: release-drafter
@@ -36,8 +39,9 @@ jobs:
 
       - name: Commit and Push
         run: |
-          git config user.name github-actions[bot]
-          git config user.email github-actions[bot]@users.noreply.github.com
+          git config user.name BotLunacub
+          git config user.email BotLunacub@users.noreply.github.com
+          git remote set-url origin https://${{ secrets.GH_PAT }}@github.com/GuGuMur/nonebot-plugin-skland-arksign.git
           git add .
           git diff-index --quiet HEAD || git commit -m ":memo: Update changelog"
-          git push
+          git push -f
