@@ -183,7 +183,7 @@ skland update 游戏账号ID/备注 [-u 可选UID] [-t 可选token] [-n 可选�
 
 ### 重新绑定账号对应的用户数据模型
 
-在更新至[`>=v0.7.0`](https://pypi.org/project/nonebot-plugin-skland-arksign/0.7.0/)(PR `#39`) 后，使用这一指令重新绑定账号对应的用户数据模型
+在更新至[`>=v0.7.0`](https://pypi.org/project/nonebot-plugin-skland-arksign/0.7.0/)([#39](https://github.com/GuGuMur/nonebot-plugin-skland-arksign/issues/39)) 后，使用这一指令重新绑定账号对应的用户数据模型
 
 ```shell
 skland rebind 游戏账号ID

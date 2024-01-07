@@ -77,7 +77,7 @@ async def skland_list_subscribes(
     else:
         stmt = select(SklandSubscribe)
         result: list[SklandSubscribe] = (await db_session.scalars(stmt)).all()
-        result = [i for i in result if compare_user_info(i.user, event_session.dict())]
+        result = [i for i in result if compare_user_info(i, event_session)]
 
     if not result:
         await matcher.finish("未能查询到任何账号，请检查")

@@ -69,8 +69,7 @@ async def add(
         async with db_session.begin():
             stmt = select(SklandSubscribe).where(SklandSubscribe.note == note)
             result: list[SklandSubscribe] = (await db_session.scalars(stmt)).all()
-            result = [i for i in result if compare_user_info(i.user, event_session_dict)]
-            if result:
+            if any(i for i in result if compare_user_info(i, event_session)):
                 await skland.finish("该note已经被您注册，请检查")
 
     # 3. 绑定到数据库里
@@ -246,7 +245,7 @@ async def update_1(
     stmt = select(SklandSubscribe).where((SklandSubscribe.uid == identifier) | (SklandSubscribe.note == identifier))
     all_subscribes = (await db_session.scalars(stmt)).all()
     if not await SUPERUSER(bot, event):
-        all_subscribes = [i for i in all_subscribes if compare_user_info(i.user, event_session.dict())]
+        all_subscribes = [i for i in all_subscribes if compare_user_info(i, event_session)]
     if not all_subscribes:
         await skland.finish("未能使用uid或备注匹配到任何账号，请检查")
 

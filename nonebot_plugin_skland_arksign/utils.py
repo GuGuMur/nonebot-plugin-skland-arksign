@@ -1,3 +1,5 @@
+from nonebot_plugin_session import EventSession
+
 from .model import SklandSubscribe
 
 
@@ -8,20 +10,19 @@ def cleantext(text: str) -> str:
     return result
 
 
-def compare_user_info(dict1, dict2: dict[any, any]):
+def compare_user_info(dict1: SklandSubscribe, dict2: EventSession):
     includes = ["bot_type", "platform", "id1"]
-    filter1 = {k: dict1.get(k) for k in includes}
-    filter2 = {k: dict2.get(k) for k in includes}
+    filter1 = {k: dict1.user.get(k) for k in includes}
+    filter2 = {k: dict2.__dict__.get(k) for k in includes}
     return filter1 == filter2
 
 
 def show_token(token: str, is_group: bool) -> str:
     if not token:
         return "未绑定"
-    else:
-        if is_group:
-            return "已绑定"
-        return token
+    elif is_group:
+        return "已绑定"
+    return token
 
 
 def report_maker(subscribes: list[SklandSubscribe], is_group: bool) -> str:
