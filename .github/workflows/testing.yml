@@ -8,14 +8,14 @@ on:
       - nonebot_plugin_skland_arksign/**
       - tests/**
       - pyproject.toml
-      - poetry.lock
+      - pdm.lock
       - .github/**
   pull_request:
     paths:
       - nonebot_plugin_skland_arksign/**
       - tests/**
       - pyproject.toml
-      - poetry.lock
+      - pdm.lock
       - .github/**
 
 concurrency:
@@ -36,7 +36,7 @@ jobs:
       PYTHON_VERSION: ${{ matrix.python-version }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup Python environment
         uses: ./.github/actions/setup-python
