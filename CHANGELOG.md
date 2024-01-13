@@ -32,6 +32,7 @@
 
 ### Bug 修复
 
+- :green_heart: release trigger 使用pdm获取版本 [@AzideCupric](https://github.com/AzideCupric) ([#49](https://github.com/GuGuMur/nonebot-plugin-skland-arksign/pull/49))
 - :bug: httpx post 参数使用json而非data [@AzideCupric](https://github.com/AzideCupric) ([#48](https://github.com/GuGuMur/nonebot-plugin-skland-arksign/pull/48))
 
 ## v0.6.4
