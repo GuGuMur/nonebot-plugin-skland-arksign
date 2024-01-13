@@ -30,6 +30,10 @@
 - 🐛 启用auto_select_bot [@AzideCupric](https://github.com/AzideCupric) ([#9](https://github.com/GuGuMur/nonebot-plugin-skland-arksign/pull/9))
 - ♻️ 使用saa [@AzideCupric](https://github.com/AzideCupric) ([#1](https://github.com/GuGuMur/nonebot-plugin-skland-arksign/pull/1))
 
+### Bug 修复
+
+- :bug: httpx post 参数使用json而非data [@AzideCupric](https://github.com/AzideCupric) ([#48](https://github.com/GuGuMur/nonebot-plugin-skland-arksign/pull/48))
+
 ## v0.6.4
 
 ### 新功能
