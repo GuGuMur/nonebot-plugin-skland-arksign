@@ -12,9 +12,14 @@ class _CONSTANTS:
     @property
     def REQUEST_HEADERS_BASE(self) -> dict[str, str]:
         return {
-            "User-Agent": "Skland/1.5.1 (com.hypergryph.skland; build:100501001; Android 34; ) Okhttp/4.11.0",
+            "User-Agent": "Skland/1.5.1 (com.hypergryph.skland; build:100501001; Android 33; ) Okhttp/4.11.0",
             "Accept-Encoding": "gzip",
             "Connection": "close",
+            "Origin": "https://www.skland.com",
+            "Referer": "https://www.skland.com/",
+            "Content-Type": "application/json; charset=utf-8",
+            "manufacturer": "Xiaomi",
+            "os": "33",
         }
 
     @property
