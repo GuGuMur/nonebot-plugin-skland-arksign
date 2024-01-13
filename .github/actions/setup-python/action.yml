@@ -18,3 +18,8 @@ runs:
 
     - name: Setup PDM
       uses: pdm-project/setup-pdm@v3
+
+    - name: Configure PDM
+      shell: bash
+      run: |
+        pdm config check_update false
