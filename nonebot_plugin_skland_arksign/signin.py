@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from collections import defaultdict
 from urllib import parse as URLParse
 
+from nonebot import logger
 from httpx import AsyncClient
 
 from .constants import CONSTANTS
@@ -74,7 +75,7 @@ async def get_grant_code(token: str) -> str:
     data = {"appCode": CONSTANTS.APP_CODE, "token": token, "type": 0}
 
     async with AsyncClient() as client:
-        response = await client.post(CONSTANTS.GRANT_CODE_URL, headers=CONSTANTS.REQUEST_HEADERS_BASE, data=data)
+        response = await client.post(CONSTANTS.GRANT_CODE_URL, headers=CONSTANTS.REQUEST_HEADERS_BASE, json=data)
         response.raise_for_status()
         resp = response.json()
         if resp["status"] != 0:
@@ -86,7 +87,7 @@ async def get_cred_resp(grant_code: str) -> dict[str, Any]:
     data = {"code": grant_code, "kind": 1}
 
     async with AsyncClient() as client:
-        response = await client.post(CONSTANTS.CRED_CODE_URL, headers=CONSTANTS.REQUEST_HEADERS_BASE, data=data)
+        response = await client.post(CONSTANTS.CRED_CODE_URL, headers=CONSTANTS.REQUEST_HEADERS_BASE, json=data)
         response.raise_for_status()
         resp = response.json()
         if resp["code"] != 0:
@@ -166,4 +167,5 @@ async def run_signin(uid: str, token: str):
     try:
         return await _run_signin(uid, token)
     except Exception as e:
+        logger.exception(f"签到失败：{e}")
         return SignResult(False, f"签到失败：{e}")
