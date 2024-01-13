@@ -1,6 +1,6 @@
 # Change Log
 
-## 最近更新
+## v0.6.5
 
 - Release: v0.6.5 [@AzideCupric](https://github.com/AzideCupric) ([#50](https://github.com/GuGuMur/nonebot-plugin-skland-arksign/pull/50))
 - :green_heart: 修改 CI [@BotLunacub](https://github.com/BotLunacub) ([#46](https://github.com/GuGuMur/nonebot-plugin-skland-arksign/pull/46))
