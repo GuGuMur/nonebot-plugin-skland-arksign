@@ -2,6 +2,7 @@
 
 ## 最近更新
 
+- Release: v0.6.5 [@AzideCupric](https://github.com/AzideCupric) ([#50](https://github.com/GuGuMur/nonebot-plugin-skland-arksign/pull/50))
 - :green_heart: 修改 CI [@BotLunacub](https://github.com/BotLunacub) ([#46](https://github.com/GuGuMur/nonebot-plugin-skland-arksign/pull/46))
 - :green_heart: CI 使用机器人账户 [@GuGuMur](https://github.com/GuGuMur) ([#45](https://github.com/GuGuMur/nonebot-plugin-skland-arksign/pull/45))
 - :arrow_up: auto update by pre-commit hooks [@pre-commit-ci](https://github.com/pre-commit-ci) ([#40](https://github.com/GuGuMur/nonebot-plugin-skland-arksign/pull/40))
