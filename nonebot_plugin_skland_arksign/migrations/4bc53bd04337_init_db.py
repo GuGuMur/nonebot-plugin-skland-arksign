@@ -1,8 +1,8 @@
 """init db
 
-迁移 ID: 82097bf345fd
+迁移 ID: 4bc53bd04337
 父迁移:
-创建时间: 2024-01-14 15:14:45.935765
+创建时间: 2024-01-14 17:39:41.845932
 
 """
 
@@ -14,7 +14,7 @@ import sqlalchemy as sa
 from alembic import op
 from sqlalchemy.dialects import postgresql
 
-revision: str = "82097bf345fd"
+revision: str = "4bc53bd04337"
 down_revision: str | Sequence[str] | None = None
 branch_labels: str | Sequence[str] | None = ("nonebot_plugin_skland_arksign",)
 depends_on: str | Sequence[str] | None = None
