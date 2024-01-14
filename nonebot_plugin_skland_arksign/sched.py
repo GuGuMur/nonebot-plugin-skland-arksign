@@ -3,9 +3,9 @@ from typing import Any
 
 from sqlalchemy import select
 from nonebot.log import logger
+from nonebot_plugin_orm import get_session
 from nonebot_plugin_apscheduler import scheduler
 from nonebot_plugin_saa import Text, PlatformTarget
-from nonebot_plugin_datastore.db import create_session
 
 from .model import SklandSubscribe
 from .signin import SignResult, run_signin
@@ -18,7 +18,7 @@ Result = dict[str, Any]
 async def sched_sign():
     logger.info("森空岛签到任务开始执行！")
     stmt = select(SklandSubscribe)
-    async with create_session() as session:
+    async with get_session() as session:
         result = await session.scalars(stmt)
         subscribes = result.all()
 
