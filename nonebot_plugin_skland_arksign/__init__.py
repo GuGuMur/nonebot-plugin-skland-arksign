@@ -10,6 +10,7 @@ require("nonebot_plugin_session_saa")
 
 from nonebot_plugin_saa import enable_auto_select_bot
 
+from . import migrations
 from .command import skland as skland
 from .sched import scheduler as scheduler
 
@@ -22,4 +23,7 @@ __plugin_meta__ = PluginMetadata(
     type="application",
     homepage="https://github.com/GuGuMur/nonebot-plugin-skland-arksign",
     supported_adapters=inherit_supported_adapters("nonebot_plugin_saa", "nonebot_plugin_session"),
+    extra={
+        "orm_version_location": migrations,
+    },
 )
