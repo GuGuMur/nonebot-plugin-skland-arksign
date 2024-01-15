@@ -5,8 +5,7 @@ from nonebot.typing import T_State
 from nonebot.adapters import Bot, Event
 from nonebot.permission import SUPERUSER
 from nonebot_plugin_alconna import on_alconna
-from sqlalchemy.ext.asyncio import AsyncSession
-from nonebot_plugin_datastore import get_session
+from nonebot_plugin_orm import async_scoped_session
 from nonebot_plugin_saa import Text, PlatformTarget
 from nonebot_plugin_session_saa import get_saa_target
 from nonebot_plugin_session import EventSession, extract_session
@@ -36,10 +35,10 @@ skland = on_alconna(
 async def add(
     state: T_State,
     uid: str,
+    db_session: async_scoped_session,
     token: str | None = None,
     note: str | None = None,
     event_session: EventSession = Depends(skland_session_extract),
-    db_session: AsyncSession = Depends(get_session),
 ):
     logger.debug(f"匹配到的参数：{state}")
     user_account = get_saa_target(event_session)
@@ -94,8 +93,8 @@ async def add(
 async def bind(
     state: T_State,
     token: str,
+    db_session: async_scoped_session,
     event_session: EventSession = Depends(skland_session_extract),
-    db_session: AsyncSession = Depends(get_session),
 ):
     logger.debug(f"匹配到的参数：{state}")
     if not event_session.id1:
@@ -148,8 +147,8 @@ async def del_(
     bot: Bot,
     event: Event,
     identifier: str,
+    db_session: async_scoped_session,
     event_session: EventSession = Depends(extract_session),
-    db_session: AsyncSession = Depends(get_session),
 ):
     # identifier 可以是uid或者备注, 需要都尝试一下
     stmt = select(SklandSubscribe).where((SklandSubscribe.uid == identifier) | (SklandSubscribe.note == identifier))
@@ -183,7 +182,7 @@ async def list_(
     bot: Bot,
     event: Event,
     state: T_State,
-    db_session: AsyncSession = Depends(get_session),
+    db_session: async_scoped_session,
 ):
     if not await SUPERUSER(bot, event):
         await skland.finish("您无权查看账号列表！")
@@ -220,10 +219,10 @@ async def update(
     bot: Bot,
     event: Event,
     identifier: str,
+    db_session: async_scoped_session,
     uid: str | None = None,
     token: str | None = None,
     note: str | None = None,
-    db_session: AsyncSession = Depends(get_session),
 ):
     if not await SUPERUSER(bot, event):
         await skland.finish("您无权更新账号信息！")
@@ -261,7 +260,7 @@ async def signin(
     bot: Bot,
     event: Event,
     identifier: str,
-    db_session: AsyncSession = Depends(get_session),
+    db_session: async_scoped_session,
 ):
     if not await SUPERUSER(bot, event):
         await skland.finish("您无权手动签到！")
