@@ -1,14 +1,15 @@
-from pytest_mock import MockerFixture
-from nonebot import get_adapter
 from nonebug import App
+from nonebot import get_adapter
+from pytest_mock import MockerFixture
 
 
 async def test_list(app: App, mocker: MockerFixture):
-    from nonebot.adapters.onebot.v11 import Adapter, Bot, Message
+    from nonebot_plugin_orm import get_session
+    from nonebot_plugin_saa import TargetQQPrivate
+    from nonebot.adapters.onebot.v11 import Bot, Adapter, Message
+
     from nonebot_plugin_skland_arksign.model import SklandSubscribe
     from nonebot_plugin_skland_arksign.command import skland as skland_cmd
-    from nonebot_plugin_saa import TargetQQPrivate
-    from nonebot_plugin_orm import get_session
 
     from .fake import fake_private_message_event_v11
 

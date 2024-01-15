@@ -2,15 +2,13 @@ from typing import TYPE_CHECKING, Literal
 
 if TYPE_CHECKING:
     from nonebot.adapters.onebot.v11 import GroupMessageEvent as GroupMessageEventV11
-    from nonebot.adapters.onebot.v11 import (
-        PrivateMessageEvent as PrivateMessageEventV11,
-    )
+    from nonebot.adapters.onebot.v11 import PrivateMessageEvent as PrivateMessageEventV11
 
 
 def fake_group_message_event_v11(**field) -> "GroupMessageEventV11":
-    from nonebot.adapters.onebot.v11 import GroupMessageEvent, Message
-    from nonebot.adapters.onebot.v11.event import Sender
     from pydantic import create_model
+    from nonebot.adapters.onebot.v11.event import Sender
+    from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent
 
     _Fake = create_model("_Fake", __base__=GroupMessageEvent)
 
@@ -40,9 +38,9 @@ def fake_group_message_event_v11(**field) -> "GroupMessageEventV11":
 
 
 def fake_private_message_event_v11(**field) -> "PrivateMessageEventV11":
-    from nonebot.adapters.onebot.v11 import Message, PrivateMessageEvent
-    from nonebot.adapters.onebot.v11.event import Sender
     from pydantic import create_model
+    from nonebot.adapters.onebot.v11.event import Sender
+    from nonebot.adapters.onebot.v11 import Message, PrivateMessageEvent
 
     _Fake = create_model("_Fake", __base__=PrivateMessageEvent)
 
