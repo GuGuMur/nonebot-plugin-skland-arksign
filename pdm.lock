@@ -5,7 +5,7 @@
 groups = ["default", "dev", "test"]
 strategy = ["cross_platform"]
 lock_version = "4.4.1"
-content_hash = "sha256:5d14e49f19fe88417bcd8737d60cfc9b7092135d0a2ee9670eb31e640e093a38"
+content_hash = "sha256:4ee05c3d814bab71d298c2e2ae06c7707a56ad3179a4e421ade7424e04840106"
 
 [[package]]
 name = "aiosqlite"
@@ -1042,6 +1042,21 @@ dependencies = [
 files = [
     {file = "nonebug-0.3.5-py3-none-any.whl", hash = "sha256:588831b08b3ea42d058874214bedae646e2ab8c1ec4ae1540ff789873107a8fa"},
     {file = "nonebug-0.3.5.tar.gz", hash = "sha256:4d4bf9448cd1cbfaaabaab73dbe4ac8757e86dd92a41ef79cdece8dd61e724e2"},
+]
+
+[[package]]
+name = "nonebug-saa"
+version = "0.2.2"
+requires_python = ">=3.8,<4.0"
+summary = "A nonebug helper for nonebot-plugin-send-anything-anything"
+dependencies = [
+    "nonebot-plugin-send-anything-anywhere>=0.2.4",
+    "nonebug<0.4.0,>=0.3.1",
+    "pytest-mock<4.0.0,>=3.10.0",
+]
+files = [
+    {file = "nonebug_saa-0.2.2-py3-none-any.whl", hash = "sha256:bec2512856243e7a4191a502b34ce9580882cbd84e0e42cfe2323d3e09e5d5e1"},
+    {file = "nonebug_saa-0.2.2.tar.gz", hash = "sha256:bbfb993cc04ce3b9589d7d7214b8d2e7f2d79bd3d7cfd26954ea3f0c1f0d864d"},
 ]
 
 [[package]]
