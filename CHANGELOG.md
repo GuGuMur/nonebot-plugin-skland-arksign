@@ -1,5 +1,9 @@
 # Change Log
 
+## 最近更新
+
+- 💥 迁移到 nb orm [@AzideCupric](https://github.com/AzideCupric) ([#51](https://github.com/GuGuMur/nonebot-plugin-skland-arksign/pull/51))
+
 ## v0.6.5
 
 - Release: v0.6.5 [@AzideCupric](https://github.com/AzideCupric) ([#50](https://github.com/GuGuMur/nonebot-plugin-skland-arksign/pull/50))
