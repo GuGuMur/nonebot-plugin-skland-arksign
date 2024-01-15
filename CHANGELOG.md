@@ -2,6 +2,7 @@
 
 ## 最近更新
 
+- :bookmark: bump version 0.7.0b1 [@AzideCupric](https://github.com/AzideCupric) ([#52](https://github.com/GuGuMur/nonebot-plugin-skland-arksign/pull/52))
 - 💥 迁移到 nb orm [@AzideCupric](https://github.com/AzideCupric) ([#51](https://github.com/GuGuMur/nonebot-plugin-skland-arksign/pull/51))
 
 ## v0.6.5
