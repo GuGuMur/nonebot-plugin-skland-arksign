@@ -69,16 +69,18 @@ async def skland_list_subscribes(
         if not (await GROUP_ADMIN(bot, event) or await GROUP_OWNER(bot, event)):
             await matcher.finish("您不是本群的管理员或群主，请通过私聊获取您的个人绑定记录！")
 
-        stmt = select(SklandSubscribe)
+        stmt = select(SklandSubscribe).where(SklandSubscribe.sendto["group_to"]==event_session.id2)
         result = (await db_session.scalars(stmt)).all()
-        result = [i for i in result if i.sendto.get("group_to") == event_session.id2]
+        # result = [i for i in result if i.sendto.get("group_to") == event_session.id2]
 
     # 普通用户的list：返回该用户绑定的所有账号
     else:
-        stmt = select(SklandSubscribe)
-        result: list[SklandSubscribe] = (await db_session.scalars(stmt)).all()
-        result = [i for i in result if compare_user_info(i, event_session)]
-
+        stmt = select(SklandSubscribe).where(SklandSubscribe.user_feature == {
+            "bot_type": event_session.bot_type,
+            "platform": event_session.platform,
+            "id1": event_session.id1,
+        })
+        result = (await db_session.execute(stmt)).all()
     if not result:
         await matcher.finish("未能查询到任何账号，请检查")
     return result

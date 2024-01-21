@@ -11,10 +11,13 @@ def cleantext(text: str) -> str:
 
 
 def compare_user_info(dict1: SklandSubscribe, dict2: EventSession):
+    # print(type(dict1))
     includes = ["bot_type", "platform", "id1"]
-    filter1 = {k: dict1.user.get(k) for k in includes}
+    # print(repr( dict1.user))
+    # print(dict2.__dict__)
+    # filter1 = {k: getattr(dict1.user, k) for k in includes}
     filter2 = {k: dict2.__dict__.get(k) for k in includes}
-    return filter1 == filter2
+    return dict1.user_feature == filter2
 
 
 def show_token(token: str, is_group: bool) -> str:

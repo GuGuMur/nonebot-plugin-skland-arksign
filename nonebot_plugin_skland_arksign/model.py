@@ -16,3 +16,11 @@ class SklandSubscribe(Model):
     cred: Mapped[str] = mapped_column(String, doc="森空岛账号CRED")
     token: Mapped[str] = mapped_column(String, doc="森空岛账号TOKEN", nullable=True)
     note: Mapped[str] = mapped_column(String, doc="备注", nullable=True)
+
+    @property
+    def user_feature(self) -> dict[str, any]:
+        return {
+            "bot_type": self.user.get("bot_type"),
+            "platform": self.user.get("platform"),
+            "id1": self.user.get("id1"),
+        }
