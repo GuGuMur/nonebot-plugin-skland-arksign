@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       newVersion:
-        description: 'New Version'     
+        description: "New Version"
         required: true
 
 jobs:
@@ -27,7 +27,7 @@ jobs:
           OLD_VERSION="\"$OLD_VERSION\""
           NEW_VERSION="\"${{ github.event.inputs.newVersion }}\""
           sed -i "s+version = $OLD_VERSION+version = $NEW_VERSION+g" ./pyproject.toml
-          echo "TAG_NAME=v$(pdm show --version)" >> $GITHUB_ENV 
+          echo "TAG_NAME=v$(pdm show --version)" >> $GITHUB_ENV
 
       - name: Archive Changelog
         uses: docker://ghcr.io/nonebot/auto-changelog:master
