@@ -2,6 +2,10 @@ name: Trigger Release
 
 on:
   workflow_dispatch:
+    inputs:
+      newVersion:
+        description: "New Version"
+        required: true
 
 jobs:
   archive:
@@ -17,7 +21,13 @@ jobs:
       - name: Setup Python environment
         uses: ./.github/actions/setup-python
 
-      - run: echo "TAG_NAME=v$(pdm show --version)" >> $GITHUB_ENV
+      - name: Set New Version
+        run: |
+          OLD_VERSION=`cat ./pyproject.toml | grep ^version | cut -d '"' -f 2`
+          OLD_VERSION="\"$OLD_VERSION\""
+          NEW_VERSION="\"${{ github.event.inputs.newVersion }}\""
+          sed -i "s+version = $OLD_VERSION+version = $NEW_VERSION+g" ./pyproject.toml
+          echo "TAG_NAME=v$(pdm show --version)" >> $GITHUB_ENV
 
       - name: Archive Changelog
         uses: docker://ghcr.io/nonebot/auto-changelog:master
