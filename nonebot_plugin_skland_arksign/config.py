@@ -1,5 +1,5 @@
-from nonebot import get_plugin_config
 from pydantic import BaseModel
+from nonebot import get_plugin_config
 
 from .utils import cleantext
 
