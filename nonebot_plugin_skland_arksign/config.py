@@ -52,4 +52,4 @@ class Config(BaseModel):
         )
 
 
-plugin_config: Config = Config.parse_obj(get_driver().config)
+plugin_config: Config = Config.model_validate(get_driver().config)
