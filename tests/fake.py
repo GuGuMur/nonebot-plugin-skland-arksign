@@ -1,4 +1,5 @@
 from typing import TYPE_CHECKING, Literal
+
 from pydantic import ConfigDict
 
 if TYPE_CHECKING:

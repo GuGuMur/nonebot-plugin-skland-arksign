@@ -68,23 +68,31 @@ async def add(
         else:
             wait_bind_dict[event_session.id1] = uid
 
-        await skland.finish(cleantext(f"""
+        await skland.finish(
+            cleantext(
+                f"""
             [森空岛明日方舟签到器]已在群聊{event_session.id2}添加新账号！
             UID：{uid}
             备注：{note or "无"}
-            接下来，请你通过`私信`bot /森空岛 bind [该账号对应的token] 来完成定时签到服务！"""))
+            接下来，请你通过`私信`bot /森空岛 bind [该账号对应的token] 来完成定时签到服务！"""
+            )
+        )
 
     # 这是私信
     else:
         if not token:
             await skland.finish("请提供token！")
 
-        await skland.send(cleantext(f"""
+        await skland.send(
+            cleantext(
+                f"""
                 [森空岛明日方舟签到器]已添加新账号！
                 UID：{uid}
                 TOKEN：{token}
                 备注：{note or "无"}
-                """))
+                """
+            )
+        )
         runres = await run_signin(uid=uid, token=token)
         await skland.finish(f"立即执行签到操作完成！\n{runres.text}")
 
@@ -125,19 +133,27 @@ async def bind(
     del wait_bind_dict[event_session.id1]
 
     # 发送成功信息（私聊）
-    await skland.send(cleantext(f"""
+    await skland.send(
+        cleantext(
+            f"""
             [森空岛明日方舟签到器]已经为绑定在群聊的游戏账号绑定TOKEN！
             群聊：{user}
             游戏账号UID：{uid}
             TOKEN：{token}
             备注：{note}
-            """))
+            """
+        )
+    )
     # 再到群聊通知一下
     runres = await run_signin(uid=uid, token=token)
-    msg = Text(cleantext(f"""
+    msg = Text(
+        cleantext(
+            f"""
         [森空岛明日方舟签到器]用户{event_session.id1}已经通过私信绑定账号{uid}的token！
         立即执行签到操作完成！
-        信息如下：{runres.text}"""))
+        信息如下：{runres.text}"""
+        )
+    )
     await msg.send_to(PlatformTarget.deserialize(user))
 
 
@@ -170,11 +186,15 @@ async def del_(
     await db_session.delete(result)
     await db_session.commit()
 
-    await skland.finish(cleantext(f"""
+    await skland.finish(
+        cleantext(
+            f"""
             [森空岛明日方舟签到器]已删除旧账号！
             UID：{uid}
             备注：{note or "无"}
-            """))
+            """
+        )
+    )
 
 
 @skland.assign("list", parameterless=[Depends(skland_session_extract)])
@@ -200,11 +220,15 @@ async def list_(
     def report_maker(subscribes: list[SklandSubscribe]):
         report = []
         for i in subscribes:
-            report.append(cleantext(f"""
+            report.append(
+                cleantext(
+                    f"""
                     UID：{i.uid}
                     TOKEN：{show_token(i.token)}
                     备注：{i.note}
-                    """))
+                    """
+                )
+            )
         return "\n\n".join(report)
 
     stmt = select(SklandSubscribe)
@@ -240,12 +264,16 @@ async def update(
         result.note = note
     await db_session.flush()
     await db_session.commit()
-    await skland.finish(cleantext(f"""
+    await skland.finish(
+        cleantext(
+            f"""
             [森空岛明日方舟签到器]已更新账号信息！
             UID：{uid or "未更改"}
             TOKEN：{token or "未更改"}
             备注：{note or "未更改"}
-            """))
+            """
+        )
+    )
 
 
 @skland.assign("signin.identifier", "!all")
@@ -271,7 +299,11 @@ async def signin(
         await skland.finish("未能使用uid或备注匹配到任何账号，请检查")
 
     sign_res = await run_signin(uid=result.uid, token=result.token)
-    await skland.finish(cleantext(f"""
+    await skland.finish(
+        cleantext(
+            f"""
             [森空岛明日方舟签到器]已为账号{result.uid}手动签到！
             信息如下：{sign_res.text}
-            """))
+            """
+        )
+    )
