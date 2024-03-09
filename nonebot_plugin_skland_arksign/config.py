@@ -1,4 +1,4 @@
-from nonebot import get_driver
+from nonebot import get_plugin_config
 from pydantic import BaseModel
 
 from .utils import cleantext
@@ -52,4 +52,4 @@ class Config(BaseModel):
         )
 
 
-plugin_config: Config = Config.model_validate(get_driver().config)
+plugin_config = get_plugin_config(Config)
