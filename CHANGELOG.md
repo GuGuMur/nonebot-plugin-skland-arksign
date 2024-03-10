@@ -2,6 +2,7 @@
 
 ## 最近更新
 
+- :arrow_up: 更新Pydantic V2 [@GuGuMur](https://github.com/GuGuMur) ([#56](https://github.com/GuGuMur/nonebot-plugin-skland-arksign/pull/56))
 - :green_heart: 手动发包时允许设置版本 [@GuGuMur](https://github.com/GuGuMur) ([#54](https://github.com/GuGuMur/nonebot-plugin-skland-arksign/pull/54))
 
 ## v0.7.0b1
