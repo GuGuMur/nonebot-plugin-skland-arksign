@@ -1,5 +1,7 @@
 from typing import TYPE_CHECKING, Literal
 
+from pydantic import ConfigDict
+
 if TYPE_CHECKING:
     from nonebot.adapters.onebot.v11 import GroupMessageEvent as GroupMessageEventV11
     from nonebot.adapters.onebot.v11 import PrivateMessageEvent as PrivateMessageEventV11
@@ -30,9 +32,7 @@ def fake_group_message_event_v11(**field) -> "GroupMessageEventV11":
             role="member",
         )
         to_me: bool = False
-
-        class Config:
-            extra = "forbid"
+        model_config = ConfigDict(extra="forbid")
 
     return FakeEvent(**field)
 
@@ -57,8 +57,6 @@ def fake_private_message_event_v11(**field) -> "PrivateMessageEventV11":
         font: int = 0
         sender: Sender = Sender(nickname="test")
         to_me: bool = False
-
-        class Config:
-            extra = "forbid"
+        model_config = ConfigDict(extra="forbid")
 
     return FakeEvent(**field)
