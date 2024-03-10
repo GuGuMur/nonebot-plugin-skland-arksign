@@ -5,7 +5,7 @@
 groups = ["default", "dev", "test"]
 strategy = ["cross_platform"]
 lock_version = "4.4.1"
-content_hash = "sha256:89cb49328794a325d1f5da9be97dcdeb8d4d094b4a3286cd71e560a32062c661"
+content_hash = "sha256:78029a941635dc1889e734709166cec4534839a6fd520d4328ae6c3b36d9acd7"
 
 [[package]]
 name = "aiosqlite"
@@ -846,18 +846,18 @@ files = [
 
 [[package]]
 name = "nonebot-plugin-alconna"
-version = "0.38.1"
+version = "0.37.1"
 requires_python = ">=3.8"
 summary = "Alconna Adapter for Nonebot"
 dependencies = [
-    "arclet-alconna-tools>=0.7.0",
-    "arclet-alconna>=1.8.1",
-    "nepattern>=0.6.0",
+    "arclet-alconna-tools>=0.6.11",
+    "arclet-alconna>=1.7.44",
+    "nepattern>=0.5.15",
     "nonebot2>=2.2.0",
 ]
 files = [
-    {file = "nonebot_plugin_alconna-0.38.1-py3-none-any.whl", hash = "sha256:588c26e04c110def62562fbbdebdf0a2b778996363858ca5d0096f8b1b7bca6f"},
-    {file = "nonebot_plugin_alconna-0.38.1.tar.gz", hash = "sha256:5e05d035f580a39c1d84a94f3a6ecf7b9d52755a1a74758cdf53640f04ac7a45"},
+    {file = "nonebot_plugin_alconna-0.37.1-py3-none-any.whl", hash = "sha256:fcc46f04ac89bf43730afebd97fa46e5910bc404a9e24cab7950da58be36246d"},
+    {file = "nonebot_plugin_alconna-0.37.1.tar.gz", hash = "sha256:5e9989ee7debd79d61c97aa41c88aac5fe452cc9c47f2d48b829d81d26dfe130"},
 ]
 
 [[package]]
