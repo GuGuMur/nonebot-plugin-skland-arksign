@@ -5,7 +5,7 @@
 groups = ["default", "dev", "test"]
 strategy = ["cross_platform"]
 lock_version = "4.4.1"
-content_hash = "sha256:0989395689fc9e75e7edda5530c29cf7c70022292b185545aa2cdb1c39603ccd"
+content_hash = "sha256:89cb49328794a325d1f5da9be97dcdeb8d4d094b4a3286cd71e560a32062c661"
 
 [[package]]
 name = "aiosqlite"
