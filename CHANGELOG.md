@@ -1,5 +1,9 @@
 # Change Log
 
+## 最近更新
+
+- :arrow_up: auto update by pre-commit hooks [@pre-commit-ci](https://github.com/pre-commit-ci) ([#58](https://github.com/GuGuMur/nonebot-plugin-skland-arksign/pull/58))
+
 ## v0.7.0
 
 - :arrow_up: 更新Pydantic V2 [@GuGuMur](https://github.com/GuGuMur) ([#56](https://github.com/GuGuMur/nonebot-plugin-skland-arksign/pull/56))
