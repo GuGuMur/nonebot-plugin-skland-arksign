@@ -1,21 +1,20 @@
-from sqlalchemy import select
+from sqlalchemy import select, and_, or_
 from nonebot.log import logger
 from nonebot.params import Depends
 from nonebot.typing import T_State
+from nonebot.adapters import MessageTemplate
 from nonebot.adapters import Bot, Event
 from nonebot.permission import SUPERUSER
-from nonebot_plugin_alconna import on_alconna
+from nonebot_plugin_alconna import on_alconna, AlconnaArg, AlconnaMatcher
 from nonebot_plugin_orm import async_scoped_session
 from nonebot_plugin_saa import Text, PlatformTarget
-from nonebot_plugin_session_saa import get_saa_target
-from nonebot_plugin_session import EventSession, extract_session
 
-from .utils import cleantext
+from .utils import cleantext, report_maker
 from .sched import sched_sign
 from .signin import run_signin
 from .alc_parser import skland_alc
 from .model import SklandSubscribe
-from .depends import skland_session_extract
+from .depends import skland_session_extract, SklandEventSession, SklandUserUpdater_EventSession
 
 SessionId1 = str
 BindUid = str
@@ -30,36 +29,62 @@ skland = on_alconna(
     auto_send_output=True,
 )
 
+skland_add = skland.dispatch("add")
+skland_bind = skland.dispatch("bind")
+skland_list = skland.dispatch("list")
+skland_del = skland.dispatch("del")
+skland_update = skland.dispatch("update")
+skland_signin_all = skland.dispatch("signin.identifier", "!all")
+skland_signin = skland.dispatch("signin")
+skland_rebind = skland.dispatch("rebind")
 
-@skland.assign("add")
+
+@skland_add.handle()
 async def add(
     state: T_State,
     uid: str,
     db_session: async_scoped_session,
     token: str | None = None,
     note: str | None = None,
-    event_session: EventSession = Depends(skland_session_extract),
+    quicksignin: bool = True,
+    event_session: SklandEventSession = Depends(skland_session_extract),
 ):
     logger.debug(f"匹配到的参数：{state}")
-    user_account = get_saa_target(event_session)
+    user_account = event_session.saa_target
     if not user_account:
         await skland.finish("未能获取到当前会话的可发送用户信息，请检查")
     logger.debug(f"当前会话的用户信息：{user_account.dict()}")
 
-    # 判断是否为私信/群聊
+    # 判断是否为私信/群聊 -> depends.skland_session_extract
 
     # 先添加一个record
-    stmt = select(SklandSubscribe).where(SklandSubscribe.uid == uid)
-    result = await db_session.scalar(stmt)
-    if result:
-        await skland.finish("该UID已经被注册，请检查")
-    new_record = SklandSubscribe(user=user_account.dict(), uid=uid, token=token, cred="", note=note)
+    # 1. 检查UID是否被注册
+    async with db_session.begin():
+        stmt = select(SklandSubscribe).where(SklandSubscribe.uid == uid)
+        result = await db_session.scalar(stmt)
+        if result:
+            await skland.finish("该UID已经被您或其他用户注册，请检查")
+
+    # 2. 检查用户绑定的 note 是否与自己绑的重复
+    if note is not None:
+        async with db_session.begin():
+            stmt = select(SklandSubscribe).where(
+                and_(SklandSubscribe.note == note, SklandSubscribe.user_feature == event_session.event_user_feature)
+            )
+            result = await db_session.scalar(stmt)
+            if result:
+                await skland.finish("该账号备注名已经被您或其他用户注册，请检查")
+
+    # 3. 绑定到数据库里
+    new_record = SklandSubscribe(
+        uid=uid, user=event_session.dict(), address=user_account.dict(), token=token, note=note, status=None
+    )
     db_session.add(new_record)
     await db_session.commit()
     await db_session.refresh(new_record)
 
     # 这是群聊
-    if state.get("is_group"):
+    if event_session.is_group:
         # 把sessionb保存到消息数据库里
         if not event_session.id1:
             await skland.finish("不能从群会话提取私聊id，请使用私聊添加账号")
@@ -71,10 +96,10 @@ async def add(
         await skland.finish(
             cleantext(
                 f"""
-            [森空岛明日方舟签到器]已在群聊{event_session.id2}添加新账号！
-            UID：{uid}
-            备注：{note or "无"}
-            接下来，请你通过`私信`bot /森空岛 bind [该账号对应的token] 来完成定时签到服务！"""
+                [森空岛明日方舟签到器]已在群聊{event_session.id2}添加新账号！
+                UID：{uid}
+                备注：{note or "无"}
+                接下来，请你通过`私信`bot /森空岛 bind [该账号对应的token] 来完成定时签到服务！"""
             )
         )
 
@@ -93,16 +118,18 @@ async def add(
                 """
             )
         )
-        runres = await run_signin(uid=uid, token=token)
-        await skland.finish(f"立即执行签到操作完成！\n{runres.text}")
+        if quicksignin:
+            runres = await run_signin(uid=uid, token=token)
+            await skland.finish(f"立即执行签到操作完成！\n{runres.text}")
 
 
-@skland.assign("bind")
+@skland_bind.handle()
 async def bind(
     state: T_State,
     token: str,
     db_session: async_scoped_session,
-    event_session: EventSession = Depends(skland_session_extract),
+    quicksignin: bool = True,
+    event_session: SklandEventSession = Depends(skland_session_extract),
 ):
     logger.debug(f"匹配到的参数：{state}")
     if not event_session.id1:
@@ -126,7 +153,8 @@ async def bind(
 
     uid = skd_user.uid
     note = skd_user.note or "无"
-    user = skd_user.user
+    groupid = skd_user.user.get("id2")
+    address = skd_user.address
     logger.debug(f"更新后的SklandSubscribe：{skd_user}")
 
     # 删除待绑定账号
@@ -137,7 +165,7 @@ async def bind(
         cleantext(
             f"""
             [森空岛明日方舟签到器]已经为绑定在群聊的游戏账号绑定TOKEN！
-            群聊：{user}
+            群聊：{groupid}
             游戏账号UID：{uid}
             TOKEN：{token}
             备注：{note}
@@ -145,47 +173,101 @@ async def bind(
         )
     )
     # 再到群聊通知一下
-    runres = await run_signin(uid=uid, token=token)
-    msg = Text(
-        cleantext(
-            f"""
-        [森空岛明日方舟签到器]用户{event_session.id1}已经通过私信绑定账号{uid}的token！
-        立即执行签到操作完成！
-        信息如下：{runres.text}"""
+    if quicksignin:
+        runres = await run_signin(uid=uid, token=token)
+        msg = Text(
+            cleantext(
+                f"""
+                [森空岛明日方舟签到器]用户{event_session.id1}已经通过私信绑定账号{uid}的token！
+                立即执行签到操作完成！
+                信息如下：{runres.text}"""
+            )
         )
-    )
-    await msg.send_to(PlatformTarget.deserialize(user))
+        await msg.send_to(PlatformTarget.deserialize(address))
+    else:
+        ...
+
+
+@skland_rebind.handle()
+async def rebind(
+    state: T_State,
+    uid: str,
+    event_session: SklandEventSession,
+    db_session: async_scoped_session,
+):
+    stmt = select(SklandSubscribe).where(SklandSubscribe.uid == uid)
+    result: SklandSubscribe | None = await db_session.scalar(stmt)
+    if not result:
+        await skland.finish("没有找到需要重新绑定的账户，请检查")
+    old_user = result.user
+    now_sendto_dict = event_session.saa_target
+    if old_user == now_sendto_dict:
+        result.user = event_session.dict()
+        result.address = now_sendto_dict
+        await db_session.flush()
+        await db_session.commit()
+        await skland.finish(f"已完成UID:{uid}的森空岛账号的用户信息重绑定！")
+    else:
+        await skland.finish("该账户此前并非您所有，请检查")
 
 
 # 删除功能可以在各处使用
-@skland.assign("del")
-async def del_(
+@skland_del.handle()
+async def del_1(
+    bot: Bot,
+    event: Event,
+    state: T_State,
+    identifier: str,
+    matcher: AlconnaMatcher,
+    db_session: async_scoped_session,
+    event_session: SklandEventSession = Depends(skland_session_extract),
+):
+    # if await SUPERUSER(bot, event):
+    #     stmt = select(SklandSubscribe).where(SklandSubscribe.user_identity == identifier)
+    # else:
+    #     stmt = select(SklandSubscribe).where(
+    #         and_(
+    #             SklandSubscribe.user_identity == identifier,
+    #             SklandSubscribe.user_feature == event_session.event_user_feature,
+    #         )
+    #     )
+    # result = (await db_session.scalars(stmt)).all()
+    result = (await db_session.scalars(select(SklandSubscribe).where())).all()
+    if await SUPERUSER(bot, event):
+        ...
+    else:
+        result = [i for i in result if i.user_identity == identifier]
+    if not result:
+        await skland.finish("未能使用uid或备注匹配到任何账号，请检查")
+    state["all_subscribes"] = result
+    state["_prompt"] = (
+        "您可执行操作的森空岛签到账号如下：\n"
+        + report_maker(result, event_session.is_group)
+        + "\n请输入对应序号完成操作！\n"
+        + "\n**注意：若输入超出范围的序号，则自动退出处理进程"
+    )
+    if len(result) == 1:
+        matcher.set_path_arg("update.position", 0)
+
+
+@skland_update.got_path("del.position", prompt=MessageTemplate("{_prompt}"))
+async def del_2(
     bot: Bot,
     event: Event,
     identifier: str,
+    matcher: AlconnaMatcher,
+    state: T_State,
     db_session: async_scoped_session,
-    event_session: EventSession = Depends(extract_session),
+    event_session: SklandEventSession = Depends(skland_session_extract),
+    position: int | None = AlconnaArg("update.position"),
 ):
-    # identifier 可以是uid或者备注, 需要都尝试一下
-    stmt = select(SklandSubscribe).where((SklandSubscribe.uid == identifier) | (SklandSubscribe.note == identifier))
-    result = await db_session.scalar(stmt)
-    if not result:
-        await skland.finish("未能使用uid或备注匹配到任何账号，请检查")
-
-    if not await SUPERUSER(bot, event):
-        user = get_saa_target(event_session)
-        if not user:
-            await skland.finish("未能获取到当前会话的用户信息，请检查")
-
-        if user.dict() != result.user:
-            await skland.finish("您无权删除该账号！")
-
-    uid = result.uid
-    note = result.note or "无"
-
-    await db_session.delete(result)
+    if position not in range(0, len(state["all_subscribes"])):
+        await skland.finish("输入的序号超出了您所能控制的账号数，已退出处理进程！")
+    subscribe = await db_session.merge(state["all_subscribes"][position])
+    uid = subscribe.uid
+    note = subscribe.note or "无"
+    await db_session.delete(subscribe)
     await db_session.commit()
-
     await skland.finish(
         cleantext(
             f"""
@@ -197,73 +279,99 @@ async def del_(
     )
 
 
-@skland.assign("list", parameterless=[Depends(skland_session_extract)])
+@skland_list.handle()
 async def list_(
     bot: Bot,
     event: Event,
     state: T_State,
     db_session: async_scoped_session,
+    event_session: SklandEventSession = Depends(skland_session_extract),
 ):
-    if not await SUPERUSER(bot, event):
-        await skland.finish("您无权查看账号列表！")
-
-    is_group = state.get("is_group")
-
-    def show_token(token: str):
-        if not token:
-            return "未绑定"
-        else:
-            if is_group:
-                return "已绑定"
-            return token
-
-    def report_maker(subscribes: list[SklandSubscribe]):
-        report = []
-        for i in subscribes:
-            report.append(
-                cleantext(
-                    f"""
-                    UID：{i.uid}
-                    TOKEN：{show_token(i.token)}
-                    备注：{i.note}
-                    """
-                )
-            )
-        return "\n\n".join(report)
-
-    stmt = select(SklandSubscribe)
-    result = (await db_session.scalars(stmt)).all()
+    result = (await db_session.scalars(select(SklandSubscribe).where())).all()
+    if await SUPERUSER(bot, event):
+        ...
+    else:
+        result = [i for i in result if i.user_feature == event_session.event_user_feature]
     if not result:
         await skland.finish("未能查询到任何账号，请检查")
-    await skland.finish(report_maker(list(result)))
+    await skland.finish(report_maker(list(result), is_show_token=event_session.is_group))
 
 
-@skland.assign("update", parameterless=[Depends(skland_session_extract)])
-async def update(
+@skland_update.handle()
+async def update_1(
     bot: Bot,
     event: Event,
+    state: T_State,
     identifier: str,
+    matcher: AlconnaMatcher,
     db_session: async_scoped_session,
+    event_session: SklandEventSession = Depends(skland_session_extract),
     uid: str | None = None,
     token: str | None = None,
     note: str | None = None,
 ):
-    if not await SUPERUSER(bot, event):
-        await skland.finish("您无权更新账号信息！")
-
-    stmt = select(SklandSubscribe).where((SklandSubscribe.uid == identifier) | (SklandSubscribe.note == identifier))
-    result = await db_session.scalar(stmt)
+    # 预处理：identifier 不应与 uid 相同
+    if isinstance(identifier, int):
+        pre_result = (await db_session.scalars(select(SklandSubscribe).where(SklandSubscribe.uid == identifier))).all()
+        if pre_result:
+            await skland.finish("您要更改的账户的UID已登记在数据库中，请检查")
+    # @TODO: 不会写了 呜呜
+    # if await SUPERUSER(bot, event):
+    #     stmt = select(SklandSubscribe).where(SklandSubscribe.user_identity == identifier)
+    # else:
+    #     stmt = select(SklandSubscribe).where(
+    #         and_(
+    #             SklandSubscribe.user_identity == identifier,
+    #             SklandSubscribe.user_feature == event_session.event_user_feature,
+    #         )
+    #     )
+    # result = (await db_session.scalars(stmt)).all()
+    result = (await db_session.scalars(select(SklandSubscribe).where())).all()
+    if await SUPERUSER(bot, event):
+        result = [i for i in result if i.user_identity == identifier]
+    else:
+        result = [
+            i for i in result if i.user_identity == identifier and i.user_feature == event_session.event_user_feature
+        ]
     if not result:
         await skland.finish("未能使用uid或备注匹配到任何账号，请检查")
+    state["all_subscribes"] = result
+    state["_prompt"] = (
+        "您可执行操作的森空岛签到账号如下：\n"
+        + report_maker(result, event_session.is_group)
+        + "\n请输入对应序号完成操作！\n"
+        + "\n**注意：若输入超出范围的序号，则自动退出处理进程"
+    )
+    if len(result) == 1:
+        matcher.set_path_arg("update.position", 0)
 
+
+@skland_update.got_path("update.position", prompt=MessageTemplate("{_prompt}"))
+async def update_2(
+    bot: Bot,
+    event: Event,
+    identifier: str,
+    matcher: AlconnaMatcher,
+    state: T_State,
+    db_session: async_scoped_session,
+    event_session: SklandEventSession = Depends(skland_session_extract),
+    uid: str | None = None,
+    token: str | None = None,
+    note: str | None = None,
+    position: int | None = AlconnaArg("update.position"),
+):
+    if position not in range(0, len(state["all_subscribes"])):
+        await skland.finish("输入的序号超出了您所能控制的账号数，已退出处理进程！")
+    subscribe = await db_session.merge(state["all_subscribes"][position])
     if uid:
-        result.uid = uid
+        subscribe.uid = uid
     if token:
-        result.token = token
+        subscribe.token = token
     if note:
-        result.note = note
+        subscribe.note = note
     await db_session.flush()
     await db_session.commit()
+    await db_session.refresh(subscribe)
     await skland.finish(
         cleantext(
             f"""
@@ -276,14 +384,14 @@ async def update(
     )
 
 
-@skland.assign("signin.identifier", "!all")
+@skland_signin_all.handle()
 async def signin_all():
     await sched_sign()
     await skland.finish("所有账号已经手动重新触发签到！")
 
 
 # 手动签到功能可以在各处使用
-@skland.assign("signin")
+@skland_signin.handle()
 async def signin(
     bot: Bot,
     event: Event,

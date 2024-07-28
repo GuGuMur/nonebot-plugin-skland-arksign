@@ -19,6 +19,12 @@ class SignResult:
     status: bool
     text: str
 
+@dataclass(frozen=True)
+class SklandUserStatus:
+    status: bool
+    description: str | None
+    time: int | None
+    is_continuable: bool
 
 async def get_timestamp() -> str:
     if plugin_config.skland_use_web_timestamp:

@@ -36,7 +36,7 @@ def upgrade(name: str = "") -> None:
         sa.Column("token", sa.String(), nullable=True),
         sa.Column("note", sa.String(), nullable=True),
         sa.PrimaryKeyConstraint("uid", name=op.f("pk_skland_subscribe")),
-        sa.UniqueConstraint("note"),
+        sa.UniqueConstraint("note", name=op.f("uq_skland_subscribe_note")),
         info={"bind_key": "nonebot_plugin_skland_arksign"},
     )
     # ### end Alembic commands ###

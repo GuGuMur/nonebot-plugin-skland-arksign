@@ -7,8 +7,22 @@ skland_alc = Alconna(
     Subcommand(
         "add",
         Args["uid", str]["token?", str],
-        Option("-n|--note", Args["note", str]),
+        [
+            Option("-n|--note", Args["note", str]),
+            Option("-q|--quicksignin", default=True)
+        ],
         help_text="添加一个新的签到账号",
+    ),
+    Subcommand(
+        "bind",
+        Args["token", str],
+        [Option("-q|--quicksignin", default=True)],
+        help_text="在私聊绑定一个在群聊中添加的签到账号",
+    ),
+    Subcommand(
+        "rebind",
+        Args["uid", str],
+        help_text="更新数据库结构后重新绑定账户的信息",
     ),
     Subcommand(
         "list",
@@ -16,12 +30,12 @@ skland_alc = Alconna(
     ),
     Subcommand(
         "del",
-        Args["identifier", str],
+        Args["identifier", str]["position?", int],
         help_text="使用uid或者备注删除一个签到账号",
     ),
     Subcommand(
         "update",
-        Args["identifier", str],
+        Args["identifier", str]["position?", int],
         [
             Option("-u|--uid", Args["uid", str]),
             Option("-t|--token", Args["token", str]),
@@ -30,13 +44,8 @@ skland_alc = Alconna(
         help_text="使用uid或者备注更新一个签到账号",
     ),
     Subcommand(
-        "bind",
-        Args["token", str],
-        help_text="在私聊绑定一个在群聊中添加的签到账号",
-    ),
-    Subcommand(
         "signin",
-        Args["identifier", str],
+        Args["identifier", str]["position?", int],
         help_text="使用uid或者备注立刻签到一个账号",
     ),
     meta=CommandMeta(
