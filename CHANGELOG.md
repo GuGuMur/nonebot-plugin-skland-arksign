@@ -1,6 +1,6 @@
 # Change Log
 
-## 最近更新
+## v0.7.2
 
 - :arrow_down: 降级特定依赖限制 [@GuGuMur](https://github.com/GuGuMur) ([#64](https://github.com/GuGuMur/nonebot-plugin-skland-arksign/pull/64))
 
