@@ -13,6 +13,7 @@ class SklandEventSession(EventSession):
     """用于森空岛插件的EventSession"""
 
     is_group: bool = Field(default=False, exclude=True)
+    skland_prompt: str | None = None
 
     @property
     def saa_target(self) -> PlatformTarget | None:
@@ -27,14 +28,13 @@ class SklandEventSession(EventSession):
         }
 
 
-
-
 async def skland_session_extract(bot: Bot, event: Event, matcher: Matcher) -> SklandEventSession:
     """
     从当前会话中提取Session, 按照 plugin_config.skland_arksign_allow_group 的值判断是否允许群聊使用
     """
     session = extract_session(bot, event)
     dump_session = model_dump(session)
+    dump_session["_prompt"] = None
     if session.level != SessionLevel.LEVEL1:
         if plugin_config.skland_arksign_allow_group:
             dump_session["is_group"] = True

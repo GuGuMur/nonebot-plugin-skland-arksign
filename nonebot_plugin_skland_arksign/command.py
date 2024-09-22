@@ -5,7 +5,7 @@ from nonebot.typing import T_State
 from nonebot.adapters import MessageTemplate
 from nonebot.adapters import Bot, Event
 from nonebot.permission import SUPERUSER
-from nonebot_plugin_alconna import on_alconna, AlconnaArg, AlconnaMatcher
+from nonebot_plugin_alconna import on_alconna, AlconnaArg, AlconnaMatcher, UniMessage
 from nonebot_plugin_orm import async_scoped_session
 from nonebot_plugin_saa import Text, PlatformTarget
 
@@ -14,7 +14,7 @@ from .sched import sched_sign
 from .signin import run_signin
 from .alc_parser import skland_alc
 from .model import SklandSubscribe
-from .depends import skland_session_extract, SklandEventSession, SklandUserUpdater_EventSession
+from .depends import skland_session_extract, SklandEventSession
 
 SessionId1 = str
 BindUid = str
@@ -240,17 +240,17 @@ async def del_1(
     if not result:
         await skland.finish("未能使用uid或备注匹配到任何账号，请检查")
     state["all_subscribes"] = result
-    state["_prompt"] = (
+    event_session.skland_prompt = (
         "您可执行操作的森空岛签到账号如下：\n"
         + report_maker(result, event_session.is_group)
         + "\n请输入对应序号完成操作！\n"
         + "\n**注意：若输入超出范围的序号，则自动退出处理进程"
     )
     if len(result) == 1:
-        matcher.set_path_arg("update.position", 0)
+        matcher.set_path_arg("del.position", 0)
 
 
-@skland_update.got_path("del.position", prompt=MessageTemplate("{_prompt}"))
+@skland_del.got_path("del.position", prompt=UniMessage.template("{prompt}"))
 async def del_2(
     bot: Bot,
     event: Event,
@@ -259,7 +259,7 @@ async def del_2(
     state: T_State,
     db_session: async_scoped_session,
     event_session: SklandEventSession = Depends(skland_session_extract),
-    position: int | None = AlconnaArg("update.position"),
+    position: int | None = AlconnaArg("del.position"),
 ):
     if position not in range(0, len(state["all_subscribes"])):
         await skland.finish("输入的序号超出了您所能控制的账号数，已退出处理进程！")
@@ -336,7 +336,14 @@ async def update_1(
     if not result:
         await skland.finish("未能使用uid或备注匹配到任何账号，请检查")
     state["all_subscribes"] = result
-    state["_prompt"] = (
+    # print(result)
+    event_session.skland_prompt = (
+        "您可执行操作的森空岛签到账号如下：\n"
+        + report_maker(result, event_session.is_group)
+        + "\n请输入对应序号完成操作！\n"
+        + "\n**注意：若输入超出范围的序号，则自动退出处理进程"
+    )
+    state["prompt"] = (
         "您可执行操作的森空岛签到账号如下：\n"
         + report_maker(result, event_session.is_group)
         + "\n请输入对应序号完成操作！\n"
@@ -346,7 +353,7 @@ async def update_1(
         matcher.set_path_arg("update.position", 0)
 
 
-@skland_update.got_path("update.position", prompt=MessageTemplate("{_prompt}"))
+@skland_update.got_path("update.position", prompt=UniMessage.template("{prompt}"))
 async def update_2(
     bot: Bot,
     event: Event,
