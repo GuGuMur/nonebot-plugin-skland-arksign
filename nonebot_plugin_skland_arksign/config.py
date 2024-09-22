@@ -52,4 +52,4 @@ class Config(BaseModel):
         )
 
 
-plugin_config = get_plugin_config(Config)
+plugin_config: Config = get_plugin_config(Config)

@@ -57,17 +57,11 @@ body:
     validations:
       required: true
 
-  # Env | VM Arch
-  - type: dropdown
+  - type: textarea
     id: env-nb2-ver
     attributes:
       label: Nonebot 2 版本
-      description: 选择运行机器人 Nonebot 2 的系统架构
-      options:
-        - 2.0.1
-        - 2.1.0
-        - 2.1.1
-        - 其它（请在下方说明）
+      description: 机器人所使用的 Nonebot 2 的版本
     validations:
       required: true
 
