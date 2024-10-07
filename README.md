@@ -19,73 +19,22 @@ _✨ 用于每日早八定时签到森空岛明日方舟的Nonebot插件 ✨_
 <a href="https://pypi.python.org/pypi/nonebot-plugin-skland-arksign">
     <img src="https://img.shields.io/pypi/v/nonebot-plugin-skland-arksign.svg" alt="pypi">
 </a>
+<a href="https://pypi.python.org/pypi/nonebot-plugin-skland-arksign">
+  <img src="https://img.shields.io/pypi/dm/nonebot-plugin-skland-arksign">
+</a>
 <img src="https://img.shields.io/badge/python-3.10+-blue.svg" alt="python">
 
 </div>
 
 ## 💿 安装
 
-<details open>
-<summary>使用 nb-cli 安装</summary>
-在 nonebot2 项目的根目录下打开命令行, 输入以下指令即可安装
+根据数美 device ID 获取的方法的不同，可选择以下版本（区别下述）：
 
-```shell
+```bash
 nb plugin install nonebot-plugin-skland-arksign
+nb plugin install nonebot-plugin-skland-arksign[sm_local]
+nb plugin install nonebot-plugin-skland-arksign[sm_htmlrender]
 ```
-
-</details>
-
-<details>
-<summary>使用包管理器安装</summary>
-在 nonebot2 项目的插件目录下, 打开命令行, 根据你使用的包管理器, 输入相应的安装命令
-
-<details>
-<summary>pip</summary>
-
-```shell
-pip install nonebot-plugin-skland-arksign
-```
-
-</details>
-<details>
-<summary>pdm</summary>
-
-```shell
-pdm add nonebot-plugin-skland-arksign
-```
-
-</details>
-<details>
-<summary>poetry</summary>
-
-```shell
-poetry add nonebot-plugin-skland-arksign
-```
-
-</details>
-<details>
-<summary>conda</summary>
-
-```shell
-conda install nonebot-plugin-skland-arksign
-```
-
-</details>
-
-打开 nonebot2 项目根目录下的 `pyproject.toml` 文件, 在 `[tool.nonebot]` 部分追加写入
-
-```toml
-plugins = ["nonebot_plugin_skland_arksign"]
-```
-
-</details>
-
-> [!IMPORTANT]
-> 如果想在 **Python <= 3.9** 的环境中使用，请选择 `v0.5.8`，这是最后一个支持 **Python <= 3.9** 的 Release
->
-> ~严格来说其实是第一个以及最后一个，因为之前的版本有不适用于**非3.10以下**的类型注解语法，为此专门发布的一个可用的支持版本~
->
-> 对于其他**非** `v0.5.8` 版本，都有可能不兼容 **Python <= 3.9**
 
 ## 🎉 使用
 
@@ -101,7 +50,48 @@ plugins = ["nonebot_plugin_skland_arksign"]
 | `skland_arksign_allow_group` | `bool` | 否 | `False` | 允许群组等私信用户以上的对话模型注册模型而不会警告 _请在私聊中使用_ 字样<br><li>**在群聊中使用命令时，命令的权限会受到较大限制**</li> |
 |   `skland_timestamp_delay`   | `int`  | 否 |    2    | 针对bot所在机器调整bot生成森空岛签名时进行运算的减数 |  
 |  `skland_use_web_timestamp`  | `bool` | 否 | `False` | 无法调到合适的`timestamp_delay`时使用的方案 |
+| `skland_sm_method_identifier`| `int` | **是** | `0` | 数美Device ID / dId 的获取方式 |
+| `skland_sm_api_endpoint`| `str` | 否 | ... | 选用 [retrieval-server api](https://github.com/GuGuMur/skland-did-retrieval-server) 时的 URL路径，可自行部署 |
+| `htmlrender-...`| ... | ... | ... | 选用 [htmlrender](https://github.com/kexue-z/nonebot-plugin-htmlrender) 时该插件的相关配置 |
 <!-- prettier-ignore-end -->
+
+#### 关于数美Device ID / dId 的配置
+
+2024.09 起，yjwl在获取 `cred` 的部分接入了 [阿里云 Web 应用防火墙](https://www.alibabacloud.com/help/zh/waf/)，导致全网项目拉闸
+
+~在监狱待着顺便蹲网上大佬们的成果后~本插件提供以下几种应对措施：
+
+##### retrieval-server api（编号`0`）
+
+采用 Koajs + Nodejs VM 的 API 方案，不需要额外安装依赖。
+
+库：[GuGuMur/skland-did-retrieval-server](https://github.com/GuGuMur/skland-did-retrieval-server)
+
+安装：`nb plugin install nonebot-plugin-skland-arksign`
+
+配置：`skland_sm_method_identifier = 0`
+
+##### Python 实现原生模拟 （编号`1`）
+
+由<del>市面上几乎所有森空岛签到项目的蓝本</del>大佬 [FancyCabbage(Gitee)](https://gitee.com/FancyCabbage/skyland-auto-sign)对数美 SDK 逆向后使用Python 实现。
+
+**额外安装库**：`cryptography`
+
+**代码协议**：[MIT](https://gitee.com/FancyCabbage/skyland-auto-sign/blob/master/LICENSE)
+
+安装：`nb plugin install nonebot-plugin-skland-arksign[sm_local]`
+
+配置：`skland_sm_method_identifier = 1`
+
+##### HTMLRender / Playwright 模拟 （编号`1`）
+
+灵感来自 [ztmzzz/skyland_auto_sign_qinglong](https://github.com/ztmzzz/skyland_auto_sign_qinglong) ，通过模拟浏览器环境获取dId
+
+**额外安装插件**：[`nonebot-plugin-htmlrender`](https://github.com/kexue-z/nonebot-plugin-htmlrender)
+
+安装：`nb plugin install nonebot-plugin-skland-arksign[sm_htmlrender]`
+
+配置：`skland_sm_method_identifier = 2`
 
 ### 新增账号
 
@@ -241,7 +231,7 @@ skland signin !all
 
 ## 🤗 致谢
 
-- `xxyz30/skyland-auto-sign`([<del>Github</del>](https://github.com/xxyz30/skyland-auto-sign)/[Gitee](https://gitee.com/FancyCabbage/skyland-auto-sign))、[`Yanstory/skland-checkin-ghaction`](https://github.com/Yanstory/skland-checkin-ghaction)、[`Maojuan-lang/SenKongDao`](https://github.com/Maojuan-lang/SenKongDao)、[`enpitsuLin/skland-daily-attendance`](https://github.com/enpitsuLin/skland-daily-attendance)：感谢以上项目提供的参考！
+- `xxyz30/skyland-auto-sign`([<del>Github</del>](https://github.com/xxyz30/skyland-auto-sign)/[Gitee](https://gitee.com/FancyCabbage/skyland-auto-sign))、[`Yanstory/skland-checkin-ghaction`](https://github.com/Yanstory/skland-checkin-ghaction)、[`Maojuan-lang/SenKongDao`](https://github.com/Maojuan-lang/SenKongDao)、[`enpitsuLin/skland-daily-attendance`](https://github.com/enpitsuLin/skland-daily-attendance)、[ztmzzz/skyland_auto_sign_qinglong](https://github.com/ztmzzz/skyland_auto_sign_qinglong)：感谢以上项目提供的参考！<del>几乎是市面上所有的森空岛签到项目</del>
 - [`AzideCupric`](https://github.com/AzideCupric)：感谢大佬的技术支持！orz
 - [`he0119/nonebot-plugin-datastore`](https://github.com/he0119/nonebot-plugin-datastore)：超好用的数据存储插件！
 - [`MountainDash/nonebot-plugin-send-anything-anywhere`](https://github.com/MountainDash/nonebot-plugin-send-anything-anywhere)：峯驰物流部门的全能转接信使！

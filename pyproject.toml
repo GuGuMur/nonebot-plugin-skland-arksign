@@ -27,6 +27,15 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
 ]
 
+[project.optional-dependencies]
+sm_local = [
+    "cryptography>=43.0.1",
+]
+sm_htmlrender = [
+    "nonebot-plugin-htmlrender>=0.3.5",
+]
+
+
 [build-system]
 requires = ["pdm-backend"]
 build-backend = "pdm.backend"
