@@ -83,7 +83,7 @@ nb plugin install nonebot-plugin-skland-arksign[sm_htmlrender]
 
 配置：`skland_sm_method_identifier = 1`
 
-##### HTMLRender / Playwright 模拟 （编号`1`）
+##### HTMLRender / Playwright 模拟 （编号`2`）
 
 灵感来自 [ztmzzz/skyland_auto_sign_qinglong](https://github.com/ztmzzz/skyland_auto_sign_qinglong) ，通过模拟浏览器环境获取dId
 
