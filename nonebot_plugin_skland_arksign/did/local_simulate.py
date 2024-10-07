@@ -1,22 +1,22 @@
 # ID: 1
 # 来自https://gitee.com/FancyCabbage/skyland-auto-sign/blob/master/SecuritySm.py
 # 协议：MIT（https://gitee.com/FancyCabbage/skyland-auto-sign/blob/master/LICENSE）
-import base64
 import gzip
-import hashlib
 
 # 数美加密方法类
 import json
 import time
 import uuid
+import base64
+import hashlib
 
 from httpx import AsyncClient
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import padding
-from cryptography.hazmat.primitives.ciphers.algorithms import AES
-from cryptography.hazmat.decrepit.ciphers.algorithms import TripleDES
 from cryptography.hazmat.primitives.ciphers.base import Cipher
+from cryptography.hazmat.primitives.ciphers.algorithms import AES
 from cryptography.hazmat.primitives.ciphers.modes import CBC, ECB
+from cryptography.hazmat.decrepit.ciphers.algorithms import TripleDES
 
 # 查询dId请求头
 devices_info_url = "https://fp-it.portal101.cn/deviceprofile/v4"

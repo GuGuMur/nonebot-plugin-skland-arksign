@@ -27,7 +27,9 @@ _✨ 用于每日早八定时签到森空岛明日方舟的Nonebot插件 ✨_
 </div>
 
 ## 💿 安装
+
 根据数美 device ID 获取的方法的不同，可选择以下版本（区别下述）：
+
 ```bash
 nb plugin install nonebot-plugin-skland-arksign
 nb plugin install nonebot-plugin-skland-arksign[sm_local]
@@ -86,7 +88,6 @@ nb plugin install nonebot-plugin-skland-arksign[sm_htmlrender]
 灵感来自 [ztmzzz/skyland_auto_sign_qinglong](https://github.com/ztmzzz/skyland_auto_sign_qinglong) ，通过模拟浏览器环境获取dId
 
 **额外安装插件**：[`nonebot-plugin-htmlrender`](https://github.com/kexue-z/nonebot-plugin-htmlrender)
-
 
 安装：`nb plugin install nonebot-plugin-skland-arksign[sm_htmlrender]`
 
