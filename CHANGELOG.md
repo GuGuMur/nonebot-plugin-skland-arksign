@@ -1,6 +1,6 @@
 # Change Log
 
-## 最近更新
+## v0.8.0
 
 - :sparkles: feat: 支持 `dId` 获取 [@GuGuMur](https://github.com/GuGuMur) ([#66](https://github.com/GuGuMur/nonebot-plugin-skland-arksign/pull/66))
 
