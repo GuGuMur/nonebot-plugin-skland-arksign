@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SDK Demo</title>
+    <script>
+        (function () {
+            window._smReadyFuncs = [];
+            window.SMSdk = {
+                onBoxDataReady: function (boxData) {
+                    console.log('此时拿到的数据为boxData或者boxId', boxData);
+                },
+                ready: function (fn) {
+                    fn && _smReadyFuncs.push(fn);
+                }
+            };
+
+            window._smConf = {
+                organization: 'UWXspnCCJN4sfYlNfqps',
+                appId: 'default',
+                publicKey: 'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCmxMNr7n8ZeT0tE1R9j/mPixoinPkeM+k4VGIn/s0k7N5rJAfnZ0eMER+QhwFvshzo0LNmeUkpR8uIlU/GEVr8mN28sKmwd2gpygqj0ePnBmOW4v0ZVwbSYK+izkhVFk2V/doLoMbWy6b+UnA8mkjvg0iYWRByfRsK2gdl7llqCwIDAQAB',
+                protocol: 'https'
+            };
+
+            var url = './fp.min.js'; // 本地文件路径
+            var sm = document.createElement('script');
+            var s = document.getElementsByTagName('script')[0];
+            sm.src = url;
+            s.parentNode.insertBefore(sm, s);
+        })();
+
+        function dealSmDeviceId(cb) {
+            var smDeviceId = '';
+            var smDeviceIdReady = false;
+
+            SMSdk.ready(function () {
+                if (SMSdk.getDeviceId) {
+                    smDeviceId = SMSdk.getDeviceId();
+                }
+                if (!smDeviceIdReady) {
+                    smDeviceIdReady = true;
+                    cb && cb(smDeviceId);
+                }
+            });
+        }
+
+        function bindEvent(element, event, handler) {
+            element.addEventListener(event, handler);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            var buttonEl = document.getElementById('getDeviceId');
+            var outputEl = document.getElementById('deviceIdOutput');
+
+            buttonEl.addEventListener("click", () => {dealSmDeviceId(function (deviceId) {
+              outputEl.textContent = deviceId;
+                    console.log('回调执行成功，设备标识为：' + deviceId);
+                });})
+        })
+    </script>
+</head>
+<body>
+<h1>SDK Demo</h1>
+<p id="deviceIdOutput"></p>
+<button id="getDeviceId">获取设备ID</button>
+</body>
+</html>

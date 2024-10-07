@@ -13,6 +13,21 @@ from httpx import AsyncClient
 from .constants import CONSTANTS
 from .config import plugin_config
 
+if plugin_config.skland_sm_method_identifier == 0:
+    from .did.api import get_did as get_did
+elif plugin_config.skland_sm_method_identifier == 1:
+    try:
+        from .did.local_simulate import get_did as get_did
+    except Exception:
+        from .did.api import get_did as get_did
+        logger.warning("请安装 nonebot-plugin-skland-arksign[sm_local]！")
+elif plugin_config.skland_sm_method_identifier == 2:
+    try:
+        from .did.html_simulate import get_did as get_did
+    except Exception:
+        from .did.api import get_did as get_did
+        logger.warning("请安装 nonebot-plugin-skland-arksign[sm_htmlrender]！")
+
 
 @dataclass(frozen=True)
 class SignResult:
@@ -71,11 +86,12 @@ def get_sign_header(
     return header | header_ca
 
 
-async def get_grant_code(token: str) -> str:
+async def get_grant_code(token: str, dId: str) -> str:
     data = {"appCode": CONSTANTS.APP_CODE, "token": token, "type": 0}
-
+    headers = CONSTANTS.REQUEST_HEADERS_BASE
+    headers["dId"] = dId
     async with AsyncClient() as client:
-        response = await client.post(CONSTANTS.GRANT_CODE_URL, headers=CONSTANTS.REQUEST_HEADERS_BASE, json=data)
+        response = await client.post(CONSTANTS.GRANT_CODE_URL, headers=headers, json=data)
         response.raise_for_status()
         resp = response.json()
         if resp["status"] != 0:
@@ -83,11 +99,12 @@ async def get_grant_code(token: str) -> str:
         return resp["data"]["code"]
 
 
-async def get_cred_resp(grant_code: str) -> dict[str, Any]:
+async def get_cred_resp(grant_code: str, dId: str) -> dict[str, Any]:
     data = {"code": grant_code, "kind": 1}
-
+    headers = CONSTANTS.REQUEST_HEADERS_BASE
+    headers["dId"] = dId
     async with AsyncClient() as client:
-        response = await client.post(CONSTANTS.CRED_CODE_URL, headers=CONSTANTS.REQUEST_HEADERS_BASE, json=data)
+        response = await client.post(CONSTANTS.CRED_CODE_URL, headers=headers, json=data)
         response.raise_for_status()
         resp = response.json()
         if resp["code"] != 0:
@@ -157,8 +174,9 @@ async def do_signin(uid: str, cred_resp: dict[str, Any], binding_list: list[dict
 
 
 async def _run_signin(uid: str, token: str):
-    grand_code = await get_grant_code(token)
-    cred_resp = await get_cred_resp(grand_code)
+    dId = await get_did()
+    grand_code = await get_grant_code(token, dId)
+    cred_resp = await get_cred_resp(grand_code, dId)
     binding_list = await get_binding_list(cred_resp)
     return await do_signin(uid, cred_resp, binding_list)
 
