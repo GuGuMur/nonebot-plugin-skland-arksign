@@ -1,4 +1,5 @@
 from typing import Literal
+
 from pydantic import BaseModel
 from nonebot import get_plugin_config
 
@@ -11,7 +12,6 @@ class Config(BaseModel):
     skland_use_web_timestamp: bool = False
     skland_sm_method_identifier: Literal[0, 1, 2] = 0
     skland_sm_api_endpoint: str = "https://skland-did-retrieval-server.gugumur.eu.org/did"
-
 
     @property
     def init_des(self) -> str:

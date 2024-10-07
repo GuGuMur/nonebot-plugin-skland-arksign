@@ -21,7 +21,7 @@ class _CONSTANTS:
             "Content-Type": "application/json; charset=utf-8",
             "manufacturer": "Xiaomi",
             "os": "33",
-            "dId": ""
+            "dId": "",
         }
 
     @property
@@ -39,7 +39,6 @@ class _CONSTANTS:
             "apiHost": "fp-it.portal101.cn",
             "apiPath": "/deviceprofile/v4",
         }
-
 
 
 CONSTANTS = _CONSTANTS()

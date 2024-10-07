@@ -20,12 +20,14 @@ elif plugin_config.skland_sm_method_identifier == 1:
         from .did.local_simulate import get_did as get_did
     except Exception:
         from .did.api import get_did as get_did
+
         logger.warning("请安装 nonebot-plugin-skland-arksign[sm_local]！")
 elif plugin_config.skland_sm_method_identifier == 2:
     try:
         from .did.html_simulate import get_did as get_did
     except Exception:
         from .did.api import get_did as get_did
+
         logger.warning("请安装 nonebot-plugin-skland-arksign[sm_htmlrender]！")
 
 

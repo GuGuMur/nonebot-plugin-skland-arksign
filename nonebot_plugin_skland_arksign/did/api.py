@@ -1,6 +1,8 @@
 # ID: 0
 from httpx import AsyncClient
+
 from ..config import plugin_config
+
 
 async def get_did() -> str:
     if plugin_config.skland_use_web_timestamp:

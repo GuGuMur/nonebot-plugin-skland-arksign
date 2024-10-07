@@ -1,12 +1,14 @@
 # ID: 2
-from nonebot import require
 from pathlib import Path
+
+from nonebot import require
 
 from ...config import plugin_config
 
 if plugin_config.skland_sm_method_identifier == 2:
     require("nonebot_plugin_htmlrender")
     from nonebot_plugin_htmlrender import get_new_page
+
     async def get_did() -> str:
         async with get_new_page() as page:
             path = Path(__file__).parent / "static"
