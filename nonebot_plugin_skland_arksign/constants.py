@@ -16,6 +16,8 @@ class _CONSTANTS:
             "User-Agent": "Skland/1.45.1 (com.hypergryph.skland; build:104501004; Android 34; ) Okhttp/4.11.0",
             "Accept-Encoding": "gzip",
             "Connection": "close",
+            "Origin": "https://www.skland.com",
+            "Referer": "https://www.skland.com/",
             "Content-Type": "application/json; charset=UTF-8",
             "manufacturer": "Xiaomi",
             "os": "34",
