@@ -10,7 +10,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: setup python
+    - name: Setup Python
       uses: actions/setup-python@v4
       with:
         python-version: ${{ inputs.python-version }}
@@ -23,3 +23,10 @@ runs:
       shell: bash
       run: |
         pdm config check_update false
+        pdm config use_uv true
+
+    - name: Setup uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        enable-cache: true
+
