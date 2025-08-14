@@ -1,6 +1,6 @@
 # Change Log
 
-## 最近更新
+## v0.8.1
 
 - :pencil2: typo: readme [@GuGuMur](https://github.com/GuGuMur) ([#67](https://github.com/GuGuMur/nonebot-plugin-skland-arksign/pull/67))
 
