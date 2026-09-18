@@ -50,7 +50,7 @@ nb plugin install nonebot-plugin-skland-arksign[sm_htmlrender]
 | `skland_arksign_allow_group` | `bool` | 否 | `False` | 允许群组等私信用户以上的对话模型注册模型而不会警告 _请在私聊中使用_ 字样<br><li>**在群聊中使用命令时，命令的权限会受到较大限制**</li> |
 |   `skland_timestamp_delay`   | `int`  | 否 |    2    | 针对bot所在机器调整bot生成森空岛签名时进行运算的减数 |  
 |  `skland_use_web_timestamp`  | `bool` | 否 | `False` | 无法调到合适的`timestamp_delay`时使用的方案 |
-| `skland_sm_method_identifier`| `int` | **是** | `0` | 数美Device ID / dId 的获取方式 |
+| `skland_sm_method_identifier`| `int` | 否 | `0` | 数美Device ID / dId 的获取方式 |
 | `skland_sm_api_endpoint`| `str` | 否 | ... | 选用 [retrieval-server api](https://github.com/GuGuMur/skland-did-retrieval-server) 时的 URL路径，可自行部署 |
 | `htmlrender-...`| ... | ... | ... | 选用 [htmlrender](https://github.com/kexue-z/nonebot-plugin-htmlrender) 时该插件的相关配置 |
 <!-- prettier-ignore-end -->
@@ -59,7 +59,7 @@ nb plugin install nonebot-plugin-skland-arksign[sm_htmlrender]
 
 2024.09 起，yjwl在获取 `cred` 的部分接入了 [阿里云 Web 应用防火墙](https://www.alibabacloud.com/help/zh/waf/)，导致全网项目拉闸
 
-~在监狱待着顺便蹲网上大佬们的成果后~本插件提供以下几种应对措施：
+~~在监狱待着顺便蹲网上大佬们的成果后~~本插件提供以下几种应对措施：
 
 ##### retrieval-server api（编号`0`）
 
