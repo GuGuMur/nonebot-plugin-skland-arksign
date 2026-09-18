@@ -59,7 +59,7 @@ nb plugin install nonebot-plugin-skland-arksign[sm_htmlrender]
 
 2024.09 起，yjwl在获取 `cred` 的部分接入了 [阿里云 Web 应用防火墙](https://www.alibabacloud.com/help/zh/waf/)，导致全网项目拉闸
 
-~在监狱待着顺便蹲网上大佬们的成果后~本插件提供以下几种应对措施：
+~~在监狱待着顺便蹲网上大佬们的成果后~~本插件提供以下几种应对措施：
 
 ##### retrieval-server api（编号`0`）
 
