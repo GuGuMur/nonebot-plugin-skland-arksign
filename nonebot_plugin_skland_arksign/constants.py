@@ -13,7 +13,7 @@ class _CONSTANTS:
     @property
     def REQUEST_HEADERS_BASE(self) -> dict[str, str]:
         return {
-            "User-Agent": "Skland/1.45.1 (com.hypergryph.skland; build:104501004; Android 34; ) Okhttp/4.11.0",
+            "User-Agent": "Skland/1.50.0 (com.hypergryph.skland; build:105001004; Android 34; ) Okhttp/4.11.0",
             "Accept-Encoding": "gzip",
             "Connection": "close",
             "Origin": "https://www.skland.com",
@@ -21,8 +21,8 @@ class _CONSTANTS:
             "Content-Type": "application/json; charset=UTF-8",
             "manufacturer": "Xiaomi",
             "os": "34",
-            "vname": "1.45.1",
-            "vcode": "104501004",
+            "vname": "1.50.0",
+            "vcode": "105001004",
             "platform": "1",
             "nid": "1",
             "channel": "OF",
@@ -32,7 +32,7 @@ class _CONSTANTS:
 
     @property
     def SIGN_HEADERS_BASE(self) -> dict[str, str]:
-        return {"platform": "1", "timestamp": "", "dId": "de9759a5afaa634f", "vName": "1.45.1"}
+        return {"platform": "1", "timestamp": "", "dId": "de9759a5afaa634f", "vName": "1.50.0"}
 
     @property
     def SM_CONFIG(self) -> dict[str, str]:
