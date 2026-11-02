@@ -1,7 +1,7 @@
 from sqlalchemy import JSON, String
 from nonebot_plugin_orm import Model
-from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.dialects.postgresql import JSONB
 
 
 class SklandSubscribe(Model):
