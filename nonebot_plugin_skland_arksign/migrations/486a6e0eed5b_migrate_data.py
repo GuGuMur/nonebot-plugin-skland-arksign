@@ -12,8 +12,8 @@ from collections.abc import Sequence
 
 import sqlalchemy as sa
 from alembic import op
-from sqlalchemy.orm import Session
 from nonebot import logger, require
+from sqlalchemy.orm import Session
 from sqlalchemy import Connection, inspect
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.ext.asyncio import AsyncConnection
